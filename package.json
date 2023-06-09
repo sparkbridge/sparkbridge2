@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/sparkbridge/sparkbridge2/issues"
   },
-  "homepage": "https://github.com/sparkbridge/sparkbridge2#readme"
+  "homepage": "https://github.com/sparkbridge/sparkbridge2#readme",
+  "dependencies": {
+    "json5": "^2.2.3",
+    "winston": "^3.9.0",
+    "ws": "^8.13.0"
+  }
 }
