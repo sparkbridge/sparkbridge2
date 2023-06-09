@@ -1,0 +1,19 @@
+{
+  "name": "sparkbridge2",
+  "version": "1.0.0",
+  "description": "a new adapter",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sparkbridge/sparkbridge2.git"
+  },
+  "author": "Sbaoor",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/sparkbridge/sparkbridge2/issues"
+  },
+  "homepage": "https://github.com/sparkbridge/sparkbridge2#readme"
+}
