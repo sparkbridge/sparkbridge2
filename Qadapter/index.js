@@ -7,7 +7,7 @@ class Qadapter{
     qid;
     pwd;
     eventEmitter = new EventEmitter();
-    eventKeyMap = new Map({'':[]});
+    eventKeyMap = new Map();
     constructor(target,qid,pwd){
         this.target =  target;
         this.qid = qid;
@@ -17,20 +17,59 @@ class Qadapter{
         this.client = new WebSocket(this.target,{headers:{Authorization:this.pwd}});
         this.client.on('open',()=>{
             //this.logger.info('登录成功，开始处理事件');
-            this.eventEmitter.emit('bot.online');
+            this.eventEmitter.emit('ws.open');
         });
+        this.client.on('error',(e)=>{
+            this.logger.error('websocket 故障！！');
+            this.logger.error('请检查连接到go-cqhttp的密钥是否填写正确');
+            console.log(e);
+        });
+        this.client.on('close',(e)=>{
+            this.logger.warn('websocket 已经断开');
+            setTimeout(()=>{
+                this.login(this.pwd)
+            },3e3);
+        });
+        this.client.on('message', (_data, _islib) =>{
+            let raw = _data;;
+            if (_islib) {
+                raw = _data.toString()
+            }
+            let msg_obj;
+            try{
+                msg_obj = JSON.parse(raw);
+            }catch(err){
+                this.logger.error('解析消息出现错误！');
+                console.log(err);
+            }
+            this.eventEmitter.emit('gocq.pack',msg_obj);
+        })
     }
     on(evk,func){
-        if(this.eventKeyMap.has(evk)==false) this.eventKeyMap.set(evk,[]);
-        this.eventKeyMap.get(evk).push(func);
+        console.log('触发on',evk);
+        this.eventEmitter.on(evk,func);
+        //if(this.eventKeyMap.has(evk)==false) this.eventKeyMap.set(evk,[]);
+        //this.eventKeyMap.get(evk).push(func);
     }
-    setProperty(k,v){
+    emit(evk,...arg){
+        console.log('触发emit',evk);
+       /* if(this.eventKeyMap.has(evk)){
+            this.eventKeyMap.get(evk).forEach(element => {
+                element(...arg);
+            });
+        }*/
+        this.eventEmitter.emit(evk,...arg);
+    }
+    setOwnProperty(k,v){
         this[k] = v;
     }
-    sendGroupMsg(gid,msg){
-        
-    }
-    sendPrivateMsg(pid,msg){
-
+    sendWSPack(pack){
+        if(typeof pack !== 'string'){
+            pack = JSON.stringify(pack);
+        }
+        this.client.send(pack);
     }
 }
+
+
+module.exports = Qadapter;

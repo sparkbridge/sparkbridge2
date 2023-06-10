@@ -1,0 +1,10 @@
+{
+    "name": "bridgebase",
+    "author": "lition",
+    "version": [
+        0,
+        0,
+        1
+    ],
+    "desc": "bridge适配器"
+}
