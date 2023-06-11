@@ -15,6 +15,9 @@ const build_reply = (id,type)=>{
 spark.on('gocq.pack',(pack)=>{
     //console.log(pack);
     //let evt_name = `${pack.post_type}${pack.message_type == undefined ? '' :'.'+ pack.message_type}`;
+    if(pack.echo != undefined){
+        spark.QClient.eventEmitter.emit("packid_"+pack.echo,pack.data);
+    }
     const POST_TYPE = pack.post_type;
     switch(POST_TYPE){
         case 'meta_event':
@@ -29,9 +32,23 @@ spark.on('gocq.pack',(pack)=>{
         case 'request':
             spark.emit(`${POST_TYPE}.${pack.request_type}`,pack);
             break;
-
     }
 });
+
+function uuid() {
+    var s = []
+    var hexDigits = '0123456789abcdef'
+    for (var i = 0; i < 36; i++) {
+        s[i] = hexDigits.substring(Math.floor(Math.random() * 0x10), 1)
+    }
+    s[14] = '4' // bits 12-15 of the time_hi_and_version field to 0010
+    s[19] = hexDigits.substring((s[19] & 0x3) | 0x8, 1) // bits 6-7 of the clock_seq_hi_and_reserved to 01
+    s[8] = s[13] = s[18] = s[23] = '-'
+
+    var uuid = s.join('')
+    return uuid
+}
+
 
 function sendGroupMsg(gid,msg){
     spark.QClient.sendWSPack(packbuilder.GroupMessagePack(gid,msg));
@@ -43,10 +60,49 @@ function sendPrivateMsg(fid,msg){
 }
 spark.QClient.setOwnProperty('sendPrivateMsg',sendPrivateMsg);
 
+function sendGroupBan(gid,mid,d){
+    spark.QClient.sendWSPack(packbuilder.GroupBanPack(gid,mid,d));
+}
+spark.QClient.setOwnProperty('sendGroupBan',sendGroupBan);
+
+function deleteMsg(id){
+    spark.QClient.sendWSPack(packbuilder.DeleteMsgPack(id));
+}
+spark.QClient.setOwnProperty('deleteMsg',deleteMsg);
+
+function getGroupMemberList(gid){
+    let tmp_id = uuid();
+    spark.QClient.sendWSPack(packbuilder.GroupMemberListPack(gid,tmp_id));
+    return new Promise((res,rej)=>{
+        spark.QClient.eventEmitter.once('packid_'+tmp_id,(data)=>{
+            res(data);
+        });
+        setTimeout(() => {
+            rej();
+        }, 5e3);
+    })
+}
+spark.QClient.setOwnProperty('getGroupMemberList',getGroupMemberList)
+
+function getGroupMemberInfo(gid,mid){
+    let tmp_id = uuid();
+    spark.QClient.sendWSPack(packbuilder.GroupMemberInfoPack(gid,mid,tmp_id));
+    return new Promise((res,rej)=>{
+        spark.QClient.eventEmitter.once('packid_'+tmp_id,(data)=>{
+            res(data);
+        });
+        setTimeout(() => {
+            rej();
+        }, 5e3);
+    })
+}
+spark.QClient.setOwnProperty('getGroupMemberInfo',getGroupMemberInfo);
 
 /*
 spark.on('ws.open',()=>{
-    spark.QClient.sendGroupMsg(519916681,'测试');
+    spark.QClient.getGroupMemberInfo(519916681,2959435045).then(res=>{
+        console.log(res);
+    });
 });
 
 
