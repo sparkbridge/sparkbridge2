@@ -33,9 +33,25 @@ spark.on('gocq.pack',(pack)=>{
     }
 });
 
+function sendGroupMsg(gid,msg){
+    spark.QClient.sendWSPack(packbuilder.GroupMessagePack(gid,msg));
+}
+spark.QClient.setOwnProperty('sendGroupMsg',sendGroupMsg);
+
+function sendPrivateMsg(fid,msg){
+    spark.QClient.sendWSPack(packbuilder.PrivateMessagePack(fid,msg));
+}
+spark.QClient.setOwnProperty('sendPrivateMsg',sendPrivateMsg);
+
+
 /*
+spark.on('ws.open',()=>{
+    spark.QClient.sendGroupMsg(519916681,'测试');
+});
+
+
 spark.on('message.group.normal',(pack,reply)=>{
-    if(pack.raw_message == 'kms测试'){
+    if(pack.raw_message == 'ksm测试'){
         reply(msgbuilder.img('https://pic2.zhimg.com/v2-adde807644d40c64a0116178b84297c7_r.jpg?source=1940ef5c'))
     }
 })
