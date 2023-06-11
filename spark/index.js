@@ -4,6 +4,7 @@ const PLUGIN_ROOT_DIR = './plugins/nodejs/sparkbridge2';
 const PLUGIN_DATA_DIR = './plugins/sparkbridge2';
 class Spark {
     QClient;
+    debug = false;
     constructor(target,qid, pwd) {
         this.QClient = new adapter(target,qid, pwd);
         this.QClient.login();
