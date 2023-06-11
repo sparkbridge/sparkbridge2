@@ -12,9 +12,7 @@ const ME = require('./package.json');
 const fs = require('fs');
 const path = require('path');
 const fhelper = require('./handles/file');
-const Spark = require('./spark');
 const lg = require('./handles/logger');
-const { Console } = require('console');
 const PLUGIN_ROOT_DIR = './plugins/nodejs/sparkbridge2';
 const PLUGIN_DATA_DIR = './plugins/sparkbridge2';
 if (fhelper.exists(PLUGIN_DATA_DIR) == false) fhelper.mkdir(PLUGIN_DATA_DIR);
@@ -32,8 +30,8 @@ const logger = lg.getLogger('sparkbridge2');
 mc.listen('onServerStarted', () => {
     const PLUGINS_PATH = path.join(__dirname, 'plugins\\');
     const plugins_list = fhelper.listdir(PLUGINS_PATH);
-    const laodPlugin = (_name) => {
-        console.log(_name)
+    const loadPlugin = (_name) => {
+       // console.log(_name)
         try {
             let pl_obj = require('./plugins/' + _name);
             let pl_info = require('./plugins/' + _name + "/spark.json");
@@ -47,7 +45,7 @@ mc.listen('onServerStarted', () => {
     // 遍历plugins文件夹，找到list.json，按照list.json的顺序加载插件
     // 记录当前插件列表，如果在旧的中没有就新增
 
-    // 这里获取旧版插件list
+    // 这里获取旧插件list
     const plugins_load_list = JSON.parse(fhelper.read(path.join(__dirname, 'plugins', 'list.json')));
 
     // 这里遍历 plugins文件夹，读取spark.json
@@ -72,23 +70,24 @@ mc.listen('onServerStarted', () => {
     logger.info('开始加载插件')
 
     try {
-        console.log(plugins_load_list);
+        if(spark.debug) console.log(plugins_load_list);
+        if(spark.debug) console.log(current_list)
         for (let i2 in plugins_load_list) {
             // ！！！！此处需要优化！！！！
-            const i_path =path.join(__dirname,'plugins',current_list[plugins_load_list[i2]]);
-            console.log(i_path);
-            if (fhelper.exists(i_path) == false) {
-                let index = plugins_load_list.indexOf(plugins_load_list[i2]);
+            let pl_name = plugins_load_list[i2];
+            if(current_list[pl_name] ==undefined){
+                // 压根没有这个插件的文件夹了，直接删了
+                let index = plugins_load_list.indexOf(pl_name);
                 if (index !== -1) {
                     plugins_load_list.splice(index, 1);
                 }
-                logger.info('移除不存在的插件' + plugins_load_list[i2]);
-            } else {
-                laodPlugin(current_list[plugins_load_list[i2]]);
+                logger.info('移除不存在的插件' + pl_name);
+            }else{
+                // const i_path = path.join(__dirname,'plugins',current_list[pl_name]);
+                // console.log(i_path);
+                loadPlugin(current_list[plugins_load_list[i2]]);
             }
         }
-
+        fhelper.writeTo(path.join(__dirname, 'plugins', 'list.json'), JSON.stringify(plugins_load_list));
     } catch (e) { console.log(e) }
-
-    fhelper.writeTo(path.join(__dirname, 'plugins', 'list.json'), JSON.stringify(plugins_load_list));
 })
