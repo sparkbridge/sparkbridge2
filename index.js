@@ -4,44 +4,91 @@
 ll.registerPlugin(
     /* name */ "sparkbridge2",
     /* introduction */ "a qq bot system",
-    /* version */ [2,0,1]
-); 
+    /* version */[2, 0, 1]
+);
 
 
 const ME = require('./package.json');
-const JSON5 = require('json5');
+const fs = require('fs');
 const path = require('path');
 const fhelper = require('./handles/file');
 const Spark = require('./spark');
 const lg = require('./handles/logger');
+const { Console } = require('console');
 const PLUGIN_ROOT_DIR = './plugins/nodejs/sparkbridge2';
 const PLUGIN_DATA_DIR = './plugins/sparkbridge2';
-if(fhelper.exists(PLUGIN_DATA_DIR) == false) fhelper.mkdir(PLUGIN_DATA_DIR);
-console.log(fhelper.read(PLUGIN_ROOT_DIR+'/logo.txt'));
+if (fhelper.exists(PLUGIN_DATA_DIR) == false) fhelper.mkdir(PLUGIN_DATA_DIR);
+console.log(fhelper.read(PLUGIN_ROOT_DIR + '/logo.txt'));
 
-let ROOT_FILE_HELPER =new fhelper.FileObj('base');
-ROOT_FILE_HELPER.initFile('config.json',{target:"ws://127.0.0.1:8080",qid:114514,pwd:''});
+let ROOT_FILE_HELPER = new fhelper.FileObj('base');
+ROOT_FILE_HELPER.initFile('config.json', { target: "ws://127.0.0.1:8080", qid: 114514, pwd: '' });
 let RAW_CONFIG = ROOT_FILE_HELPER.getFile('config.json');
 const CONFIG = JSON.parse(RAW_CONFIG);
 
-global.spark = new Spark(CONFIG.target,CONFIG.qid,CONFIG.pwd);
+global.spark = new Spark(CONFIG.target, CONFIG.qid, CONFIG.pwd);
 
-const logger = lg.getLogger('sparkbridge2')
+const logger = lg.getLogger('sparkbridge2');
 
 mc.listen('onServerStarted', () => {
     const PLUGINS_PATH = path.join(__dirname, 'plugins\\');
     const plugins_list = fhelper.listdir(PLUGINS_PATH);
-    const laodPlugin = (_name) =>{
+    const laodPlugin = (_name) => {
+        console.log(_name)
         try {
-            let pl_obj = require('./plugins/'+_name);
-            let pl_info = require('./plugins/'+_name+"/spark.json")
+            let pl_obj = require('./plugins/' + _name);
+            let pl_info = require('./plugins/' + _name + "/spark.json");
             logger.info(`加载 ${pl_info.name}`);
-            //pl_obj.onStart(_adapter);
             logger.info(`${pl_info.name} 加载完成，作者：${pl_info.author}`);
         } catch (err) {
             console.log(err);
             logger.error(`插件 ${_name} 加载失败`);
         }
     }
-    laodPlugin('bridgebase')
+    // 遍历plugins文件夹，找到list.json，按照list.json的顺序加载插件
+    // 记录当前插件列表，如果在旧的中没有就新增
+
+    // 这里获取旧版插件list
+    const plugins_load_list = JSON.parse(fhelper.read(path.join(__dirname, 'plugins', 'list.json')));
+
+    // 这里遍历 plugins文件夹，读取spark.json
+    const current_list = {};
+    plugins_list.forEach(epl => {
+        const sata = fs.statSync(PLUGINS_PATH + epl);
+        if (!sata.isDirectory()) return;
+        let i_info = JSON.parse(fhelper.read(path.join(__dirname, 'plugins', epl, 'spark.json')));
+        current_list[i_info.name] = epl;
+    });
+
+    // 对比当前插件列表和旧列表，有新增的就加到旧插件列表
+    for (let i in current_list) {
+        //console.log(i);
+        if (plugins_load_list.includes(i) == false) {
+            // 新增插件
+            logger.info('新增插件' + i);
+            plugins_load_list.push(i);
+        }
+    }
+
+    logger.info('开始加载插件')
+
+    try {
+        console.log(plugins_load_list);
+        for (let i2 in plugins_load_list) {
+            // ！！！！此处需要优化！！！！
+            const i_path =path.join(__dirname,'plugins',current_list[plugins_load_list[i2]]);
+            console.log(i_path);
+            if (fhelper.exists(i_path) == false) {
+                let index = plugins_load_list.indexOf(plugins_load_list[i2]);
+                if (index !== -1) {
+                    plugins_load_list.splice(index, 1);
+                }
+                logger.info('移除不存在的插件' + plugins_load_list[i2]);
+            } else {
+                laodPlugin(current_list[plugins_load_list[i2]]);
+            }
+        }
+
+    } catch (e) { console.log(e) }
+
+    fhelper.writeTo(path.join(__dirname, 'plugins', 'list.json'), JSON.stringify(plugins_load_list));
 })
