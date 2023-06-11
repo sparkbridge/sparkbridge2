@@ -17,6 +17,7 @@ spark.on('gocq.pack',(pack)=>{
     //let evt_name = `${pack.post_type}${pack.message_type == undefined ? '' :'.'+ pack.message_type}`;
     if(pack.echo != undefined){
         spark.QClient.eventEmitter.emit("packid_"+pack.echo,pack.data);
+        // return  // <-- 要不要return呢，不return也没什么，但是怕出啥问题。。。
     }
     const POST_TYPE = pack.post_type;
     switch(POST_TYPE){

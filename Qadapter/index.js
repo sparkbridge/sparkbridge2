@@ -29,7 +29,7 @@ class Qadapter{
         this.client.on('close',(e)=>{
             this.logger.warn('websocket 已经断开');
             setTimeout(()=>{
-                this.login(this.pwd)
+                this.login()
             },3e3);
         });
         this.client.on('message', (_data, _islib) =>{
