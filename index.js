@@ -13,6 +13,7 @@ const fs = require('fs');
 const path = require('path');
 const fhelper = require('./handles/file');
 const lg = require('./handles/logger');
+const Spark =require("./spark");
 const PLUGIN_ROOT_DIR = './plugins/nodejs/sparkbridge2';
 const PLUGIN_DATA_DIR = './plugins/sparkbridge2';
 if (fhelper.exists(PLUGIN_DATA_DIR) == false) fhelper.mkdir(PLUGIN_DATA_DIR);
