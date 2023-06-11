@@ -1,5 +1,3 @@
-// LiteLoader-AIDS automatic generated
-/// <reference path="c:\Users\zhouying\Documents/dts/helperlib/src/index.d.ts"/> 
 
 ll.registerPlugin(
     /* name */ "sparkbridge2",
