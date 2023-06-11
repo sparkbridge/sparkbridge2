@@ -1,5 +1,5 @@
 const msgbuilder = require('../../handles/msgbuilder')
-
+const packbuilder = require('../../handles/packbuilder');
 function text(str){
     if(typeof str == 'string') return msgbuilder.text(str);
     else return str;
@@ -7,7 +7,7 @@ function text(str){
 
 const Greply = (gid)=>{
     return (msg) =>{
-        spark.QClient.send(text(msg));
+        spark.QClient.send(packbuilder.GroupMessagePack(text(msg)));
     }
 }
 
