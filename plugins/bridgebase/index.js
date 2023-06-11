@@ -33,8 +33,11 @@ spark.on('gocq.pack',(pack)=>{
     }
 });
 
+/*
 spark.on('message.group.normal',(pack,reply)=>{
     if(pack.raw_message == 'kms测试'){
         reply(msgbuilder.img('https://pic2.zhimg.com/v2-adde807644d40c64a0116178b84297c7_r.jpg?source=1940ef5c'))
     }
 })
+
+*/
