@@ -7,6 +7,7 @@ ll.registerPlugin(
 
 
 const ME = require('./package.json');
+const JSON5  =require('json5');
 const fs = require('fs');
 const path = require('path');
 const fhelper = require('./handles/file');
@@ -20,11 +21,13 @@ console.log(fhelper.read(PLUGIN_ROOT_DIR + '/logo.txt'));
 let ROOT_FILE_HELPER = new fhelper.FileObj('base');
 ROOT_FILE_HELPER.initFile('config.json', { target: "ws://127.0.0.1:8080", qid: 114514, pwd: '' });
 let RAW_CONFIG = ROOT_FILE_HELPER.getFile('config.json');
-const CONFIG = JSON.parse(RAW_CONFIG);
+const CONFIG = JSON5.parse(RAW_CONFIG);
 
 global.spark = new Spark(CONFIG.target, CONFIG.qid, CONFIG.pwd);
 
 const logger = lg.getLogger('sparkbridge2');
+logger.info('SparkBridge载入中...VERSION:'+ME.version);
+spark.VERSION = ME.VERSION;
 
 mc.listen('onServerStarted', () => {
     const PLUGINS_PATH = path.join(__dirname, 'plugins\\');
@@ -66,7 +69,7 @@ mc.listen('onServerStarted', () => {
         }
     }
 
-    logger.info('开始加载插件')
+    logger.info('开始加载插件');
 
     try {
         if(spark.debug) console.log(plugins_load_list);
