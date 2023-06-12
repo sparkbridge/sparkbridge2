@@ -1,6 +1,7 @@
 const { WebSocket } = require('ws');
 const EventEmitter = require("events");
 const logger = require('../handles/logger');
+const { text } = require('../handles/msgbuilder');
 
 class Qadapter{
     client;

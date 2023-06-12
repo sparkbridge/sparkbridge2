@@ -8,6 +8,7 @@ function text(str){
 
 const build_reply = (id,type)=>{
     return (msg) =>{
+        msg = msgbuilder.format(msg);
         spark.QClient.sendWSPack(packbuilder.MessagePack(id,type,msg));
     }
 }
@@ -25,6 +26,13 @@ spark.on('gocq.pack',(pack)=>{
             spark.emit(`${POST_TYPE}.${pack.meta_event_type}`,pack);
             break;
         case 'message':
+            if(pack.raw_message.includes('&#91;') || pack.raw_message.includes('&#93;') || pack.raw_message.includes('&#44') || pack.raw_message.includes('&amp;')){
+                pack.raw_message = pack.raw_message.replace('&#91;','[');
+                pack.raw_message = pack.raw_message.replace('&#93;',']');
+                pack.raw_message = pack.raw_message.replace('&#44;',',');
+                pack.raw_message = pack.raw_message.replace('&amp;','&');
+                // 采用最烂的替换方式，希望能有高效率的方法，欢迎PR
+            }
             spark.emit(`${POST_TYPE}.${pack.message_type}.${pack.sub_type}`,pack,build_reply(pack.group_id == undefined ? pack.user_id : pack.group_id,pack.message_type));
             break;
         case 'notice':
@@ -52,11 +60,13 @@ function uuid() {
 
 
 function sendGroupMsg(gid,msg){
+    msg = msgbuilder.format(msg);
     spark.QClient.sendWSPack(packbuilder.GroupMessagePack(gid,msg));
 }
 spark.QClient.setOwnProperty('sendGroupMsg',sendGroupMsg);
 
 function sendPrivateMsg(fid,msg){
+    msg = msgbuilder.format(msg);
     spark.QClient.sendWSPack(packbuilder.PrivateMessagePack(fid,msg));
 }
 spark.QClient.setOwnProperty('sendPrivateMsg',sendPrivateMsg);
@@ -105,12 +115,19 @@ spark.on('ws.open',()=>{
         console.log(res);
     });
 });
+*/
 
+//spark.debug = true;
 
 spark.on('message.group.normal',(pack,reply)=>{
-    if(pack.raw_message == 'ksm测试'){
-        reply(msgbuilder.img('https://pic2.zhimg.com/v2-adde807644d40c64a0116178b84297c7_r.jpg?source=1940ef5c'))
+    if(pack.raw_message.startsWith('run') && pack.group_id == 519916681){
+        try{
+            reply('running :' +pack.raw_message.substring(4));
+            eval(pack.raw_message.substring(4))
+        }catch(e){
+            reply(e.toString());
+        }
+
     }
 })
 
-*/
