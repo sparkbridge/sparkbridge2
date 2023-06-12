@@ -115,10 +115,10 @@ spark.on('ws.open',()=>{
         console.log(res);
     });
 });
+
+
+spark.debug = true;
 */
-
-//spark.debug = true;
-
 spark.on('message.group.normal',(pack,reply)=>{
     if(pack.raw_message.startsWith('run') && pack.group_id == 519916681){
         try{
