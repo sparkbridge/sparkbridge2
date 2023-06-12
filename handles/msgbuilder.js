@@ -8,22 +8,30 @@ class Builder {
     }
     static at(qid) {
         return { type: "at", data: { "qq": qid } };
-
+    }
+    static face(id) {
+        return { type: 'face', data: { id } }
     }
     static text(raw) {
         return { type: 'text', data: { text: raw } };
     }
-    static format(msg){
-        if(Array.isArray(msg) == false){
+    static poke(id) {
+        return { type: 'poke', data: { qq: id } }
+    }
+    static redbag(title) {
+        return { type: 'redbag', data: { title } }
+    }
+    static format(msg) {
+        if (Array.isArray(msg) == false) {
             msg = [msg];
         }
-        for(let index in msg){
+        for (let index in msg) {
             var imsg = msg[index];
-            if(typeof imsg == 'string'){
+            if (typeof imsg == 'string') {
                 msg[index] = Builder.text(imsg);
             }
         }
-        if(spark.debug) console.log('build msg -->'+msg)
+        if (spark.debug) console.log('build msg -->' + JSON.stringify(msg))
         return msg;
     }
 }
