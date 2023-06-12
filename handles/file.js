@@ -20,10 +20,19 @@ class FileObj{
             return read(PLUGIN_DATA_DIR+'/'+this.pname+'/'+fname)
         }
     }
+    getBuffer(fname){
+        if(exists(PLUGIN_DATA_DIR+'/'+this.pname) == false){
+            return null;
+        }else{
+            return fs.readFileSync(PLUGIN_DATA_DIR+'/'+this.pname+'/'+fname)
+        }
+    }
     updateFile(fname,data_obj){
         writeTo(PLUGIN_DATA_DIR+'/'+this.pname+'/'+fname,JSON5.stringify(data_obj,null,4));
     }
 }
+
+
 
 function exists(pt) {
     try {
