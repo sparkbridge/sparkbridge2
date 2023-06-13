@@ -9,7 +9,7 @@ class Qadapter{
     qid;
     pwd;
     eventEmitter = new EventEmitter();
-    eventKeyMap = new Map();
+    //eventKeyMap = new Map();
     logger = logger.getLogger('Qadapter')
     constructor(target,qid,pwd){
         this.target =  target;
