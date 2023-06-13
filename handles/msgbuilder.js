@@ -18,8 +18,8 @@ class Builder {
     static poke(id) {
         return { type: 'poke', data: { qq: id } }
     }
-    static redbag(title) {
-        return { type: 'redbag', data: { title } }
+    static reply(id) {
+        return { type: 'reply', data: { id } };
     }
     static format(msg) {
         if (Array.isArray(msg) == false) {
