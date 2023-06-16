@@ -1,5 +1,12 @@
 const fs = require('fs');
-const PLUGIN_DATA_DIR = './plugins/sparkbridge2';
+var PLUGIN_DATA_DIR;
+if (typeof mc !== 'undefined'){
+    PLUGIN_DATA_DIR = './plugins/sparkbridge2'
+}else{
+    PLUGIN_DATA_DIR = './testdata'
+}
+
+
 const JSON5  =require('json5');
 class FileObj{
     pname;

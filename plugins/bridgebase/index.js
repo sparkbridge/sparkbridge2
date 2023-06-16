@@ -118,7 +118,7 @@ spark.on('ws.open',()=>{
 
 
 spark.debug = true;
-*/
+
 spark.on('message.group.normal',(pack,reply)=>{
     if(pack.raw_message.startsWith('run') && pack.group_id == 519916681){
         try{
@@ -131,3 +131,5 @@ spark.on('message.group.normal',(pack,reply)=>{
     }
 })
 
+
+*/

@@ -1,5 +1,6 @@
 const adapter = require('../Qadapter');
 const fhelper = require('../handles/file');
+const logger = require('../handles/logger');
 const PLUGIN_ROOT_DIR = './plugins/nodejs/sparkbridge2';
 const PLUGIN_DATA_DIR = './plugins/sparkbridge2';
 class Spark {
@@ -8,6 +9,9 @@ class Spark {
     constructor(target,qid, pwd) {
         this.QClient = new adapter(target,qid, pwd);
         this.QClient.login();
+    }
+    getLogger(header){
+        return logger.getLogger(header);
     }
     on(evt, func) {
         this.QClient.on(evt, func);
