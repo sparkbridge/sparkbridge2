@@ -116,7 +116,12 @@ if (spark.onBDS) {
         readPluginDir();
     })
 }else{
-    logger.info('本地调试器...');
+    console.log('\n');
+    logger.warn('====本地调试器====');
+    logger.warn("您现在处于调试模式！！！");
+    logger.warn("MC类将被覆盖");
+    logger.warn("数据存储已转移到testdata文件夹")
+    logger.warn('====本地调试器====\n');
     readPluginDir();
 }
 
