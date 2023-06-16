@@ -82,7 +82,6 @@ function readPluginDir(){
 
 function bootUpPlugins(plugins_load_list,current_list){
     logger.info('开始加载插件');
-
     try {
         if (spark.debug) console.log(plugins_load_list);
         if (spark.debug) console.log(current_list)
