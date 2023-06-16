@@ -1,0 +1,10 @@
+{
+    "name": "mc",
+    "author": "lition",
+    "version": [
+        0,
+        0,
+        1
+    ],
+    "desc": "LL适配器"
+}
