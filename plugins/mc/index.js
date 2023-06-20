@@ -48,6 +48,10 @@ function addXbox(qid, xbox) {
     _config.updateFile('xbox.json', xboxs);
 }
 
+function hasXbox(xboxid){
+    return Object.values(xboxs).includes(xboxid);
+}
+
 function remXboxByName(xbox) {
     let t = Object.values(xboxs);
     if (t.includes(xbox)) {
@@ -68,3 +72,4 @@ spark.mc.remXboxByName = remXboxByName;
 spark.mc.addXbox = addXbox;
 spark.mc.remXboxByQid = remXboxByQid;
 spark.mc.getXbox = getXbox;
+spark.mc.hasXbox = hasXbox;

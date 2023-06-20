@@ -6,9 +6,17 @@ function text(str){
     else return str;
 }
 
-const build_reply = (id,type)=>{
-    return (msg) =>{
+const build_reply = (id,type,mid)=>{
+    return (msg,quote = false) =>{
         msg = msgbuilder.format(msg);
+        if(quote){
+            msg.unshift({
+                type:'reply',
+                data:{
+                    id: mid
+                }
+            });
+        }
         spark.QClient.sendWSPack(packbuilder.MessagePack(id,type,msg));
     }
 }
@@ -33,7 +41,7 @@ spark.on('gocq.pack',(pack)=>{
                 pack.raw_message = pack.raw_message.replace('&amp;','&');
                 // 采用最烂的替换方式，希望能有高效率的方法，欢迎PR
             }
-            spark.emit(`${POST_TYPE}.${pack.message_type}.${pack.sub_type}`,pack,build_reply(pack.group_id == undefined ? pack.user_id : pack.group_id,pack.message_type));
+            spark.emit(`${POST_TYPE}.${pack.message_type}.${pack.sub_type}`,pack,build_reply(pack.group_id == undefined ? pack.user_id : pack.group_id,pack.message_type,pack.message_id));
             break;
         case 'notice':
             spark.emit(`${POST_TYPE}.${pack.notice_type}`,pack)
