@@ -1,6 +1,6 @@
-const logger= spark.getLogger('regex');
+const logger = spark.getLogger('regex');
 
-spark.setOwnProperty('Cmd',{});
+spark.setOwnProperty('Cmd', {});
 
 /**
  * 
@@ -16,23 +16,23 @@ function buildString(str, reg, e) {
     });
     if (str.includes("%")) {
         let str_arr = buildPlaceHolder(str);
-        return str_arr.map((t)=>{
-            if(t.type == 'holder'){
-                return getPlaceHolder(t.raw,e);
-            }else{
+        return str_arr.map((t) => {
+            if (t.type == 'holder') {
+                return getPlaceHolder(t.raw, e);
+            } else {
                 return t.raw;
             }
         }).join("");
-    }else{
+    } else {
         return str;
     }
 
 }
 
-function getPlaceHolder(key,e){
-    if(PlaceHolders.has(key)){
+function getPlaceHolder(key, e) {
+    if (PlaceHolders.has(key)) {
         return PlaceHolders.get(key)(e);
-    }else{
+    } else {
         return 'null';
     }
 }
@@ -48,28 +48,28 @@ function buildPlaceHolder(raw) {
     for (let i in raw) {
         let now_i = raw[i];
         //console.log('匹配：'+now_i);
-        if(skip_next == false){ // 需要进行变量判断
-            if(now_i == '\\'){  // 需要直接写入下一位
-               skip_next = true;
-               //console.log('跳过判断下一位');
-            }else if(now_i == '%'){
+        if (skip_next == false) { // 需要进行变量判断
+            if (now_i == '\\') {  // 需要直接写入下一位
+                skip_next = true;
+                //console.log('跳过判断下一位');
+            } else if (now_i == '%') {
                 // 开始或者结束匹配变量
-                if(matching){
+                if (matching) {
                     matching = false;
-                    out_raw.push({type:'holder',raw:matching_now});
+                    out_raw.push({ type: 'holder', raw: matching_now });
                     matching_now = '';
-                }else{
+                } else {
                     matching = true;
                 }
-            }else{
-                if(matching){
+            } else {
+                if (matching) {
                     matching_now += now_i;
-                }else{
-                    out_raw.push({type:'plan',raw:now_i})
+                } else {
+                    out_raw.push({ type: 'plan', raw: now_i })
                 }
             }
-        }else{ //需要直接写入当前字符串
-            out_raw.push({type:'plan',raw:now_i})
+        } else { //需要直接写入当前字符串
+            out_raw.push({ type: 'plan', raw: now_i })
             skip_next = false;
         }
     }
@@ -85,20 +85,20 @@ function regCmd(head, cb) {
 
 spark.Cmd.regCmd = regCmd;
 
-function runCmd(_first, _args, reg, e, adapter) {
+function runCmd(_first, _args, reg, e, reply) {
     if (Cmds.has(_first)) {
         try {
-            Cmds.get(_first)(_args, reg, e, adapter);
+            Cmds.get(_first)(_args, reg, e ,reply);
         } catch (err) { console.log(err) }
     }
 }
 
-regCmd('reply', (_arg, reg, e, adapter) => {
+regCmd('reply', (_arg, reg, e, reply) => {
     let txt1 = buildString(_arg, reg, e);
-    e.reply(txt1);
+    reply(txt1);
 });
 
-regCmd('f', (_arg, reg, e, adapter) => {
+regCmd('f', (_arg, reg, e,reply) => {
     let t_and_a = _arg.split(':');
     if (t_and_a.length == 0) {
         logger.warn(`执行正则表达式遇到错误：参数不足，请指定私聊联系人`);
@@ -108,7 +108,7 @@ regCmd('f', (_arg, reg, e, adapter) => {
     spark.QClient.sendPrivateMsg(Number(target), buildString(arg, reg, e))
 });
 
-regCmd('g', (_arg, reg, e, adapter) => {
+regCmd('g', (_arg, reg, e,reply) => {
     let t_and_a = _arg.split(':');
     if (t_and_a.length == 0) {
         logger.warn(`执行正则表达式遇到错误：参数不足，请指定群号`);
@@ -118,7 +118,7 @@ regCmd('g', (_arg, reg, e, adapter) => {
     spark.QClient.sendGroupMsg(Number(target), buildString(arg, reg, e))
 })
 
-regCmd('t', (arg, reg, e, adapter) => {
+regCmd('t', (arg, reg, e,reply) => {
     let t_and_m = arg.split(':');
     let tp = t_and_m[0];
     let ms = t_and_m[1];
@@ -131,7 +131,7 @@ regCmd('t', (arg, reg, e, adapter) => {
         }
     }
 })
-regCmd('run', (arg, reg, e, adapter) => {
+regCmd('run', (arg, reg, e,reply) => {
     let command = arg;
     let r = mc.runcmdEx(buildString(command, reg, e));
     e.reply(r.success ? r.output : command + '执行失败');
@@ -140,22 +140,61 @@ regCmd('run', (arg, reg, e, adapter) => {
  * 
  * @param {String} cmd 
  */
-function commandParse(cmd, reg, e, _adapter) {
+function commandParse(cmd, reg, e,reply) {
     let items = cmd.split("|");
     if (items.length == 1) {
         logger.warn(`执行正则表达式：${cmd} 遇到错误：参数不足，请写入参数`);
     }
     let _first = items[0];
     let _arg = items[1];
-    if (spark.DEBUG)
+    if (spark.debug)
         logger.info('执行正则表达式命令：' + _first + ',参数：' + _arg);
-    runCmd(_first, _arg, reg, e, _adapter);
+    runCmd(_first, _arg, reg, e, reply);
 }
 
 const PlaceHolders = new Map();
 
-function regPlaceHolder(key,recall){
-    PlaceHolders.set(key,recall);
+function regPlaceHolder(key, recall) {
+    PlaceHolders.set(key, recall);
 }
 
 spark.Cmd.regPlaceHolder = regPlaceHolder;
+
+const GROUP = spark.mc.config.group;
+const ADMINS = spark.mc.config.admins;
+
+const _config = spark.getFileHelper('regex');
+_config.initFile('data.json', {
+    "我是(.+)": {
+        "cmd": "reply|你是$1",
+        "adm": false
+    }
+});
+const regexs = JSON.parse(_config.getFile('data.json'));
+
+spark.debug = true;
+spark.on('message.group.normal', (e,reply) => {
+    //reply("?")
+    const { raw_message, group_id, user_id } = e;
+    console.log(raw_message, group_id, user_id ,GROUP);
+    if (group_id !== GROUP) return;
+    for (let reg_it in regexs) {
+        console.log(reg_it);
+        let tmp = raw_message.match(reg_it);
+
+        if (tmp == null) continue;
+        console.log('working...');
+        if (regexs[reg_it].adm == true && !ADMINS.includes(user_id)) {
+            reply("执行失败，权限不足");
+            return;
+        }
+        try {
+            regexs[reg_it].cmd.split(';').forEach(regtmp => {
+                commandParse(regtmp, tmp, e, reply);
+            })
+        } catch (err) {
+            console.log(err);
+        }
+    }
+});
+

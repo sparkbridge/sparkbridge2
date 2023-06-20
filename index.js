@@ -122,6 +122,7 @@ if (spark.onBDS) {
     logger.warn("MC类将被覆盖");
     logger.warn("数据存储已转移到testdata文件夹")
     logger.warn('====本地调试器====\n');
+    require('./handles/fakeapi');
     readPluginDir();
 }
 
