@@ -176,14 +176,14 @@ spark.debug = true;
 spark.on('message.group.normal', (e,reply) => {
     //reply("?")
     const { raw_message, group_id, user_id } = e;
-    console.log(raw_message, group_id, user_id ,GROUP);
+    //console.log(raw_message, group_id, user_id ,GROUP);
     if (group_id !== GROUP) return;
     for (let reg_it in regexs) {
-        console.log(reg_it);
+        //console.log(reg_it);
         let tmp = raw_message.match(reg_it);
 
         if (tmp == null) continue;
-        console.log('working...');
+        if(spark.debug) console.log('regex working...',reg_it);
         if (regexs[reg_it].adm == true && !ADMINS.includes(user_id)) {
             reply("执行失败，权限不足");
             return;
