@@ -20,7 +20,7 @@ class Qadapter{
         this.client = new WebSocket(this.target,{headers:{Authorization:this.pwd}});
         this.client.on('open',()=>{
             this.logger.info('登录成功，开始处理事件');
-            this.eventEmitter.emit('ws.open');
+            this.eventEmitter.emit('bot.online');
         });
         this.client.on('error',(e)=>{
             this.logger.error('websocket 故障！！');
