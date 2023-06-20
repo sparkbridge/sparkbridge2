@@ -7,7 +7,7 @@ if (typeof mc !== 'undefined'){
 }
 
 
-const JSON5  =require('json5');
+const JSON5  = require('json5');
 class FileObj{
     pname;
     constructor(plugin_name){
@@ -18,7 +18,7 @@ class FileObj{
     }
     initFile(fname,init_obj){
         if(exists(PLUGIN_DATA_DIR+'/'+this.pname+'/'+fname) == false)
-            writeTo(PLUGIN_DATA_DIR+'/'+this.pname+'/'+fname,JSON5.stringify(init_obj,null,4));
+            writeTo(PLUGIN_DATA_DIR+'/'+this.pname+'/'+fname,JSON.stringify(init_obj,null,4));
     }
     getFile(fname){
         if(exists(PLUGIN_DATA_DIR+'/'+this.pname) == false){
@@ -35,7 +35,7 @@ class FileObj{
         }
     }
     updateFile(fname,data_obj){
-        writeTo(PLUGIN_DATA_DIR+'/'+this.pname+'/'+fname,JSON5.stringify(data_obj,null,4));
+        writeTo(PLUGIN_DATA_DIR+'/'+this.pname+'/'+fname,JSON.stringify(data_obj,null,4));
     }
 }
 

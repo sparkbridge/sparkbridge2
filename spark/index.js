@@ -19,6 +19,11 @@ class Spark {
     emit(evt,...arg){
         this.QClient.emit(evt,...arg);
     }
+    /**
+     * 
+     * @param {*} plugin_name 
+     * @returns {fhelper.FileObj}
+     */
     getFileHelper(plugin_name) {
         return new fhelper.FileObj(plugin_name);
     }
