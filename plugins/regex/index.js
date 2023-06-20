@@ -95,7 +95,7 @@ function runCmd(_first, _args, reg, e, reply) {
 
 regCmd('reply', (_arg, reg, e, reply) => {
     let txt1 = buildString(_arg, reg, e);
-    reply(txt1);
+    reply(txt1,true);
 });
 
 regCmd('f', (_arg, reg, e,reply) => {
@@ -123,7 +123,7 @@ regCmd('t', (arg, reg, e,reply) => {
     let tp = t_and_m[0];
     let ms = t_and_m[1];
     if (tp == 'all') {
-        mc.broadcast(buildString(ms, reg));
+        mc.broadcast(buildString(ms, reg).trim());
     } else {
         let top = mc.getPlayer(tp);
         if (top) {
@@ -133,9 +133,32 @@ regCmd('t', (arg, reg, e,reply) => {
 })
 regCmd('run', (arg, reg, e,reply) => {
     let command = arg;
-    let r = mc.runcmdEx(buildString(command, reg, e));
-    e.reply(r.success ? r.output : command + '执行失败');
+    let r = mc.runcmdEx(buildString(command, reg, e).trim());
+    reply(r.success ? r.output : command + '执行失败',true);
 })
+
+regCmd('addwl',(arg,reg,e,reply)=>{
+    let command = arg.split(":");
+    let xboxid = buildString(command[0], reg, e).trim();
+    if(!spark.mc.hasXbox(xboxid) && spark.mc.getXbox(e.user_id) == '未绑定'){
+        spark.mc.addXbox(e.user_id,xboxid);
+        reply(xboxid+'绑定成功',true);
+        if(command[1] == 'true'){
+            mc.runcmd('allowlist add "'+xboxid+'"');
+        }
+    }
+    else{
+        reply('绑定失败，请检查是否已经绑定',true);
+    }
+})
+
+regCmd('remwl',(arg,reg,e,reply)=>{
+    if(spark.mc.getXbox(e.user_id) != '未绑定'){
+        spark.mc.remXboxByQid(e.user_id);
+        reply('解绑成功',true);
+    }
+});
+
 /**
  * 
  * @param {String} cmd 
@@ -143,7 +166,7 @@ regCmd('run', (arg, reg, e,reply) => {
 function commandParse(cmd, reg, e,reply) {
     let items = cmd.split("|");
     if (items.length == 1) {
-        logger.warn(`执行正则表达式：${cmd} 遇到错误：参数不足，请写入参数`);
+        //logger.warn(`执行正则表达式：${cmd} 遇到错误：参数不足，请写入参数`);
     }
     let _first = items[0];
     let _arg = items[1];
@@ -164,15 +187,41 @@ const GROUP = spark.mc.config.group;
 const ADMINS = spark.mc.config.admins;
 
 const _config = spark.getFileHelper('regex');
-_config.initFile('data.json', {
-    "我是(.+)": {
-        "cmd": "reply|你是$1",
-        "adm": false
+const PRE_CONFIG = {
+    "^我是(.+)": {
+        cmd: 'reply|你是$1',
+        adm: false
+    },
+    "^bot测试":{
+        cmd:'reply|已上线',
+        adm:true
+    },
+    "^绑定(.+)":{
+        cmd:'addwl|$1:true',
+        adm:false
+    },
+    "^解绑":{
+        cmd:'remwl|$1',
+        adm:false
+    },
+    "^查服":{
+        cmd:'run|list',
+        adm:false
+    },
+    "^chat(.+)":{
+        cmd:'t|all:$1',
+        adm:false
+    },
+    "执行(.+)":{
+        cmd:'run|$1',
+        adm:true
     }
-});
+}
+
+_config.initFile('data.json', PRE_CONFIG);
 const regexs = JSON.parse(_config.getFile('data.json'));
 
-spark.debug = true;
+//spark.debug = true;
 spark.on('message.group.normal', (e,reply) => {
     //reply("?")
     const { raw_message, group_id, user_id } = e;
@@ -181,7 +230,6 @@ spark.on('message.group.normal', (e,reply) => {
     for (let reg_it in regexs) {
         //console.log(reg_it);
         let tmp = raw_message.match(reg_it);
-
         if (tmp == null) continue;
         if(spark.debug) console.log('regex working...',reg_it);
         if (regexs[reg_it].adm == true && !ADMINS.includes(user_id)) {
