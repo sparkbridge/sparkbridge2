@@ -133,9 +133,10 @@ regCmd('t', (arg, reg, e, reply) => {
 })
 regCmd('run', (arg, reg, e, reply) => {
     let command = arg;
-    let r = mc.runcmdEx(buildString(command, reg, e).trim());
+    let run_str = buildString(command, reg, e).trim();
+    let r = mc.runcmdEx(run_str);
     if (!r.success) {
-        reply(buildString(command[0], reg, e).trim() + '执行失败');
+        reply(run_str + '执行失败');
     }
     else {
         // 没有
