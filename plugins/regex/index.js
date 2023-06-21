@@ -88,17 +88,17 @@ spark.Cmd.regCmd = regCmd;
 function runCmd(_first, _args, reg, e, reply) {
     if (Cmds.has(_first)) {
         try {
-            Cmds.get(_first)(_args, reg, e ,reply);
+            Cmds.get(_first)(_args, reg, e, reply);
         } catch (err) { console.log(err) }
     }
 }
 
 regCmd('reply', (_arg, reg, e, reply) => {
     let txt1 = buildString(_arg, reg, e);
-    reply(txt1,true);
+    reply(txt1, true);
 });
 
-regCmd('f', (_arg, reg, e,reply) => {
+regCmd('f', (_arg, reg, e, reply) => {
     let t_and_a = _arg.split(':');
     if (t_and_a.length == 0) {
         logger.warn(`执行正则表达式遇到错误：参数不足，请指定私聊联系人`);
@@ -108,7 +108,7 @@ regCmd('f', (_arg, reg, e,reply) => {
     spark.QClient.sendPrivateMsg(Number(target), buildString(arg, reg, e))
 });
 
-regCmd('g', (_arg, reg, e,reply) => {
+regCmd('g', (_arg, reg, e, reply) => {
     let t_and_a = _arg.split(':');
     if (t_and_a.length == 0) {
         logger.warn(`执行正则表达式遇到错误：参数不足，请指定群号`);
@@ -118,7 +118,7 @@ regCmd('g', (_arg, reg, e,reply) => {
     spark.QClient.sendGroupMsg(Number(target), buildString(arg, reg, e))
 })
 
-regCmd('t', (arg, reg, e,reply) => {
+regCmd('t', (arg, reg, e, reply) => {
     let t_and_m = arg.split(':');
     let tp = t_and_m[0];
     let ms = t_and_m[1];
@@ -131,31 +131,39 @@ regCmd('t', (arg, reg, e,reply) => {
         }
     }
 })
-regCmd('run', (arg, reg, e,reply) => {
+regCmd('run', (arg, reg, e, reply) => {
     let command = arg;
     let r = mc.runcmdEx(buildString(command, reg, e).trim());
-    reply(r.success ? r.output : command + '执行失败',true);
+    if (!r.success) {
+        reply(command[0] + '执行失败');
+    }
+    else {
+        // 没有
+        reply(r.output, true);
+    }
 })
 
-regCmd('addwl',(arg,reg,e,reply)=>{
+regCmd('addwl', (arg, reg, e, reply) => {
     let command = arg.split(":");
     let xboxid = buildString(command[0], reg, e).trim();
-    if(!spark.mc.hasXbox(xboxid) && spark.mc.getXbox(e.user_id) == '未绑定'){
-        spark.mc.addXbox(e.user_id,xboxid);
-        reply(xboxid+'绑定成功',true);
-        if(command[1] == 'true'){
-            mc.runcmd('allowlist add "'+xboxid+'"');
+    if (!spark.mc.hasXbox(xboxid) && spark.mc.getXbox(e.user_id) == '未绑定') {
+        spark.mc.addXbox(e.user_id, xboxid);
+        reply(xboxid + '绑定成功', true);
+        if (command[1] == 'true') {
+            mc.runcmd('allowlist add "' + xboxid + '"');
         }
     }
-    else{
-        reply('绑定失败，请检查是否已经绑定',true);
+    else {
+        reply('绑定失败，请检查是否已经绑定', true);
     }
 })
 
-regCmd('remwl',(arg,reg,e,reply)=>{
-    if(spark.mc.getXbox(e.user_id) != '未绑定'){
+regCmd('remwl', (arg, reg, e, reply) => {
+    if (spark.mc.getXbox(e.user_id) != '未绑定') {
+        let xb = spark.mc.getXbox(e.user_id);
         spark.mc.remXboxByQid(e.user_id);
-        reply('解绑成功',true);
+        reply('解绑成功', true);
+        mc.runCmd('allowlist remove "' + xb + '"');
     }
 });
 
@@ -163,7 +171,7 @@ regCmd('remwl',(arg,reg,e,reply)=>{
  * 
  * @param {String} cmd 
  */
-function commandParse(cmd, reg, e,reply) {
+function commandParse(cmd, reg, e, reply) {
     let items = cmd.split("|");
     if (items.length == 1) {
         //logger.warn(`执行正则表达式：${cmd} 遇到错误：参数不足，请写入参数`);
@@ -192,29 +200,29 @@ const PRE_CONFIG = {
         cmd: 'reply|你是$1',
         adm: false
     },
-    "^bot测试":{
-        cmd:'reply|已上线',
-        adm:true
+    "^bot测试": {
+        cmd: 'reply|已上线',
+        adm: true
     },
-    "^绑定(.+)":{
-        cmd:'addwl|$1:true',
-        adm:false
+    "^绑定(.+)": {
+        cmd: 'addwl|$1:true',
+        adm: false
     },
-    "^解绑":{
-        cmd:'remwl|$1',
-        adm:false
+    "^解绑": {
+        cmd: 'remwl|$1',
+        adm: false
     },
-    "^查服":{
-        cmd:'run|list',
-        adm:false
+    "^查服": {
+        cmd: 'run|list',
+        adm: false
     },
-    "^chat(.+)":{
-        cmd:'t|all:$1',
-        adm:false
+    "^chat(.+)": {
+        cmd: 't|all:$1',
+        adm: false
     },
-    "执行(.+)":{
-        cmd:'run|$1',
-        adm:true
+    "^执行(.+)": {
+        cmd: 'run|$1',
+        adm: true
     }
 }
 
@@ -222,7 +230,7 @@ _config.initFile('data.json', PRE_CONFIG);
 const regexs = JSON.parse(_config.getFile('data.json'));
 
 //spark.debug = true;
-spark.on('message.group.normal', (e,reply) => {
+spark.on('message.group.normal', (e, reply) => {
     //reply("?")
     const { raw_message, group_id, user_id } = e;
     //console.log(raw_message, group_id, user_id ,GROUP);
@@ -231,7 +239,7 @@ spark.on('message.group.normal', (e,reply) => {
         //console.log(reg_it);
         let tmp = raw_message.match(reg_it);
         if (tmp == null) continue;
-        if(spark.debug) console.log('regex working...',reg_it);
+        if (spark.debug) console.log('regex working...', reg_it);
         if (regexs[reg_it].adm == true && !ADMINS.includes(user_id)) {
             reply("执行失败，权限不足");
             return;
