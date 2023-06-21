@@ -134,7 +134,7 @@ regCmd('t', (arg, reg, e,reply) => {
 regCmd('run', (arg, reg, e,reply) => {
     let command = arg;
     let r = mc.runcmdEx(buildString(command, reg, e).trim());
-    reply(r.success ? r.output : command + '执行失败',true);
+    reply(r.success ? r.output : buildString(command, reg, e).trim() + '执行失败',true);
 })
 
 regCmd('addwl',(arg,reg,e,reply)=>{
