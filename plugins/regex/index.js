@@ -135,7 +135,7 @@ regCmd('run', (arg, reg, e, reply) => {
     let command = arg;
     let r = mc.runcmdEx(buildString(command, reg, e).trim());
     if (!r.success) {
-        reply(command[0] + '执行失败');
+        reply(buildString(command[0], reg, e).trim() + '执行失败');
     }
     else {
         // 没有
