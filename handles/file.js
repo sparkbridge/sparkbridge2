@@ -16,9 +16,9 @@ class FileObj{
             mkdir(PLUGIN_DATA_DIR+'/'+this.pname);
         }
     }
-    initFile(fname,init_obj){
+    initFile(fname,init_obj,json = JSON){
         if(exists(PLUGIN_DATA_DIR+'/'+this.pname+'/'+fname) == false)
-            writeTo(PLUGIN_DATA_DIR+'/'+this.pname+'/'+fname,JSON.stringify(init_obj,null,4));
+            writeTo(PLUGIN_DATA_DIR+'/'+this.pname+'/'+fname,json.stringify(init_obj,null,4));
     }
     getFile(fname){
         if(exists(PLUGIN_DATA_DIR+'/'+this.pname) == false){
@@ -34,8 +34,8 @@ class FileObj{
             return fs.readFileSync(PLUGIN_DATA_DIR+'/'+this.pname+'/'+fname)
         }
     }
-    updateFile(fname,data_obj){
-        writeTo(PLUGIN_DATA_DIR+'/'+this.pname+'/'+fname,JSON.stringify(data_obj,null,4));
+    updateFile(fname,data_obj,json= JSON){
+        writeTo(PLUGIN_DATA_DIR+'/'+this.pname+'/'+fname,json.stringify(data_obj,null,4));
     }
 }
 

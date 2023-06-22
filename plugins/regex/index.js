@@ -9,6 +9,7 @@ spark.setOwnProperty('Cmd', {});
  * @returns 
  */
 function buildString(str, reg, e) {
+    console.log(reg);
     var i = 0;
     reg.forEach(s => {
         str = str.replace(`\$${i}`, s);
@@ -26,8 +27,9 @@ function buildString(str, reg, e) {
     } else {
         return str;
     }
-
 }
+
+spark.Cmd.buildString = buildString;
 
 function getPlaceHolder(key, e) {
     if (PlaceHolders.has(key)) {
@@ -75,6 +77,8 @@ function buildPlaceHolder(raw) {
     }
     return out_raw;
 }
+
+spark.Cmd.buildPlaceHolder = buildPlaceHolder;
 
 
 const Cmds = new Map();
