@@ -9,7 +9,7 @@ spark.setOwnProperty('Cmd', {});
  * @returns 
  */
 function buildString(str, reg, ...arg) {
-    if(spark.debug) console.log(reg);
+    if (spark.debug) console.log(reg);
     var i = 0;
     reg.forEach(s => {
         str = str.replace(`\$${i}`, s);
@@ -127,7 +127,7 @@ regCmd('t', (arg, reg, e, reply) => {
     let tp = t_and_m[0];
     let ms = t_and_m[1];
     if (tp == 'all') {
-        mc.broadcast(buildString(ms, reg).trim());
+        mc.broadcast(buildString(ms, reg, e).trim());
     } else {
         let top = mc.getPlayer(tp);
         if (top) {
