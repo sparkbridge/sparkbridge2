@@ -168,7 +168,7 @@ regCmd('remwl', (arg, reg, e, reply) => {
         let xb = spark.mc.getXbox(e.user_id);
         spark.mc.remXboxByQid(e.user_id);
         reply('解绑成功', true);
-        mc.runCmd('allowlist remove "' + xb + '"');
+        mc.runcmd('allowlist remove "' + xb + '"');
     }
 });
 
@@ -222,7 +222,7 @@ const PRE_CONFIG = {
         adm: false
     },
     "^chat(.+)": {
-        cmd: 't|all:%USER_XBOXID% >> $1',
+        cmd: 't|all:[群聊]%USER_XBOXID% >> $1',
         adm: false
     },
     "^执行(.+)": {
@@ -235,13 +235,17 @@ _config.initFile('data.json', PRE_CONFIG);
 const regexs = JSON.parse(_config.getFile('data.json'));
 
 function formatMsg(msg) {
+    //console.log(msg);
     return msg.map(t => {
         switch (t.type) {
             case 'at':
-                return '@' + t.data.qq;
+                if(spark.mc.getXbox(t.data.qq) == '未绑定'){
+                    return '@' + t.data.qq;
+                }
+                return '@' +spark.mc.getXbox(t.data.qq);
             case 'text':
                 return t.data.text;
-            case 'img':
+            case 'image':
                 return '[图片]';
             case 'face':
                 return '[表情]';
@@ -254,10 +258,12 @@ spark.on('message.group.normal', (e, reply) => {
     //reply("?")
     const { raw_message, group_id, user_id } = e;
     //console.log(raw_message, group_id, user_id ,GROUP);
+    const raw = formatMsg(e.message);
+    //console.log(raw);
     if (group_id !== GROUP) return;
     for (let reg_it in regexs) {
         //console.log(reg_it);
-        const raw = formatMsg(e.message);
+
         let tmp = raw.match(reg_it);
         if (tmp == null) continue;
         if (spark.debug) console.log('regex working...', reg_it);
