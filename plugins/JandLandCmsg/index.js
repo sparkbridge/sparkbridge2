@@ -45,7 +45,7 @@ spark.Cmd.regPlaceHolder('USER_QID', e => {
 spark.Cmd.regPlaceHolder('USER_XBOXID', e => {
     //console.log(e);
     const qid = e.sender.user_id;
-    if (spark.mc.getXbox(qid) == '未找到') {
+    if (spark.mc.getXbox(qid) == '未绑定') {
         return e.sender.card;
     } else {
         return spark.mc.getXbox(qid);
@@ -110,6 +110,10 @@ if (config.switch.chat.group) {
     spark.mc.on('onChat', (player, msg) => {
         if(msg.length > config.chatMaxLength){
             player.tell('聊天长度过长，将不会转发');
+            return;
+        }
+        if(hasShield(msg)){
+            player.tell('聊天包含违禁词，将不会转发');
             return;
         }
         spark.QClient.sendGroupMsg(GROUP_ID, spark.Cmd.buildString(lang.chat.group, [], player, msg));
