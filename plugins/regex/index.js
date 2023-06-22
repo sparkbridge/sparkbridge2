@@ -234,6 +234,21 @@ const PRE_CONFIG = {
 _config.initFile('data.json', PRE_CONFIG);
 const regexs = JSON.parse(_config.getFile('data.json'));
 
+function formatMsg(msg) {
+    return msg.map(t => {
+        switch (t.type) {
+            case 'at':
+                return '@' + t.data.qq;
+            case 'text':
+                return t.data.text;
+            case 'img':
+                return '[图片]';
+            case 'face':
+                return '[表情]';
+        }
+    }).join('');
+}
+
 //spark.debug = true;
 spark.on('message.group.normal', (e, reply) => {
     //reply("?")
@@ -242,7 +257,8 @@ spark.on('message.group.normal', (e, reply) => {
     if (group_id !== GROUP) return;
     for (let reg_it in regexs) {
         //console.log(reg_it);
-        let tmp = raw_message.match(reg_it);
+        const raw = formatMsg(e.message);
+        let tmp = raw.match(reg_it);
         if (tmp == null) continue;
         if (spark.debug) console.log('regex working...', reg_it);
         if (regexs[reg_it].adm == true && !ADMINS.includes(user_id)) {
