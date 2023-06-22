@@ -222,7 +222,7 @@ const PRE_CONFIG = {
         adm: false
     },
     "^chat(.+)": {
-        cmd: 't|all:$1',
+        cmd: 't|all:%USER_XBOXID% >> $1',
         adm: false
     },
     "^执行(.+)": {
