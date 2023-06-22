@@ -31,9 +31,9 @@ function buildString(str, reg, ...arg) {
 
 spark.Cmd.buildString = buildString;
 
-function getPlaceHolder(key, e) {
+function getPlaceHolder(key, ...arg) {
     if (PlaceHolders.has(key)) {
-        return PlaceHolders.get(key)(e);
+        return PlaceHolders.get(key)(...arg);
     } else {
         return 'null';
     }
