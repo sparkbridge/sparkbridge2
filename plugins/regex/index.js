@@ -8,7 +8,7 @@ spark.setOwnProperty('Cmd', {});
  * @param {RegExpMatchArray} reg 
  * @returns 
  */
-function buildString(str, reg, e) {
+function buildString(str, reg, ...arg) {
     console.log(reg);
     var i = 0;
     reg.forEach(s => {
@@ -19,7 +19,7 @@ function buildString(str, reg, e) {
         let str_arr = buildPlaceHolder(str);
         return str_arr.map((t) => {
             if (t.type == 'holder') {
-                return getPlaceHolder(t.raw, e);
+                return getPlaceHolder(t.raw, ...arg);
             } else {
                 return t.raw;
             }
