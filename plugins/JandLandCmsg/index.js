@@ -59,26 +59,26 @@ spark.Cmd.regPlaceHolder('PLAYER_IP', e => {
     return e.getDevice().ip.split(':')[0];
 });
 
-spark.Cmd.regPlaceHolder('PLAYER_MSG', player, msg => {
+spark.Cmd.regPlaceHolder('PLAYER_MSG', (player, msg) => {
     return msg;
 });
 
 function formatMsg(msg) {
-	return msg.map(t => {
-		switch (t.type) {
-			case 'at':
-				return '@' + t.data.qq;
-			case 'text':
-				return t.data.text;
-			case 'img':
-				return '[图片]';
-			case 'face':
-				return '[表情]';
-		}
-	}).join('');
+    return msg.map(t => {
+        switch (t.type) {
+            case 'at':
+                return '@' + t.data.qq;
+            case 'text':
+                return t.data.text;
+            case 'img':
+                return '[图片]';
+            case 'face':
+                return '[表情]';
+        }
+    }).join('');
 }
 
-spark.Cmd.regPlaceHolder('USER_MSG',e=>{
+spark.Cmd.regPlaceHolder('USER_MSG', e => {
     return formatMsg(e.message);
 })
 

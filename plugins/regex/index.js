@@ -9,7 +9,7 @@ spark.setOwnProperty('Cmd', {});
  * @returns 
  */
 function buildString(str, reg, ...arg) {
-    console.log(reg);
+    if(spark.debug) console.log(reg);
     var i = 0;
     reg.forEach(s => {
         str = str.replace(`\$${i}`, s);
