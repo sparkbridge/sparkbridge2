@@ -4,13 +4,7 @@ const _config = spark.getFileHelper('mc');
 
 _config.initFile('config.json', {
     group: 114514,
-    admins: [],
-    switch: {
-        chat: true,
-        cmd: true,
-        join: true,
-        left: true
-    }
+    admins: []
 });
 
 _config.initFile('xbox.json', {});
@@ -61,12 +55,12 @@ function remXboxByName(xbox) {
     }
 }
 
-
 function remXboxByQid(qid) {
     if (xboxs[qid] == undefined) return;
     delete xboxs[qid];
     _config.updateFile('xbox.json', xboxs);
 }
+
 
 spark.mc.remXboxByName = remXboxByName;
 spark.mc.addXbox = addXbox;
