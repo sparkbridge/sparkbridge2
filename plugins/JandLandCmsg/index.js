@@ -39,11 +39,12 @@ spark.Cmd.regPlaceHolder('USER_CARD', e => {
 });
 
 spark.Cmd.regPlaceHolder('USER_QID', e => {
-    return e.sedner.user_id;
+    return e.sender.user_id;
 });
 
 spark.Cmd.regPlaceHolder('USER_XBOXID', e => {
-    const qid = e.user_id;
+    console.log(e);
+    const qid = e.sender.user_id;
     if (spark.mc.getXbox(qid) == '未找到') {
         return e.sender.card;
     } else {
