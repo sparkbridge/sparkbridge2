@@ -97,6 +97,10 @@ if (config.switch.left) {
 
 if (config.switch.chat.group) {
     spark.mc.on('onChat', (player, msg) => {
-        spark.QClient.sendGroupMsg(GROUP_ID, spark.Cmd.buildString(lang.left, [], player, msg));
+        if(msg.length > config.chatMaxLength){
+            player.tell('聊天长度过长，将不会转发');
+            return;
+        }
+        spark.QClient.sendGroupMsg(GROUP_ID, spark.Cmd.buildString(lang.chat.group, [], player, msg));
     });
 }
