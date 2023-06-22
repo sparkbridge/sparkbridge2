@@ -43,7 +43,7 @@ spark.Cmd.regPlaceHolder('USER_QID', e => {
 });
 
 spark.Cmd.regPlaceHolder('USER_XBOXID', e => {
-    console.log(e);
+    //console.log(e);
     const qid = e.sender.user_id;
     if (spark.mc.getXbox(qid) == '未找到') {
         return e.sender.card;
@@ -94,6 +94,16 @@ if (config.switch.left) {
     spark.mc.on('onLeft', (player) => {
         spark.QClient.sendGroupMsg(GROUP_ID, spark.Cmd.buildString(lang.left, [], player));
     });
+}
+
+function hasShield(raw){
+    var ret = false;
+    config.chatShield.forEach(et => {
+        if(raw.match(et)){
+            ret = true
+        }
+    });
+    return ret;
 }
 
 if (config.switch.chat.group) {
