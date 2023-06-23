@@ -34,7 +34,7 @@ mc.listen('onJoin', (p) => {
 });
 
 function getXbox(qid){
-    return xboxs[qid] ?? '未绑定';
+    return xboxs[qid];
 }
 
 function addXbox(qid, xbox) {

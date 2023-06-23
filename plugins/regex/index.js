@@ -151,7 +151,7 @@ regCmd('run', (arg, reg, e, reply) => {
 regCmd('addwl', (arg, reg, e, reply) => {
     let command = arg.split(":");
     let xboxid = buildString(command[0], reg, e).trim();
-    if (!spark.mc.hasXbox(xboxid) && spark.mc.getXbox(e.user_id) == '未绑定') {
+    if (!spark.mc.hasXbox(xboxid) && spark.mc.getXbox(e.user_id) == undefined) {
         spark.mc.addXbox(e.user_id, xboxid);
         reply(xboxid + '绑定成功', true);
         if (command[1] == 'true') {
@@ -164,9 +164,11 @@ regCmd('addwl', (arg, reg, e, reply) => {
 })
 
 regCmd('remwl', (arg, reg, e, reply) => {
-    if (spark.mc.getXbox(e.user_id) != '未绑定') {
+    console.log(e);
+    console.log(spark.mc.getXbox(e.sender.user_id));
+    if (spark.mc.getXbox(e.sender.user_id) != undefined) {
         let xb = spark.mc.getXbox(e.user_id);
-        spark.mc.remXboxByQid(e.user_id);
+        spark.mc.remXboxByQid(e.sender.user_id);
         reply('解绑成功', true);
         mc.runcmd('allowlist remove "' + xb + '"');
     }
@@ -239,7 +241,7 @@ function formatMsg(msg) {
     return msg.map(t => {
         switch (t.type) {
             case 'at':
-                if(spark.mc.getXbox(t.data.qq) == '未绑定'){
+                if(spark.mc.getXbox(t.data.qq) == undefined){
                     return '@' + t.data.qq;
                 }
                 return '@' +spark.mc.getXbox(t.data.qq);
