@@ -64,6 +64,7 @@ class Qadapter{
         this.eventEmitter.emit(evk,...arg);
     }
     setOwnProperty(k,v){
+        if(spark.debug) console.log('挂载 ——> '+k);
         this[k] = v;
     }
     sendWSPack(pack){

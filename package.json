@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/sparkbridge/sparkbridge2#readme",
   "dependencies": {
+    "axios": "^1.4.0",
     "dayjs": "^1.11.8",
     "json5": "^2.2.3",
     "winston": "^3.9.0",
