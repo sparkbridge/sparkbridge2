@@ -17,7 +17,11 @@ const build_reply = (id,type,mid)=>{
                 }
             });
         }
-        spark.QClient.sendWSPack(packbuilder.MessagePack(id,type,msg));
+        if(type == 'group'){
+            return sendGroupMsg(id,msg);
+        }else{
+            return sendPrivateMsg(id,msg);
+        }
     }
 }
 
@@ -68,14 +72,32 @@ function uuid() {
 
 
 function sendGroupMsg(gid,msg){
+    let tmp_id = uuid();
     msg = msgbuilder.format(msg);
-    spark.QClient.sendWSPack(packbuilder.GroupMessagePack(gid,msg));
+    spark.QClient.sendWSPack(packbuilder.GroupMessagePack(gid,msg,tmp_id));
+    return new Promise((res,rej)=>{
+        spark.QClient.eventEmitter.once('packid_'+tmp_id,(data)=>{
+            res(data);
+        });
+        setTimeout(() => {
+            rej({reason:'timeout'});
+        }, 10e3);
+    });
 }
 spark.QClient.setOwnProperty('sendGroupMsg',sendGroupMsg);
 
 function sendPrivateMsg(fid,msg){
     msg = msgbuilder.format(msg);
-    spark.QClient.sendWSPack(packbuilder.PrivateMessagePack(fid,msg));
+    let tmp_id = uuid();
+    spark.QClient.sendWSPack(packbuilder.PrivateMessagePack(fid,msg,tmp_id));
+    return new Promise((res,rej)=>{
+        spark.QClient.eventEmitter.once('packid_'+tmp_id,(data)=>{
+            res(data);
+        });
+        setTimeout(() => {
+            rej({reason:'timeout'});
+        }, 10e3);
+    });
 }
 spark.QClient.setOwnProperty('sendPrivateMsg',sendPrivateMsg);
 
@@ -97,8 +119,8 @@ function getGroupMemberList(gid){
             res(data);
         });
         setTimeout(() => {
-            rej();
-        }, 5e3);
+            rej({reason:'timeout'});
+        }, 10e3);
     })
 }
 spark.QClient.setOwnProperty('getGroupMemberList',getGroupMemberList)
@@ -111,8 +133,8 @@ function getGroupMemberInfo(gid,mid){
             res(data);
         });
         setTimeout(() => {
-            rej();
-        }, 5e3);
+            rej({reason:'timeout'});
+        }, 10e3);
     })
 }
 spark.QClient.setOwnProperty('getGroupMemberInfo',getGroupMemberInfo);

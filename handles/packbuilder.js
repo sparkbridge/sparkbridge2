@@ -1,26 +1,9 @@
 
 class Builder {
-    static PrivateMessagePack(fid, msg) {
-        return {
-            action: 'send_private_msg',
-            params: {
-                user_id: fid,
-                message: msg
-            }
-        };
-    }
-    static GroupMessagePack(gid, msg) {
-        return {
-            action: 'send_group_msg',
-            params: {
-                group_id: gid,
-                message: msg
-            }
-        };
-    }
-    static MessagePack(id, type, msg) {
+    static MessagePack(id, type, msg, pid) {
         return {
             action: 'send_msg',
+            echo: pid,
             params: {
                 user_id: id,
                 group_id: id,
@@ -28,6 +11,12 @@ class Builder {
                 message_type: type
             }
         }
+    }
+    static PrivateMessagePack(fid, msg, id) {
+        return this.MessagePack(fid, 'private', msg, id);
+    }
+    static GroupMessagePack(gid, msg, id) {
+        return this.MessagePack(gid, 'group', msg, id);
     }
     static DeleteMsgPack(id) {
         return {
@@ -47,22 +36,22 @@ class Builder {
             }
         }
     }
-    static GroupMemberListPack(gid,id) {
+    static GroupMemberListPack(gid, id) {
         return {
             action: 'get_group_member_list',
             echo: id,
             params: {
-                group_id:gid
+                group_id: gid
             }
         }
     }
-    static GroupMemberInfoPack(gid,mid,id){
+    static GroupMemberInfoPack(gid, mid, id) {
         return {
             action: 'get_group_member_info',
-            echo:id,
-            params:{
+            echo: id,
+            params: {
                 group_id: gid,
-                user_id:mid
+                user_id: mid
             }
         }
     }

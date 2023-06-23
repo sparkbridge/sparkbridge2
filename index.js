@@ -41,8 +41,13 @@ const plugins_list = fhelper.listdir(PLUGINS_PATH);
 
 function loadPlugin(_name){
     try {
-        let pl_obj = require('./plugins/' + _name);
+        
         let pl_info = require('./plugins/' + _name + "/spark.json");
+        if(pl_info.load){
+            let pl_obj = require('./plugins/' + _name);
+        }else{
+            logger.info('跳过加载插件：'+_name);
+        }
         logger.info(`加载 ${pl_info.name}`);
         logger.info(`${pl_info.name} 加载完成，作者：${pl_info.author}`);
     } catch (err) {
