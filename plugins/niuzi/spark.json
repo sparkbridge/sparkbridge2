@@ -1,0 +1,11 @@
+{
+    "name": "niuzi",
+    "author": "sbaoor",
+    "version": [
+        0,
+        0,
+        1
+    ],
+    "desc": "牛至PK系统",
+    "load": true
+}
