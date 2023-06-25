@@ -55,6 +55,16 @@ class Builder {
             }
         }
     }
+    static GroupForwardMessagePack(gid,msg,id){
+        return {
+            action : 'send_group_forward_msg',
+            echo:id,
+            params:{
+                group_id : gid,
+                messages:msg
+            }
+        }
+    }
 }
 
 

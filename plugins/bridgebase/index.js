@@ -29,6 +29,7 @@ spark.on('gocq.pack',(pack)=>{
     //console.log(pack);
     //let evt_name = `${pack.post_type}${pack.message_type == undefined ? '' :'.'+ pack.message_type}`;
     if(pack.echo != undefined){
+        if(spark.debug) console.log(pack);
         spark.QClient.eventEmitter.emit("packid_"+pack.echo,pack.data);
         // return  // <-- 要不要return呢，不return也没什么，但是怕出啥问题。。。
     }
@@ -100,6 +101,20 @@ function sendPrivateMsg(fid,msg){
     });
 }
 spark.QClient.setOwnProperty('sendPrivateMsg',sendPrivateMsg);
+
+function sendGroupForwardMsg(gid,msg){
+    let tmp_id = uuid();
+    spark.QClient.sendWSPack(packbuilder.GroupForwardMessagePack(gid,msg,tmp_id));
+    return new Promise((res,rej)=>{
+        spark.QClient.eventEmitter.once('packid_'+tmp_id,(data)=>{
+            res(data);
+        });
+        setTimeout(() => {
+            rej({reason:'timeout'});
+        }, 10e3);
+    });
+}
+spark.QClient.setOwnProperty('sendGroupForwardMsg',sendGroupForwardMsg);
 
 function sendGroupBan(gid,mid,d){
     spark.QClient.sendWSPack(packbuilder.GroupBanPack(gid,mid,d));

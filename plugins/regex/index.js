@@ -198,6 +198,12 @@ function regPlaceHolder(key, recall) {
 
 spark.Cmd.regPlaceHolder = regPlaceHolder;
 
+spark.Cmd.addRegex = (key,item) =>{
+    if(regexs[key] != undefined) return false;
+    regexs[key] = item;
+    return true;
+}
+
 const GROUP = spark.mc.config.group;
 const ADMINS = spark.mc.config.admins;
 
@@ -275,8 +281,8 @@ spark.on('message.group.normal', (e, reply) => {
         }
         try {
             regexs[reg_it].cmd.split(';').forEach(regtmp => {
-                commandParse(regtmp, tmp, e, reply);
-            })
+                    commandParse(regtmp, tmp, e, reply);
+                })
         } catch (err) {
             console.log(err);
         }

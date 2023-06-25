@@ -1,5 +1,31 @@
 const fs = require('fs');
 const fhelper = require('./file')
+
+class ForwardMsgBuilder{
+    msg = []
+    addMsgById(id){
+        this.msg.push({
+            type:'node',
+            data:{
+                id
+            }
+        })
+    }
+    addCustomsMsg(name,uin,content){
+        this.msg.push({
+            type:'node',
+            data:{
+                name,
+                uin,
+                content
+            }
+        })
+    }
+    getMsg(){
+        return this.msg;
+    }
+}
+
 class Builder {
     static img(file) {
         if (typeof file === 'string' && fhelper.exists(file)) file = fs.readFileSync(file);
@@ -33,6 +59,9 @@ class Builder {
         }
         if (spark.debug) console.log('build msg -->' + JSON.stringify(msg))
         return msg;
+    }
+    static ForwardMsgBuilder(){
+        return new ForwardMsgBuilder();
     }
 }
 
