@@ -19,7 +19,7 @@ _config.initFile('lang.json', {
     left: '%PLAYER_NAME% 离开了服务器',
     chat: {
         group: '%PLAYER_NAME% >> %PLAYER_MSG%',
-        server: '%USER_XBOXID% >> %USER_MSG%'
+        server: '[群聊]%USER_XBOXID% >> %USER_MSG%'
     }
 });
 
@@ -120,3 +120,11 @@ if (config.switch.chat.group) {
         spark.QClient.sendGroupMsg(GROUP_ID, spark.Cmd.buildString(lang.chat.group, [], player, msg));
     });
 }
+
+if (config.switch.chat.server) {
+    spark.on('message.group.normal', (e) => {
+        let msg = formatMsg(e.message);
+        mc.broadcast(spark.Cmd.buildString(lang.chat.group, [], player, msg));
+    });
+}
+

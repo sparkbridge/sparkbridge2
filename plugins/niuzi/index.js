@@ -5,6 +5,7 @@ const _config = spark.getFileHelper('niuzi');
 _config.initFile('config.json', {
     default_name: '牛子',
     pkCd: 10,
+    teeCd:60,
     convertConst: 500
 });
 _config.initFile('commands.json', {
@@ -175,14 +176,14 @@ spark.Cmd.regCmd('niuzi_pk', (cmd, reg, e, reply) => {
         if(s.red_cd !== 0){
             let less = s.red_cd - new Date().getTime();
             if(less > 0){
-                reply(`你的牛子红肿了，等 ${(less/6e4).toFixed(1)} 分钟`)
+                reply(`你的牛子红肿了，等 ${(less/6e4).toFixed(1)} 分钟`,true)
                 return;
             }
         }
         if(b.red_cd !== 0){
             let less = b.red_cd - new Date().getTime();
             if(less > 0){
-                reply(`对方的牛子红肿了，等 ${(less/6e4).toFixed(1)} 分钟`)
+                reply(`对方的牛子红肿了，等 ${(less/6e4).toFixed(1)} 分钟`,true)
                 return;
             }
         }
