@@ -1,0 +1,6 @@
+{
+    "name":"llapi",
+    "author":"lition",
+    "version":[0,0,1],
+    "desc":"liteloader适配器"
+}

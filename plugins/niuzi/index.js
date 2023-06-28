@@ -255,5 +255,39 @@ spark.Cmd.regCmd('niuzi_marry',(cmd,reg,e,reply)=>{
         return;
     }
     marry_apply[target] = e.sender.user_id;
+    setTimeout(()=>{
+        if(marry_apply[target] !=undefined){
+            delete marry_apply[target];
+        }
+    },5*60*1000);
     reply('已经暂存你的请求，有效期五分钟\n对方发送“处理请求 处对象 同意”即可成功处对象');
 });
+
+
+spark.Cmd.regCmd('niuzi_handle',(cmd,reg,e,reply)=>{
+    var raw = e.raw_message;
+    let handle = reg[1];
+    let reu = reg[2];
+    let target = marry_apply[e.sender.user_id];
+    if(target == undefined){
+        reply(buildString(lang.no_target,e),true);
+        return;
+    }
+    if(handle == '处对象'){
+        if(reu == '同意'){
+            niuzi_data[e.sender.user_id].elephant = target;
+            niuzi_data[target].elephant = e.sender.user_id;
+            save_niuzi();
+            reply(`处对象成功！`,true);
+        }else{
+            reply('拒绝成功',true);
+        }
+    }else if(handle == '分手'){
+
+    }
+});
+
+
+spark.Cmd.regCmd('niuzi_teetee',(cmd,reg,e,reply)=>{
+    
+})
