@@ -173,6 +173,10 @@ spark.Cmd.regCmd('niuzi_pk', (cmd, reg, e, reply) => {
         let win = pk();
         let s = get_niuzi_data(e.sender.user_id);
         let b = get_niuzi_data(target);
+        if (has_niuzi(target) == false) {
+            reply(buildString(lang.target_no_niuzi, e), true);
+            return;
+        }
         if(s.red_cd !== 0){
             let less = s.red_cd - new Date().getTime();
             if(less > 0){
