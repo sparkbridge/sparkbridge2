@@ -4,6 +4,9 @@ testdata/
 # idea
 .vscode/
 
+# llapi
+llapi.js
+
 # Logs
 logs
 *.log

@@ -1,5 +1,11 @@
 # SparkBridge2
 
+coming soon....
+
+未完成部分
+ - 全局注册命令
+ - 正则表达式
+
 ## 本地调试模式
 
 文件存储位于`testdata/`文件夹，代替`plugins/sparkbridge2/`

@@ -1,14 +1,20 @@
-const winston = require('winston');
+const { createLogger, format, transports } = require('winston');
+const { combine, timestamp, label, printf } = format;
 const dayjs = require('dayjs');
 const today = dayjs();
 
+const myFormat = printf(({ level, message, label}) => {
+    return `${dayjs().format("YYYY-MM-DD h:mm:ss")} [${label}] [${ level}] ${message}`;
+  });
+
 function SparkLogger(plugin_name){
-    return winston.createLogger({
-        format: winston.format.printf((info) => {
-            return `${today.format("YYYY-MM-DD h:mm:ss")} [${info.level}] ${plugin_name} | ${info.message}`
-        }),
+    return createLogger({
+        format: combine(
+            label({ label: plugin_name}),
+            myFormat
+          ),
         transports: [
-            new winston.transports.Console()
+            new transports.Console()
             //new winston.transports.File({ filename:  `./plugins/sparkbridge2/logs/${today.format("YYYY-MM-DD")}-${}.log` })
         ]
     });

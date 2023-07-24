@@ -2,6 +2,7 @@ const { WebSocket } = require('ws');
 const EventEmitter = require("events");
 const logger = require('../handles/logger');
 const { text } = require('../handles/msgbuilder');
+const { boom } = require('../handles/reconnect');
 
 class Qadapter{
     client;
@@ -31,7 +32,7 @@ class Qadapter{
             this.logger.warn('websocket 已经断开');
             setTimeout(()=>{
                 this.login()
-            },3e3);
+            },boom());
         });
         this.client.on('message', (_data, _islib) =>{
             let raw = _data;;
