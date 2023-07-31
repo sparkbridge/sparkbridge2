@@ -116,7 +116,7 @@ Join and Left and Chat msg，提供群服互通的支持：
 
 插件`regex`可提供自定义正则表达式功能
 
-配置文件位于`/plugins/sparkbridge2/regex/config.json`
+配置文件位于`/plugins/sparkbridge2/regex/data.json`
 
 ``` json
 {
