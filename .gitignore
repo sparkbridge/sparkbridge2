@@ -7,6 +7,9 @@ testdata/
 # llapi
 llapi.js
 
+# updata
+updata.bat
+
 # Logs
 logs
 *.log
