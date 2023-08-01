@@ -11,7 +11,7 @@
 
 ```
 我们先新建这个自述文件，让我们打开它
-```spark.json
+```json
 {
     "name": "example", //这是插件的名字，将会在被bds加载时显示
     "author": "户山兔兔", //此处签上你的大名
@@ -28,7 +28,7 @@
 
 接下来我们开始对index的开发：
 这是一个简单的sb插件
-```
+```js
 const msgbuilder = require('../../handles/msgbuilder');//导入信息构建函数
 spark.QClient.on('bot.online', () => {
     spark.QClient.sendGroupMsg(spark.mc.config.group, '我来啦');向指定群发送字符
