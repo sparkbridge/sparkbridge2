@@ -30,3 +30,5 @@ clone结束后，开启BDS
 
 `什么？命令不存在？这边建议你去minebbs下载捏`
 
+## [-->配置亿下](/subpages/conf.md)
+

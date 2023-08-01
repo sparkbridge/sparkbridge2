@@ -105,3 +105,4 @@ remwl|Lition
 此时群里发送“我是%XBOXID%”
 返回“你是xxxxxxx”（发信人绑定的游戏ID）
 
+## [-->常见问题](/subpages/qa.md)

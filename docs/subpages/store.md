@@ -42,3 +42,5 @@
 ![](/store/adventure.jpg)
 
 链接：https://www.minebbs.com/resources/advancements-java.4949/
+
+## [-->装载插件](/subpages/plugin.md)

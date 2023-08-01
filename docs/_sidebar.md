@@ -3,9 +3,8 @@
 [怎么使用呢](/subpages/use.md)
 [正则表达式命令](/subpages/cmd.md)
 [常见问题](/subpages/qa.md)
+[插件市场](/subpages/store.md)
 [装载插件](/subpages/plugin.md)
 [开发指南](/subpages/develop.md)
-[插件市场](/subpages/store.md)
+[Sparkbridge1指南](https://sparkbridge.github.io/docs/)
 [关于我们](/subpages/about.md)
-[一代SB指南](https://sparkbridge.github.io/docs/)
-
