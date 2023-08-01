@@ -1,7 +1,0 @@
-{
-    "name":"potato",
-    "author":"mingji",
-    "version":[0,0,1],
-    "desc":"土豆服务器启动",
-    "load":false
-}
