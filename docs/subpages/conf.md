@@ -3,7 +3,7 @@
 启动一次SparkBridge后，会在`plugin/sparkbridge2/`文件夹生成配置文件
 
 ``` 
-┌—base <-- gocqhttp登录项配置文件
+┌─base <-- gocqhttp登录项配置文件
 ├─mc  <-- 群和管理员配置文件
 ├─JandLandCmsg  <-- 群服互通细则配置文件
 ├─regex  <--正则表达式配置文件

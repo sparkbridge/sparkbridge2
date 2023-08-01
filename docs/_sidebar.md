@@ -7,3 +7,5 @@
 [开发指南](/subpages/develop.md)
 [插件市场](/subpages/store.md)
 [关于我们](/subpages/about.md)
+[SB1指南](https://sparkbridge.github.io/docs/)
+
