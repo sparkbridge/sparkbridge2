@@ -26,7 +26,7 @@ Liteloader的版本需要大于2.5.0。
 
 ## 无法登录？
 
-搭建[qsign签名服务器](https://github.com/fuqiuluo/unidbg-fetch-qsign)
+搭建[qsign签名服务器](https://github.com/fuqiuluo/unidbg-fetch-qsign)，强烈推荐查看哔哩哔哩上小饼干发的指南：[链接](https://b23.tv/iDzHdIj)
 
 ## 如何扫码登录？
 
