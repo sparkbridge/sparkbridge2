@@ -27,9 +27,15 @@
 >[!Warning]真正的json中不应当包含注释！
 
 接下来我们开始对index的开发：
-这是一个最简单的js插件
+这是一个简单的sb插件
 ```
 const msgbuilder = require('../../handles/msgbuilder');//导入信息构建函数
+spark.QClient.on('bot.online', () => {
+    spark.QClient.sendGroupMsg(spark.mc.config.group, '我来啦');向指定群发送字符
+    //spark.QClient.sendGroupMsg(spark.mc.config.group, msgbuilder.img('https://bestdori.com/assets/cn/stamp/01_rip/stamp_002001.png'));
+    //↑ 或者图片
+
+});//bot上线时执行的命令
 spark.on('message.group.normal', (e, reply) => {
 
     const { raw_message, group_id } = e;
