@@ -30,7 +30,7 @@
 这是一个简单的sb插件
 ```js
 const msgbuilder = require('../../handles/msgbuilder');//导入信息构建函数
-spark.QClient.on('bot.online', () => {
+spark.QClient.on('bot.online', () => { //当bot登录时
     spark.QClient.sendGroupMsg(spark.mc.config.group, '我来啦');向指定群发送字符
     //spark.QClient.sendGroupMsg(spark.mc.config.group, msgbuilder.img('https://bestdori.com/assets/cn/stamp/01_rip/stamp_002001.png'));
     //↑ 或者图片
