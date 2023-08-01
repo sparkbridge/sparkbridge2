@@ -70,7 +70,7 @@ default-middlewares: &default
 随后填写qq账号密码，按指示登录gocqhttp。登录成功后，打开bds
 
 sbBot将会根据你的填写开始连接。如果一切顺利，bds应该会输出以下文字：
-```cmd
+```
  [Qadapter] [info] 登录成功，开始处理事件
 ```
 此时发送“bot测试”到群，应该可以收到回应：已上线。
