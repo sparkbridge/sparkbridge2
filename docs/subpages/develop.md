@@ -2,6 +2,8 @@
 
 很高兴认识你，欢迎你参与到Sparkbridge2的开发中。这里我们来稍微讲一下sb2的开发：
 
+## 普通模式开发
+
 正如前面插件指南所说，插件装载位置在于“\plugins\nodejs\sparkbridge2\plugins”，因此在这里新建一个文件夹，随便起一个名字，就可以了。
 
 接下来插件里面应该至少包含两个文件：
@@ -50,6 +52,25 @@ spark.on('message.group.normal', (e, reply) => {
 
 ```
 你可以试试把这个代码本地执行一次！
+
+## Sandbox分离开发
+
+使用Sandbox可以使得插件分离BDS运行，不依赖于liteloaderBDS的纯群聊插件都可以使用Sandbox开发，因此你甚至可以将Sparkbridge作为一个普通聊天机器人使用。
+
+使用Sandbox需要Nodejs环境，如何安装不需要我多说了吧，安装完成后，打开Sandbox.bat。
+
+如果产生报错，请在Sparkbridge根目录CMD执行npm install。
+
+```
+ [sparkbridge2] [warn] ====本地调试器====
+ [sparkbridge2] [warn] 您现在处于调试模式！！！
+ [sparkbridge2] [warn] MC类将被覆盖
+ [sparkbridge2] [warn] 数据存储已转移到testdata文件夹
+ [sparkbridge2] [warn] ====本地调试器====
+```
+本地调试器，启动！
+
+启动完成一次后请打开testdata重新配置一次配置文件，这里是调试模式的配置文件，与bds工作中的配置文件不互通，然后再次启动Sandbox。开发过程与前面相同。
 
 更多api请等待文档更新。
 

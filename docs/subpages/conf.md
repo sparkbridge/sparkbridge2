@@ -141,10 +141,10 @@ Join and Left and Chat msg，提供群服互通的支持：
         "adm": false
     },
     "^chat(.+)": {
-        "cmd": "t|all:$1",
+        "cmd": "t|all:[群聊]%USER_XBOXID% >> $1",
         "adm": false
     },
-    "执行(.+)": {
+    "^执行(.+)": {
         "cmd": "run|$1",
         "adm": true
     }
