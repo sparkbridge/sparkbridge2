@@ -104,7 +104,7 @@ Join and Left and Chat msg，提供群服互通的支持：
             "server": false// 是否转发群聊内容到游戏，默认保持关闭，使用插件regex中的正则表达式转发聊天内容，具体看下文。
         }
     },
-    "chatMaxLength": 20,//最大允许的转发数量
+    "chatMaxLength": 20,//超过这么多字不转发
     "chatShield": [
         "傻逼"   //转发包含关键词则不转发
     ]

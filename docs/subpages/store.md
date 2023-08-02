@@ -1,6 +1,6 @@
 # 插件中心
 
->要是你也愿意为我们提供插件，欢迎来[仓库](https://github.com/sparkbridge/docs)提交Pull Request哦
+>要是你也愿意为我们提供插件，欢迎来[仓库](https://github.com/sparkbridge/sparkbridge2/tree/main/docs)提交Pull Request哦
 
 ## os
 
