@@ -124,7 +124,7 @@ if (config.switch.chat.group) {
 if (config.switch.chat.server) {
     spark.on('message.group.normal', (e) => {
         let msg = formatMsg(e.message);
-        mc.broadcast(spark.Cmd.buildString(lang.chat.group, [], player, msg));
+        mc.broadcast(spark.Cmd.buildString(lang.chat.group, [], e.sender, msg));
     });
 }
 
