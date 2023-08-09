@@ -1,6 +1,22 @@
 const _config = spark.getFileHelper('JandLandCmsg');
 const JSON5 = require('json5');
 
+function formatMsg(msg) {
+    return msg.map(t => {
+        switch (t.type) {
+            case 'at':
+                return '@' + t.data.qq;
+            case 'text':
+                return t.data.text;
+            case 'img':
+                return '[图片]';
+            case 'face':
+                return '[表情]';
+        }
+    }).join('');
+}
+
+
 _config.initFile('config.json', {
     switch: {
         join: true,
@@ -19,7 +35,7 @@ _config.initFile('lang.json', {
     left: '%PLAYER_NAME% 离开了服务器',
     chat: {
         group: '%PLAYER_NAME% >> %PLAYER_MSG%',
-        server: '[群聊]%USER_XBOXID% >> %USER_MSG%'
+        server: '[群聊]%USER_XBOXID% >> %PLAYER_MSG%'
     }
 });
 
@@ -44,10 +60,11 @@ spark.Cmd.regPlaceHolder('USER_QID', e => {
 
 spark.Cmd.regPlaceHolder('USER_XBOXID', e => {
     //console.log(e);
-    const qid = e.sender.user_id;
+    const qid = e.user_id;
+   
     if (spark.mc.getXbox(qid) == undefined) {
-        console.log(e.sender.card);
-        return e.sender.nickname; //获取card有时候是空的，用nickname代替
+        //console.log(e.card);
+        return e.nickname; //获取card有时候是空的，用nickname代替
     } else {
         return spark.mc.getXbox(qid);
     }
@@ -65,24 +82,15 @@ spark.Cmd.regPlaceHolder('PLAYER_MSG', (player, msg) => {
     return msg;
 });
 
-function formatMsg(msg) {
-    return msg.map(t => {
-        switch (t.type) {
-            case 'at':
-                return '@' + t.data.qq;
-            case 'text':
-                return t.data.text;
-            case 'img':
-                return '[图片]';
-            case 'face':
-                return '[表情]';
-        }
-    }).join('');
-}
 
-spark.Cmd.regPlaceHolder('USER_MSG', e => {
+/*spark.Cmd.regPlaceHolder('USER_MSG', e => {
     return formatMsg(e.message);
-})
+})*/
+//这个代码不知道为什么没有办法运行，直接用上面的Player_msg就行了
+spark.Cmd.regPlaceHolder('USER_MSG', (player, msg) => {
+    return msg;
+});
+
 
 const GROUP_ID = spark.mc.config.group;
 
@@ -122,9 +130,12 @@ if (config.switch.chat.group) {
 }
 
 if (config.switch.chat.server) {
+    
     spark.on('message.group.normal', (e) => {
+        if (e.group_id !== GROUP_ID) return;
         let msg = formatMsg(e.message);
-        mc.broadcast(spark.Cmd.buildString(lang.chat.group, [], e.sender, msg));
+        
+        mc.broadcast(spark.Cmd.buildString(lang.chat.server, [], e.sender, msg));
     });
 }
 
