@@ -81,6 +81,7 @@ function buildPlaceHolder(raw) {
 spark.Cmd.buildPlaceHolder = buildPlaceHolder;
 
 
+
 const Cmds = new Map();
 
 function regCmd(head, cb) {
@@ -164,8 +165,8 @@ regCmd('addwl', (arg, reg, e, reply) => {
 })
 
 regCmd('remwl', (arg, reg, e, reply) => {
-    console.log(e);
-    console.log(spark.mc.getXbox(e.sender.user_id));
+    //console.log(e);
+    //console.log(spark.mc.getXbox(e.sender.user_id));
     if (spark.mc.getXbox(e.sender.user_id) != undefined) {
         let xb = spark.mc.getXbox(e.user_id);
         spark.mc.remXboxByQid(e.sender.user_id);
