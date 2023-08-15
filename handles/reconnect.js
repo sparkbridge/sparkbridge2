@@ -8,7 +8,7 @@ function boom() {
         count++;
     else
         count = 1;
-        awa;
+        awa();
     return sleep_t * 1e3;
 }
 
