@@ -36,7 +36,7 @@ if (typeof mc !== 'undefined'){
 }
 
 
-const PLUGINS_PATH = path.join(__dirname, 'plugins\\');
+const PLUGINS_PATH = path.join(__dirname, 'plugins');
 const plugins_list = fhelper.listdir(PLUGINS_PATH);
 
 function loadPlugin(_name){
@@ -62,11 +62,11 @@ function readPluginDir(){
 
     // 这里获取旧插件list
     const plugins_load_list = JSON.parse(fhelper.read(path.join(__dirname, 'plugins', 'list.json')));
-
+    console.log(plugins_list);
     // 这里遍历 plugins文件夹，读取spark.json
     const current_list = {};
     plugins_list.forEach(epl => {
-        const sata = fs.statSync(PLUGINS_PATH + epl);
+        const sata = fs.statSync(path.join(PLUGINS_PATH , epl));
         if (!sata.isDirectory()) return;
         let i_info = JSON.parse(fhelper.read(path.join(__dirname, 'plugins', epl, 'spark.json')));
         current_list[i_info.name] = epl;
