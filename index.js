@@ -62,7 +62,7 @@ function readPluginDir(){
 
     // 这里获取旧插件list
     const plugins_load_list = JSON.parse(fhelper.read(path.join(__dirname, 'plugins', 'list.json')));
-    console.log(plugins_list);
+    logger.info('检测到了'+plugins_list.length+'个插件');
     // 这里遍历 plugins文件夹，读取spark.json
     const current_list = {};
     plugins_list.forEach(epl => {
