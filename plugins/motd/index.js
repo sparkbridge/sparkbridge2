@@ -44,12 +44,15 @@ spark.on('message.group.normal', (e,reply) => {
                 try {
                     const { version, description, players, favicon, modinfo } = res;
                     //console.log(res);
-                    let send = ['Java版服务器查询',`服务器描述：${typeof description == 'string' ? description : description.text ?? description.translate}\n版本：${version.name}\n协议版本：${version.protocol}\n在线人数：${players.online}/${players.max}\n在线列表：${players.sample.map((i) => { return i.name }).join(',')}\n延迟：${new Date().getTime() - now}`];
+                    let send = ['Java版服务器查询',`服务器描述：${typeof description == 'string' ? description : description.text ?? description.translate}\n版本：${version.name}\n协议版本：${version.protocol}\n在线人数：${players.online}/${players.max}\n延迟：${new Date().getTime() - now}`];
                     if (favicon) {
                         send.push(_adapter.img('base64://' + favicon.split(',')[1]));
                     }
                     if (modinfo) {
                         send.push('\nmod数量：' + modinfo.modList.length)
+                    }
+                    if(players.sample){
+                        send.push(`\n在线列表：${players.sample.map((i) => { return i.name }).join(',')}`)
                     }
                     reply(send,true);
                 } catch (erer) {
