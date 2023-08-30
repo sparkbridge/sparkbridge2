@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "mcpe-ping": "^0.0.4",
+    "varint": "^6.0.0"
+  }
+}

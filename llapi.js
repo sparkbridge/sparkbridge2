@@ -1,5 +1,5 @@
 // LiteLoader-AIDS automatic generated
-/// <reference path="c:\Users\dream\Documents/dts/HelperLib-master/src/index.d.ts"/> 
+/// <reference path="/home/lition/文档/litaloader-api/dts/helperlib/src/index.d.ts"/> 
 
 
 
