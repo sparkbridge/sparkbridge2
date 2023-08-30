@@ -230,7 +230,7 @@ const PRE_CONFIG = {
         cmd: 'run|list',
         adm: false
     },
-    "^chat(.+)": {
+    "^chat (.+)": {
         cmd: 't|all:[群聊]%USER_XBOXID% >> $1',
         adm: false
     },
