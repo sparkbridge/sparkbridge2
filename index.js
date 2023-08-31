@@ -115,7 +115,7 @@ if (spark.onBDS) {
     ll.registerPlugin(
     /* name */ "sparkbridge2",
     /* introduction */ "a qq bot system",
-    /* version */[2, 0, 1]
+    /* version */[2, 0, 2]
     );
     mc.listen('onServerStarted', () => {
         readPluginDir();
