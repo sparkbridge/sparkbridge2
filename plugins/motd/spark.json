@@ -1,7 +1,0 @@
-{
-    "name":"motd",
-    "author":"lition",
-    "version":[0,0,2],
-    "desc":"服务器查询",
-    "load":true
-}

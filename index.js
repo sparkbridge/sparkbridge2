@@ -131,3 +131,7 @@ if (spark.onBDS) {
     readPluginDir();
 }
 
+process.on('unhandledRejection', (reason, p) => {
+    console.log('Promise: ', p, 'Reason: ', reason)
+    // do something
+})
