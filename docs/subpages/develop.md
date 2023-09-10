@@ -26,7 +26,7 @@
     "load":true //是否启用此插件，保持默认即可
 }
 ```
->[!Warning]真正的json中不应当包含注释！
+>[!Warning] sparkbridge所支持的json中不应当包含注释！
 
 接下来我们开始对index的开发：
 这是一个简单的sb插件
