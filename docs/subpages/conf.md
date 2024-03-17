@@ -18,18 +18,33 @@
 打开/base的`config.json`
 ``` json
 {
-    target: 'ws://127.0.0.1:8080', //对接gocqhttp所需要的address地址和端口
-    qid: 114514, //你的bot的QQ号
-    pwd: 'linktoken', //gocqhttp 配置文件中access-token的配对密匙，需保持一致，不是密码！！！
-    onebot_mode_v11 : true //是否使用Onebot的string模式，如果你不使用array，保持true即可。
+    "target": "ws://127.0.0.1:8080", //对接Onebot实现所需要的address地址和端口
+    "qid": 114514, //你的bot的QQ号
+    "pwd": "linktoken", //gocqhttp 配置文件中access-token的配对密匙，需保持一致，不是密码！！！
+    "onebot_mode_v11" : true //是否使用Onebot的string模式，如果你不使用array，保持true即可。
 }
 ```
 
 :::
 
+## 配置 LLOneBot
+> [开始前请阅读此教程安装QQNT和LLOneBot模块](https://llonebot.github.io/zh-CN/guide/getting-started)
+
+打开LLOneBot设置界面：
+
+Http服务我们用不到，直接关闭；
+
+首先我们启动正向WebSocket服务
+
+监听端口设置为前面json中target中设置过的端口
+
+下面Access Token设置为前面的pwd的参数
+
+其余默认即可
+
 ## 配置 GO-CQHTTP
 
->[!Warning] Gocq可能遇到登录问题！强烈建议你使用LiteloaderQQNTOnebot模式登录！
+>[!Warning] Gocq可能遇到登录问题！强烈建议你使用LLOnebot模式登录！
 
 ### 下载 [GO-CQHTTP](https://github.com/Mrs4s/go-cqhttp/releases)
 
