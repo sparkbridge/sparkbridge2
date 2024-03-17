@@ -26,7 +26,7 @@
     "load":true //是否启用此插件，保持默认即可
 }
 ```
->[!Warning]真正的json中不应当包含注释！
+>[!Warning] sparkbridge所支持的json中不应当包含注释！
 
 接下来我们开始对index的开发：
 这是一个简单的sb插件
@@ -59,7 +59,7 @@ spark.on('message.group.normal', (e, reply) => {
 
 使用Sandbox需要Nodejs环境，如何安装不需要我多说了吧，安装完成后，打开Sandbox.bat。
 
-如果产生报错，请在Sparkbridge根目录CMD执行npm install。
+如果产生报错，请在Sparkbridge根目录CMD执行npm i。
 
 ```
  [sparkbridge2] [warn] ====本地调试器====

@@ -1,58 +1,71 @@
 const msgbuilder = require('../../handles/msgbuilder')
 const packbuilder = require('../../handles/packbuilder');
-
-function text(str){
-    if(typeof str == 'string') return msgbuilder.text(str);
+const { parseCQString } = require('../../handles/parserCQString');
+function text(str) {
+    if (typeof str == 'string') return msgbuilder.text(str);
     else return str;
 }
 
-const build_reply = (id,type,mid)=>{
-    return (msg,quote = false) =>{
+const build_reply = (id, type, mid) => {
+    return (msg, quote = false) => {
         msg = msgbuilder.format(msg);
-        if(quote){
+        if (quote) {
             msg.unshift({
-                type:'reply',
-                data:{
+                type: 'reply',
+                data: {
                     id: mid
                 }
             });
         }
-        if(type == 'group'){
-            return sendGroupMsg(id,msg);
-        }else{
-            return sendPrivateMsg(id,msg);
+        if (type == 'group') {
+            return sendGroupMsg(id, msg);
+        } else {
+            return sendPrivateMsg(id, msg);
         }
     }
 }
 
-spark.on('gocq.pack',(pack)=>{
-    //console.log(pack);
+const _config = spark.getFileHelper('base');
+const _raw_file = _config.getFile("config.json");
+const _p_raw = JSON.parse(_raw_file);
+const _isArray = _p_raw.onebot_mode_v11;
+//console.log(_isArray)
+spark.on('gocq.pack', (pack) => {
+    if (spark.debug) console.log(pack);
     //let evt_name = `${pack.post_type}${pack.message_type == undefined ? '' :'.'+ pack.message_type}`;
-    if(pack.echo != undefined){
-        if(spark.debug) console.log(pack);
-        spark.QClient.eventEmitter.emit("packid_"+pack.echo,pack.data);
+
+    if (pack.echo != undefined) {
+        // if (spark.debug) console.log(pack);
+        spark.QClient.eventEmitter.emit("packid_" + pack.echo, pack.data);
         // return  // <-- 要不要return呢，不return也没什么，但是怕出啥问题。。。
     }
     const POST_TYPE = pack.post_type;
-    switch(POST_TYPE){
+    switch (POST_TYPE) {
         case 'meta_event':
-            spark.emit(`${POST_TYPE}.${pack.meta_event_type}`,pack);
+            spark.emit(`${POST_TYPE}.${pack.meta_event_type}`, pack);
             break;
         case 'message':
-            if(pack.raw_message.includes('&#91;') || pack.raw_message.includes('&#93;') || pack.raw_message.includes('&#44') || pack.raw_message.includes('&amp;')){
-                pack.raw_message = pack.raw_message.replace('&#91;','[');
-                pack.raw_message = pack.raw_message.replace('&#93;',']');
-                pack.raw_message = pack.raw_message.replace('&#44;',',');
-                pack.raw_message = pack.raw_message.replace('&amp;','&');
+            //console.log("in");
+            if (_isArray) {
+                //console.log("in",typeof pack.message);
+                let _pmessage = parseCQString(pack.message.toString());
+                 pack.message = _pmessage;
+              //console.log(_pmessage);
+            }
+            if (pack.raw_message.includes('&#91;') || pack.raw_message.includes('&#93;') || pack.raw_message.includes('&#44') || pack.raw_message.includes('&amp;')) {
+                pack.raw_message = pack.raw_message.replace('&#91;', '[');
+                pack.raw_message = pack.raw_message.replace('&#93;', ']');
+                pack.raw_message = pack.raw_message.replace('&#44;', ',');
+                pack.raw_message = pack.raw_message.replace('&amp;', '&');
                 // 采用最烂的替换方式，希望能有高效率的方法，欢迎PR
             }
-            spark.emit(`${POST_TYPE}.${pack.message_type}.${pack.sub_type}`,pack,build_reply(pack.group_id == undefined ? pack.user_id : pack.group_id,pack.message_type,pack.message_id));
+            spark.emit(`${POST_TYPE}.${pack.message_type}.${pack.sub_type}`, pack, build_reply(pack.group_id == undefined ? pack.user_id : pack.group_id, pack.message_type, pack.message_id));
             break;
         case 'notice':
-            spark.emit(`${POST_TYPE}.${pack.notice_type}`,pack)
+            spark.emit(`${POST_TYPE}.${pack.notice_type}`, pack)
             break;
         case 'request':
-            spark.emit(`${POST_TYPE}.${pack.request_type}`,pack);
+            spark.emit(`${POST_TYPE}.${pack.request_type}`, pack);
             break;
     }
 });
@@ -72,109 +85,85 @@ function uuid() {
 }
 
 
-function sendGroupMsg(gid,msg){
+function sendGroupMsg(gid, msg) {
     let tmp_id = uuid();
     msg = msgbuilder.format(msg);
-    spark.QClient.sendWSPack(packbuilder.GroupMessagePack(gid,msg,tmp_id));
-    return new Promise((res,rej)=>{
-        spark.QClient.eventEmitter.once('packid_'+tmp_id,(data)=>{
+    spark.QClient.sendWSPack(packbuilder.GroupMessagePack(gid, msg, tmp_id));
+    return new Promise((res, rej) => {
+        spark.QClient.eventEmitter.once('packid_' + tmp_id, (data) => {
             res(data);
         });
         setTimeout(() => {
-            rej({reason:'timeout'});
+            rej({ reason: 'timeout' });
         }, 10e3);
     });
 }
-spark.QClient.setOwnProperty('sendGroupMsg',sendGroupMsg);
+spark.QClient.setOwnProperty('sendGroupMsg', sendGroupMsg);
 
-function sendPrivateMsg(fid,msg){
+function sendPrivateMsg(fid, msg) {
     msg = msgbuilder.format(msg);
     let tmp_id = uuid();
-    spark.QClient.sendWSPack(packbuilder.PrivateMessagePack(fid,msg,tmp_id));
-    return new Promise((res,rej)=>{
-        spark.QClient.eventEmitter.once('packid_'+tmp_id,(data)=>{
+    spark.QClient.sendWSPack(packbuilder.PrivateMessagePack(fid, msg, tmp_id));
+    return new Promise((res, rej) => {
+        spark.QClient.eventEmitter.once('packid_' + tmp_id, (data) => {
             res(data);
         });
         setTimeout(() => {
-            rej({reason:'timeout'});
+            rej({ reason: 'timeout' });
         }, 10e3);
     });
 }
-spark.QClient.setOwnProperty('sendPrivateMsg',sendPrivateMsg);
+spark.QClient.setOwnProperty('sendPrivateMsg', sendPrivateMsg);
 
-function sendGroupForwardMsg(gid,msg){
+function sendGroupForwardMsg(gid, msg) {
     let tmp_id = uuid();
-    spark.QClient.sendWSPack(packbuilder.GroupForwardMessagePack(gid,msg,tmp_id));
-    return new Promise((res,rej)=>{
-        spark.QClient.eventEmitter.once('packid_'+tmp_id,(data)=>{
+    spark.QClient.sendWSPack(packbuilder.GroupForwardMessagePack(gid, msg, tmp_id));
+    return new Promise((res, rej) => {
+        spark.QClient.eventEmitter.once('packid_' + tmp_id, (data) => {
             res(data);
         });
         setTimeout(() => {
-            rej({reason:'timeout'});
+            rej({ reason: 'timeout' });
         }, 10e3);
     });
 }
-spark.QClient.setOwnProperty('sendGroupForwardMsg',sendGroupForwardMsg);
+spark.QClient.setOwnProperty('sendGroupForwardMsg', sendGroupForwardMsg);
 
-function sendGroupBan(gid,mid,d){
-    spark.QClient.sendWSPack(packbuilder.GroupBanPack(gid,mid,d));
+function sendGroupBan(gid, mid, d) {
+    spark.QClient.sendWSPack(packbuilder.GroupBanPack(gid, mid, d));
 }
-spark.QClient.setOwnProperty('sendGroupBan',sendGroupBan);
+spark.QClient.setOwnProperty('sendGroupBan', sendGroupBan);
 
-function deleteMsg(id){
+function deleteMsg(id) {
     spark.QClient.sendWSPack(packbuilder.DeleteMsgPack(id));
 }
-spark.QClient.setOwnProperty('deleteMsg',deleteMsg);
+spark.QClient.setOwnProperty('deleteMsg', deleteMsg);
 
-function getGroupMemberList(gid){
+function getGroupMemberList(gid) {
     let tmp_id = uuid();
-    spark.QClient.sendWSPack(packbuilder.GroupMemberListPack(gid,tmp_id));
-    return new Promise((res,rej)=>{
-        spark.QClient.eventEmitter.once('packid_'+tmp_id,(data)=>{
+    spark.QClient.sendWSPack(packbuilder.GroupMemberListPack(gid, tmp_id));
+    return new Promise((res, rej) => {
+        spark.QClient.eventEmitter.once('packid_' + tmp_id, (data) => {
             res(data);
         });
         setTimeout(() => {
-            rej({reason:'timeout'});
+            rej({ reason: 'timeout' });
         }, 10e3);
     })
 }
-spark.QClient.setOwnProperty('getGroupMemberList',getGroupMemberList)
+spark.QClient.setOwnProperty('getGroupMemberList', getGroupMemberList)
 
-function getGroupMemberInfo(gid,mid){
+function getGroupMemberInfo(gid, mid) {
     let tmp_id = uuid();
-    spark.QClient.sendWSPack(packbuilder.GroupMemberInfoPack(gid,mid,tmp_id));
-    return new Promise((res,rej)=>{
-        spark.QClient.eventEmitter.once('packid_'+tmp_id,(data)=>{
+    spark.QClient.sendWSPack(packbuilder.GroupMemberInfoPack(gid, mid, tmp_id));
+    return new Promise((res, rej) => {
+        spark.QClient.eventEmitter.once('packid_' + tmp_id, (data) => {
             res(data);
         });
         setTimeout(() => {
-            rej({reason:'timeout'});
+            rej({ reason: 'timeout' });
         }, 10e3);
     })
 }
-spark.QClient.setOwnProperty('getGroupMemberInfo',getGroupMemberInfo);
+spark.QClient.setOwnProperty('getGroupMemberInfo', getGroupMemberInfo);
 
-/*
-spark.on('ws.open',()=>{
-    spark.QClient.getGroupMemberInfo(519916681,2959435045).then(res=>{
-        console.log(res);
-    });
-});
-
-
-spark.debug = true;
-
-spark.on('message.group.normal',(pack,reply)=>{
-    if(pack.raw_message.startsWith('run') && pack.group_id == 519916681){
-        try{
-            reply('running :' +pack.raw_message.substring(4));
-            eval(pack.raw_message.substring(4))
-        }catch(e){
-            reply(e.toString());
-        }
-
-    }
-})
-
-
-*/
