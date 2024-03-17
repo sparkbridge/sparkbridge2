@@ -10,6 +10,10 @@
 └─economy  <-- 经济配置文件  
 
 ```
+
+
+>[!Warning] sparkbridge所支持的json中不应当包含注释！
+
 ## 登录项配置文件
 打开/base的`config.json`
 ``` json
@@ -17,12 +21,15 @@
     target: 'ws://127.0.0.1:8080', //对接gocqhttp所需要的address地址和端口
     qid: 114514, //你的bot的QQ号
     pwd: 'linktoken', //gocqhttp 配置文件中access-token的配对密匙，需保持一致，不是密码！！！
+    onebot_mode_v11 : true //是否使用Onebot的string模式，如果你不使用array，保持true即可。
 }
 ```
 
 :::
 
 ## 配置 GO-CQHTTP
+
+>[!Warning] Gocq可能遇到登录问题！强烈建议你使用LiteloaderQQNTOnebot模式登录！
 
 ### 下载 [GO-CQHTTP](https://github.com/Mrs4s/go-cqhttp/releases)
 
@@ -35,16 +42,9 @@
 
 在 CQHTTP 配置文件中，
 
-首先，填写`post-format`值为`array`,就像这样
-```yaml
-message:
-  # 上报数据类型
-  # 可选: string,array
-  post-format: array
 
-```
 
-然后，更改gocq中access-token为你在sb机器人配置文件中填的配对密匙
+首先，更改gocq中access-token为你在sb机器人配置文件中填的配对密匙
 ```yaml
 # 默认中间件锚点
 default-middlewares: &default
@@ -85,7 +85,7 @@ sbBot将会根据你的填写开始连接。如果一切顺利，bds应该会输
 
 ``` json
 {
-    "group": 12345678, // 机器人所生效群。目前只支持一个
+    "group": 12345678, // 只支持一个
     "admins": [10001,10002], // 管理员，是一个数组，可添加多个，用逗号分割
 }
 ```
@@ -143,7 +143,7 @@ Join and Left and Chat msg，提供群服互通的支持：
     "^chat(.+)": {
         "cmd": "t|all:[群聊]%USER_XBOXID% >> $1",
         "adm": false
-    },
+    },//就是在这个地方实现了前缀转发。
     "^执行(.+)": {
         "cmd": "run|$1",
         "adm": true
