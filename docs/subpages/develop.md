@@ -2,6 +2,8 @@
 
 很高兴认识你，欢迎你参与到Sparkbridge2的开发中。这里我们来稍微讲一下sb2的开发：
 
+>更多相关来看[API文档](/subpages/API.md)
+
 ## 普通模式开发
 
 正如前面插件指南所说，插件装载位置在于“\plugins\nodejs\sparkbridge2\plugins”，因此在这里新建一个文件夹，随便起一个名字，就可以了。
