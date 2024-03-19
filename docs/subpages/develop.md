@@ -55,6 +55,23 @@ spark.on('message.group.normal', (e, reply) => {
 ```
 你可以试试把这个代码本地执行一次！
 
+## 插件配置文件的加载
+
+SparkBridge为插件提供了配置加载API，以便在SandBox和BDS模式提供分离的配置文件。加载方式如下：
+
+```js
+const _config = spark.getFileHelper('Example');
+const JSON5 = require('json5');
+//此处为插件Example加载了配置文件
+_config.initFile('config.json', {
+    config: "For example"
+});
+//在配置文件目录“./Example”文件夹下生成config
+
+var config = JSON5.parse(_config.getFile('config.json'));
+//加载配置文件到变量以便后期调用。
+```
+
 ## Sandbox分离开发
 
 使用Sandbox可以使得插件分离BDS运行，不依赖于liteloaderBDS的纯群聊插件都可以使用Sandbox开发，因此你甚至可以将Sparkbridge作为一个普通聊天机器人使用。
