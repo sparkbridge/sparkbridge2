@@ -2,7 +2,7 @@
 
 很高兴认识你，欢迎你参与到Sparkbridge2的开发中。这里我们来稍微讲一下sb2的开发：
 
->更多相关来看[API文档](/subpages/API.md)
+>更多相关来看[API文档](/subpages/API.md)和[Event事件文档](/subpages/Event.md)
 
 ## 普通模式开发
 
