@@ -1,6 +1,6 @@
 # Msgbuilder API 文档
 
-首先你需要在你的插件中调用库packbuilder
+首先你需要在你的插件中调用库msgbuilder
 ```js
 const msgbuilder = require('../../handles/msgbuilder');
 ```
@@ -11,6 +11,9 @@ msgbuilder.someFunction()
 ```
 
 以调用
+
+>发消息的时候请使用数组来和正常信息的字符串拼接
+
 
 ---
 
