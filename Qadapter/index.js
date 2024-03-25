@@ -54,6 +54,7 @@ class Qadapter {
     on(evk, func) {
         if (spark.debug) console.log('触发on', evk);
         this.eventEmitter.on(evk, func);
+        this.eventEmitter.setMaxListeners(20)
         //if(this.eventKeyMap.has(evk)==false) this.eventKeyMap.set(evk,[]);
         //this.eventKeyMap.get(evk).push(func);
     }
