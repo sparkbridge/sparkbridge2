@@ -11,7 +11,7 @@ const PLUGIN_ROOT_DIR = './plugins/nodejs/sparkbridge2';
 var PLUGIN_DATA_DIR;
 
 if (typeof mc !== 'undefined') {
-    PLUGIN_DATA_DIR = './plugins/sparkbridge2';
+    PLUGIN_DATA_DIR = './plugins/sparkbridge2/serverdata';
 } else {
     PLUGIN_DATA_DIR = './testdata/';
 }

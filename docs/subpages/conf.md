@@ -1,6 +1,6 @@
 # 配置文件详解
 
-启动一次SparkBridge后，会在`plugin/sparkbridge2/`文件夹生成配置文件
+启动一次SparkBridge后，会在`plugin/sparkbridge2/serverdata`文件夹生成配置文件
 
 ``` 
 ┌─base <-- gocqhttp登录项配置文件
@@ -108,7 +108,7 @@ sbBot将会根据你的填写开始连接。如果一切顺利，bds应该会输
 
 Join and Left and Chat msg，提供群服互通的支持：
 
-配置文件位于`/plugins/sparkbridge2/JandLandCmsg/config.json`
+配置文件位于`/plugins/sparkbridge2/serverdata/JandLandCmsg/config.json`
 ```json
 {
     "switch": {
@@ -131,7 +131,7 @@ Join and Left and Chat msg，提供群服互通的支持：
 
 插件`regex`可提供自定义正则表达式功能
 
-配置文件位于`/plugins/sparkbridge2/regex/data.json`
+配置文件位于`/plugins/sparkbridge2/serverdata/regex/data.json`
 
 ``` json
 {

@@ -12,7 +12,17 @@ msgbuilder.someFunction()
 
 以调用
 
->发消息的时候请使用数组来和正常信息的字符串拼接
+>发消息的时候请使用数组来和正常信息的字符串拼接:
+如：
+```js
+let string=[]
+let msg="some word"
+let img=msgbuilder.img(Buffer)
+string.push(msg)
+string.push(img)
+reply(string)
+//发送文字同时和图片
+```
 
 
 ---
