@@ -1,3 +1,20 @@
+# 开始之前...
+
+llplugin放进plugins文件之后开启服务器，会解压插件。这个时候plugins/sparkbridge会看见一个“manifest.json”·
+``` json
+{
+    "entry": "index.js",//<------此处空位填入“index.js”，代表程序入口
+    "name": "sparkbridge2",
+    "type": "lse-nodejs",
+    "dependencies": [
+        {
+            "name": "legacy-script-engine-nodejs"
+        }
+    ]
+}
+```
+然后重新启动服务器，就可以开始加载配置文件准备好下一步了
+
 # 配置文件详解
 
 启动一次SparkBridge后，会在`plugin/sparkbridge2/serverdata`文件夹生成配置文件
