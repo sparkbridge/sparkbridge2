@@ -46,7 +46,7 @@ spark.on('gocq.pack', (pack) => {
             break;
         case 'message':
             //console.log("in");
-            if (_isArray) {
+            if (!_isArray) {
                 //console.log("in",typeof pack.message);
                 let _pmessage = parseCQString(pack.message.toString());
                  pack.message = _pmessage;
