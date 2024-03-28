@@ -44,7 +44,11 @@ llplugin放进plugins文件之后开启服务器，会解压插件。这个时�
 
 :::
 
+我们有两个对接方法：
+
 ## 配置 LLOneBot
+>[!Warning] 此对接方法和gocqhttp二选一即可！
+
 > [开始前请阅读此教程安装QQNT和LLOneBot模块](https://llonebot.github.io/zh-CN/guide/getting-started)
 
 打开LLOneBot设置界面：
@@ -60,6 +64,8 @@ Http服务我们用不到，直接关闭；
 其余默认即可
 
 ## 配置 GO-CQHTTP
+
+>[!Warning] 此对接方法和LLOB二选一即可！
 
 >[!Warning] Gocq可能遇到登录问题！强烈建议你使用LLOnebot模式登录！
 
