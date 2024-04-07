@@ -1,5 +1,7 @@
 # Msgbuilder API 文档
 
+这一部分用于更加灵活地构建信息
+
 首先你需要在你的插件中调用库msgbuilder
 ```js
 const msgbuilder = require('../../handles/msgbuilder');
@@ -128,104 +130,89 @@ reply(string)
 
 
 
-# Websocket API 文档
+# Spark API 文档
 
-首先你需要在你的插件中调用库packbuilder
+## 多插件协同API
+
 ```js
+spark.setOwnProperty('#插件名字#', {});
+//创建一个属于你的插件的api共用库
+
+spark.#插件名字#.something=something
+//注册全局api
+
+//————————————————————
+//此后在其他插件使用
+spark.#插件名字#.something()
+
+```
+
+## QQ发送 API
+
+使用QCilent调用这些通用api：
+```js
+spark.QClient.SOMEFUNCTION()
+```
+
+获取返回值：
+```js
+async function SOMEFUNCTION() {
+            try {
+                let data = await spark.QClient.SOMEFUNCTION();
+               // console.log("Received data:", data);
+                return data;
+            } catch (error) {
+                console.error("Error:", error);
+                throw error; // 可以选择抛出错误或者处理错误
+            }
+        }
+        //使用async创建函数
+
+let getsth =await SOMEFUNCTION()
+console.log(getsth)//拿到message传回值，详细规则参见GocqHttp文档。
+```
+
+### sendGroupMsg(gid, msg)
+
+发送一个群信息
+
+- **参数：**
+  - `gid`：群ID。
+  - `msg`：信息内容。
+
+
+
+### sendPrivateMsg(fid, msg)
+
+发送一个私信信息
+
+- **参数：**
+  - `fid`：好友ID。
+  - `msg`：信息内容。
+
+### sendGroupForwardMsg(gid, msg) 
+
+发送群合并聊天信息
+
+- **参数：**
+  - `gid`：群ID。
+  - `msg`：自定义转发消息, 具体看 [CQcode](https://docs.go-cqhttp.org/cqcode/#%E5%90%88%E5%B9%B6%E8%BD%AC%E5%8F%91%E6%B6%88%E6%81%AF%E8%8A%82%E7%82%B9)。
+
+
+### deleteMsg(id)
+撤回某个信息
+
+- **参数：**
+  - `id`：信息id
+
+## 如何自行实现api
+
+使用
+```js
+spark.QClient.sendWSPack(SOMEFUNCTION(sth));
+//自行通过sendWSPack调用自己的方法
+
+//也可以导入packbuilder库引入已有的api
 const packbuilder = require('../../handles/packbuilder');
-```
-
-然后使用
-
-```js
-spark.QClient.sendWSPack(packbuilder.someFUNCTION(sth));
-
-/*如：*/
 spark.QClient.sendWSPack(packbuilder.GroupMessagePack(gid, msg, tmp_id));
-
 ```
-来使用api
-
-
-
----
-
-## `PrivateMessagePack(fid, msg, id)`
-
-- **描述：** 构造私聊消息包对象。
-  
-  - `fid`（字符串）：好友的 ID。
-  - `msg`（字符串）：消息内容。
-  - `id`（字符串）：回显标识符。
-  
-
-
----
-
-## `GroupMessagePack(gid, msg, id)`
-
-- **描述：** 构造群聊消息包对象。
-  
-  - `gid`（字符串）：群组 ID。
-  - `msg`（字符串）：消息内容。
-  - `id`（字符串）：回显标识符。
-  
-
-
----
-
-## `LikePack(fid)`
-
-- **描述：** 构造点赞包对象。
-  
-  - `fid`（字符串）：接收者的用户 QQ。
-  
-
-
----
-
-## `DeleteMsgPack(id)`
-
-- **描述：** 构造删除消息包对象。
-  
-  - `id`（字符串）：消息 ID。
-
-
-
----
-
-## `GroupBanPack(gid, mid, duration)`
-
-- **描述：** 构造禁言群成员包对象。
-  
-  - `gid`（字符串）：群组 ID。
-  - `mid`（字符串）：成员的用户 QQ。
-  - `duration`（数值）：禁言时长（单位：秒）。
-  
-
-
----
-
-## `GroupRequestPack(flag, sub_type, approve, echo)`
-
-- **描述：** 构造设置群添加请求包对象。
-  
-  - `flag`（字符串）：请求标志。
-  - `sub_type`（字符串）：子类型。
-  - `approve`（布尔值）：是否批准。
-  - `echo`（字符串）：回显标识符。
-  
-
-
----
-
-## `FriendRequestPack(flag, approve, echo)`
-
-- **描述：** 构造设置好友添加请求包对象。
-  
-  - `flag`（字符串）：请求标志。
-  - `approve`（布尔值）：是否批准。
-  - `echo`（字符串）：回显标识符。
-  
-
----
