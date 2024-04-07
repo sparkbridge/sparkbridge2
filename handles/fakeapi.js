@@ -1,19 +1,24 @@
-global.mc={};
+global.mc = {};
+global.ll = {};
 
-mc.listen = (evk,func) =>{
-    console.log('监听：'+evk);
+ll.export = (fnc,name) =>{
+    console.log('共享：' + name);
 }
 
-mc.runcmd = (cmd) =>{
-    console.log('执行：'+cmd);
+mc.listen = (evk, func) => {
+    console.log('监听：' + evk);
 }
 
-mc.runcmdEx = (cmd) =>{
-    console.log('执行：'+cmd);
-    return {output:'执行成功',success:true}
+mc.runcmd = (cmd) => {
+    console.log('执行：' + cmd);
+}
+
+mc.runcmdEx = (cmd) => {
+    console.log('执行：' + cmd);
+    return { output: '执行成功', success: true }
 }
 
 
-mc.broadcast = (msg) =>{
-    console.log('广播：'+msg);
+mc.broadcast = (msg) => {
+    console.log('广播：' + msg);
 }

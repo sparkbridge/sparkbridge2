@@ -1,6 +1,23 @@
+# 开始之前...
+
+llplugin放进plugins文件之后开启服务器，会解压插件。这个时候plugins/sparkbridge会看见一个“manifest.json”·
+``` json
+{
+    "entry": "index.js",//<------此处空位填入“index.js”，代表程序入口
+    "name": "sparkbridge2",
+    "type": "lse-nodejs",
+    "dependencies": [
+        {
+            "name": "legacy-script-engine-nodejs"
+        }
+    ]
+}
+```
+然后重新启动服务器，就可以开始加载配置文件准备好下一步了
+
 # 配置文件详解
 
-启动一次SparkBridge后，会在`plugin/sparkbridge2/`文件夹生成配置文件
+启动一次SparkBridge后，会在`plugin/sparkbridge2/serverdata`文件夹生成配置文件
 
 ``` 
 ┌─base <-- gocqhttp登录项配置文件
@@ -10,19 +27,47 @@
 └─economy  <-- 经济配置文件  
 
 ```
+
+
+>[!Warning] sparkbridge所支持的json中不应当包含注释！
+
 ## 登录项配置文件
 打开/base的`config.json`
 ``` json
 {
-    target: 'ws://127.0.0.1:8080', //对接gocqhttp所需要的address地址和端口
-    qid: 114514, //你的bot的QQ号
-    pwd: 'linktoken', //gocqhttp 配置文件中access-token的配对密匙，需保持一致，不是密码！！！
+    "target": "ws://127.0.0.1:8080", //对接Onebot实现所需要的address地址和端口
+    "qid": 114514, //你的bot的QQ号
+    "pwd": "linktoken", //gocqhttp 配置文件中access-token的配对密匙，需保持一致，不是密码！！！
+    "onebot_mode_v11" : true //是否使用Onebot的string模式，如果你不使用array，保持true即可。
 }
 ```
 
 :::
 
+我们有两个对接方法：
+
+## 配置 LLOneBot
+>[!Warning] 此对接方法和gocqhttp二选一即可！
+
+> [开始前请阅读此教程安装QQNT和LLOneBot模块](https://llonebot.github.io/zh-CN/guide/getting-started)
+
+打开LLOneBot设置界面：
+
+Http服务我们用不到，直接关闭；
+
+首先我们启动正向WebSocket服务
+
+监听端口设置为前面json中target中设置过的端口
+
+下面Access Token设置为前面的pwd的参数
+
+其余默认即可
+
 ## 配置 GO-CQHTTP
+
+>[!Warning] 此对接方法和LLOB二选一即可！
+
+>[!Warning] Gocq可能遇到登录问题！强烈建议你使用LLOnebot模式登录！
 
 ### 下载 [GO-CQHTTP](https://github.com/Mrs4s/go-cqhttp/releases)
 
@@ -35,16 +80,9 @@
 
 在 CQHTTP 配置文件中，
 
-首先，填写`post-format`值为`array`,就像这样
-```yaml
-message:
-  # 上报数据类型
-  # 可选: string,array
-  post-format: array
 
-```
 
-然后，更改gocq中access-token为你在sb机器人配置文件中填的配对密匙
+首先，更改gocq中access-token为你在sb机器人配置文件中填的配对密匙
 ```yaml
 # 默认中间件锚点
 default-middlewares: &default
@@ -85,7 +123,7 @@ sbBot将会根据你的填写开始连接。如果一切顺利，bds应该会输
 
 ``` json
 {
-    "group": 12345678, // 机器人所生效群。目前只支持一个
+    "group": 12345678, // 只支持一个
     "admins": [10001,10002], // 管理员，是一个数组，可添加多个，用逗号分割
 }
 ```
@@ -93,7 +131,7 @@ sbBot将会根据你的填写开始连接。如果一切顺利，bds应该会输
 
 Join and Left and Chat msg，提供群服互通的支持：
 
-配置文件位于`/plugins/sparkbridge2/JandLandCmsg/config.json`
+配置文件位于`/plugins/sparkbridge2/serverdata/JandLandCmsg/config.json`
 ```json
 {
     "switch": {
@@ -116,7 +154,7 @@ Join and Left and Chat msg，提供群服互通的支持：
 
 插件`regex`可提供自定义正则表达式功能
 
-配置文件位于`/plugins/sparkbridge2/regex/data.json`
+配置文件位于`/plugins/sparkbridge2/serverdata/regex/data.json`
 
 ``` json
 {
@@ -143,7 +181,7 @@ Join and Left and Chat msg，提供群服互通的支持：
     "^chat(.+)": {
         "cmd": "t|all:[群聊]%USER_XBOXID% >> $1",
         "adm": false
-    },
+    },//就是在这个地方实现了前缀转发。
     "^执行(.+)": {
         "cmd": "run|$1",
         "adm": true
