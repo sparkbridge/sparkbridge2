@@ -23,7 +23,7 @@ _config.initFile('config.json', {
         left: true,
         chat: {
             group: true,
-            server: true //发送到服务器的默认为关闭，默认的正则表达式附带了chat xxxx的正则
+            server: false //发送到服务器的默认为关闭，默认的正则表达式附带了chat xxxx的正则
         }
     },
     chatMaxLength: 20,

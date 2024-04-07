@@ -2,6 +2,8 @@
 
 很高兴认识你，欢迎你参与到Sparkbridge2的开发中。这里我们来稍微讲一下sb2的开发：
 
+>更多相关来看[API文档](/subpages/API.md)和[Event事件文档](/subpages/Event.md)
+
 ## 普通模式开发
 
 正如前面插件指南所说，插件装载位置在于“\plugins\nodejs\sparkbridge2\plugins”，因此在这里新建一个文件夹，随便起一个名字，就可以了。
@@ -53,13 +55,30 @@ spark.on('message.group.normal', (e, reply) => {
 ```
 你可以试试把这个代码本地执行一次！
 
+## 插件配置文件的加载
+
+SparkBridge为插件提供了配置加载API，以便在SandBox和BDS模式提供分离的配置文件。加载方式如下：
+
+```js
+const _config = spark.getFileHelper('Example');
+const JSON5 = require('json5');
+//此处为插件Example加载了配置文件
+_config.initFile('config.json', {
+    config: "For example"
+});
+//在配置文件目录“./Example”文件夹下生成config
+
+var config = JSON5.parse(_config.getFile('config.json'));
+//加载配置文件到变量以便后期调用。
+```
+
 ## Sandbox分离开发
 
 使用Sandbox可以使得插件分离BDS运行，不依赖于liteloaderBDS的纯群聊插件都可以使用Sandbox开发，因此你甚至可以将Sparkbridge作为一个普通聊天机器人使用。
 
 使用Sandbox需要Nodejs环境，如何安装不需要我多说了吧，安装完成后，打开Sandbox.bat。
 
-如果产生报错，请在Sparkbridge根目录CMD执行npm install。
+如果产生报错，请在Sparkbridge根目录CMD执行npm i。
 
 ```
  [sparkbridge2] [warn] ====本地调试器====

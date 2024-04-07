@@ -6,5 +6,7 @@
 [插件市场](/subpages/store.md)
 [装载插件](/subpages/plugin.md)
 [开发指南](/subpages/develop.md)
+[Event事件文档](/subpages/Event.md)
+[API指南](/subpages/API.md)
 [Sparkbridge1指南](https://sparkbridge.github.io/docs/)
 [关于我们](/subpages/about.md)
