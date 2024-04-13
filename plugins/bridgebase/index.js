@@ -13,7 +13,7 @@ const build_reply = (id, type, mid) => {
             msg.unshift({
                 type: 'reply',
                 data: {
-                    id: mid
+                    id: mid.toString()
                 }
             });
         }
