@@ -4,6 +4,8 @@
 
 ## os
 
+by [户山兔兔](https://www.minebbs.com/members/daniel.25994/)
+
 群内自助查询服务器状态
 
 ![](/store/sparkos.jpg)
@@ -11,21 +13,29 @@
 链接：https://www.minebbs.com/resources/spark-os.5657/
 
 
-## niuzi 牛子系统
+## Rank2 -Q群获取游戏内可视化统计数据 离线生成分享图
 
-在你的群里面和群友一起比比谁的牛子长（）
+by [Sbaoor](https://www.minebbs.com/members/sbaoor.7769/) & [户山兔兔](https://www.minebbs.com/members/daniel.25994/)
 
-![](/store/niuzi.png)
+![](/store/rank2.jpg)
 
-链接：敬请期待
+链接：https://www.minebbs.com/resources/spark2-rank-q-sb.7886/
 
-## setu 涩图插件
+## custmap2 -群内自助地图画插件
 
-在你的群里面获取一张涩图
+by [10_27](https://www.minebbs.com/members/10_27.10809/) & [户山兔兔](https://www.minebbs.com/members/daniel.25994/)
 
-![](/store/setu.png)
+![](/store/custmap.png)
 
-链接：敬请期待
+链接：https://www.minebbs.com/resources/spark2-custmap-sb2.7754/
+
+## Welcome 群内欢迎插件
+
+by [户山兔兔](https://www.minebbs.com/members/daniel.25994/)
+
+![](/store/welcome.jpg)
+
+链接：https://www.minebbs.com/resources/spark-welcome-q.5753/
 
 ## DeathMessages - 更生动具体的死亡信息
 
@@ -43,9 +53,34 @@
 
 链接：https://www.minebbs.com/resources/advancements-java.4949/
 
+## homo - homo娱乐插件
 
+by [户山兔兔](https://www.minebbs.com/members/daniel.25994/)
+
+![](/store/homo.png)
+
+链接：https://www.minebbs.com/resources/spark-homo-homo.5858/
+
+## tarot -塔罗牌娱乐插件
+
+by [户山兔兔](https://www.minebbs.com/members/daniel.25994/)
+
+![](/store/tarot.png)
+
+链接：https://www.minebbs.com/resources/spark-tarot.5870/
+
+
+## answerbook -答案之书娱乐插件
+
+by [户山兔兔](https://www.minebbs.com/members/daniel.25994/)
+
+![](/store/answerbook.jpg)
+
+链接：https://www.minebbs.com/resources/spark-answerbook.5856/
 
 ## spark.qbot
+
+by [户山兔兔](https://www.minebbs.com/members/daniel.25994/)
 
 基于青云客AI的聊天BOT
 
@@ -54,6 +89,8 @@
 链接:https://www.minebbs.com/resources/spark-qbot.5744/
 
 ## spark.pic
+
+by [户山兔兔](https://www.minebbs.com/members/daniel.25994/)
 
 群内获取二次元图片
 
