@@ -8,7 +8,7 @@
 
 下载下来的压缩包请解压。
 
-然后把`.llplugin`文件放到BDS的plugins文件夹
+然后把里面的sparkbridge放到BDS的plugins文件夹
 
 ## 从Github安装
 
