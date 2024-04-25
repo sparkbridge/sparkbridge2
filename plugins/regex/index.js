@@ -123,12 +123,33 @@ regCmd('g', (_arg, reg, e, reply) => {
     spark.QClient.sendGroupMsg(Number(target), buildString(arg, reg, e))
 })
 
+
+let JandQuitConfig=JSON.parse(spark.getFileHelper('JandLandCmsg').getFile('config.json'))
+function hasShield(raw){
+    var ret = false;
+  JandQuitConfig.chatShield.forEach(et => {
+        if(raw.match(et)){
+            ret = true
+        }
+    });
+    return ret;
+}
+
 regCmd('t', (arg, reg, e, reply) => {
     let t_and_m = arg.split(':');
     let tp = t_and_m[0];
     let ms = t_and_m[1];
+    console.log(ms)
     if (tp == 'all') {
-        mc.broadcast(buildString(ms, reg, e).trim());
+        let tellallMsg=buildString(ms, reg, e).trim()
+        if(tellallMsg.length > JandQuitConfig.chatMaxLength+ms.replace(/\$1/g, '').length){
+            tellallMsg='[群聊]聊天长度过长，将不会转发'
+        }
+        if(hasShield(tellallMsg)){
+            tellallMsg='[群聊]聊天包含违禁词，将不会转发'
+        }
+        console.log(tellallMsg)
+        mc.broadcast(tellallMsg);
     } else {
         let top = mc.getPlayer(tp);
         if (top) {
@@ -268,6 +289,7 @@ spark.on('message.group.normal', (e, reply) => {
     const { raw_message, group_id, user_id } = e;
     //console.log(raw_message, group_id, user_id ,GROUP);
     const raw = formatMsg(e.message);
+   
     //console.log(raw);
     if (group_id !== GROUP) return;
     for (let reg_it in regexs) {
@@ -283,6 +305,7 @@ spark.on('message.group.normal', (e, reply) => {
         try {
             regexs[reg_it].cmd.split(';').forEach(regtmp => {
                     commandParse(regtmp, tmp, e, reply);
+            
                 })
         } catch (err) {
             console.log(err);
