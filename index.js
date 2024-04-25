@@ -6,8 +6,10 @@ const fhelper = require('./handles/file');
 const lg = require('./handles/logger');
 const Spark = require("./spark");
 const PLUGIN_ROOT_DIR = './plugins/nodejs/sparkbridge2';
-
-
+const logger = lg.getLogger('sparkbridge2');
+process.on('unhandledRejection', (reason, promise) => {
+logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
 var PLUGIN_DATA_DIR;
 
 if (typeof mc !== 'undefined') {
@@ -25,7 +27,7 @@ let RAW_CONFIG = ROOT_FILE_HELPER.getFile('config.json');
 const CONFIG = JSON5.parse(RAW_CONFIG);
 
 global.spark = new Spark(CONFIG.target, CONFIG.qid, CONFIG.pwd);
-const logger = lg.getLogger('sparkbridge2');
+
 logger.info('SparkBridge载入中...VERSION:' + ME.version);
 spark.VERSION = ME.VERSION;
 
