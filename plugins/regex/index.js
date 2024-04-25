@@ -139,7 +139,7 @@ regCmd('t', (arg, reg, e, reply) => {
     let t_and_m = arg.split(':');
     let tp = t_and_m[0];
     let ms = t_and_m[1];
-    console.log(ms)
+    
     if (tp == 'all') {
         let tellallMsg=buildString(ms, reg, e).trim()
         if(tellallMsg.length > JandQuitConfig.chatMaxLength+ms.replace(/\$1/g, '').length){
@@ -148,7 +148,7 @@ regCmd('t', (arg, reg, e, reply) => {
         if(hasShield(tellallMsg)){
             tellallMsg='[群聊]聊天包含违禁词，将不会转发'
         }
-        console.log(tellallMsg)
+
         mc.broadcast(tellallMsg);
     } else {
         let top = mc.getPlayer(tp);
