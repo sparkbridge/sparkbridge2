@@ -27,6 +27,12 @@ logger.info("Hi!")//输出
 
 然后你应该会看见“2024-04-26 11:45:14 [foobar] [info] Hi!”这样的输出
 
+## 文件读取api 
+
+```js
+const configFile = spark.getFileHelper('Example');//获取Example插件的配置文件目录
+let a=configFile.getFile("a.jpg")//获取目录下指定文件
+```
 ## QQ发送 API
 
 使用QCilent调用这些通用api：
