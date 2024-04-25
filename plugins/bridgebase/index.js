@@ -1,6 +1,8 @@
 const msgbuilder = require('../../handles/msgbuilder')
 const packbuilder = require('../../handles/packbuilder');
 const { parseCQString } = require('../../handles/parserCQString');
+const lg = require('../../handles/logger')
+const logger = lg.getLogger('QClient');
 function text(str) {
     if (typeof str == 'string') return msgbuilder.text(str);
     else return str;
@@ -83,6 +85,14 @@ function uuid() {
     var uuid = s.join('')
     return uuid
 }
+function defaultErrorHandler(error) {
+    if (error.reason === 'timeout') {
+       logger.warn("请求超时,此信息可能发送失败");
+        // 这里可以做一些超时后的默认处理，比如重试等
+    } else {
+        logger.error("请求发送时发生错误:", error);
+    }
+}
 
 
 function sendGroupMsg(gid, msg) {
@@ -95,7 +105,7 @@ function sendGroupMsg(gid, msg) {
         });
         setTimeout(() => {
             rej({ reason: 'timeout' });
-        }, 10e3);
+        }, 10e3).catch(defaultErrorHandler);
     });
 }
 spark.QClient.setOwnProperty('sendGroupMsg', sendGroupMsg);
@@ -110,7 +120,7 @@ function sendPrivateMsg(fid, msg) {
         });
         setTimeout(() => {
             rej({ reason: 'timeout' });
-        }, 10e3);
+        }, 10e3).catch(defaultErrorHandler);
     });
 }
 spark.QClient.setOwnProperty('sendPrivateMsg', sendPrivateMsg);
@@ -124,7 +134,7 @@ function sendGroupForwardMsg(gid, msg) {
         });
         setTimeout(() => {
             rej({ reason: 'timeout' });
-        }, 10e3);
+        }, 10e3).catch(defaultErrorHandler);
     });
 }
 spark.QClient.setOwnProperty('sendGroupForwardMsg', sendGroupForwardMsg);
@@ -148,7 +158,7 @@ function getGroupMemberList(gid) {
         });
         setTimeout(() => {
             rej({ reason: 'timeout' });
-        }, 10e3);
+        }, 10e3).catch(defaultErrorHandler);
     })
 }
 spark.QClient.setOwnProperty('getGroupMemberList', getGroupMemberList)
@@ -162,7 +172,7 @@ function getGroupMemberInfo(gid, mid) {
         });
         setTimeout(() => {
             rej({ reason: 'timeout' });
-        }, 10e3);
+        }, 10e3).catch(defaultErrorHandler);
     })
 }
 spark.QClient.setOwnProperty('getGroupMemberInfo', getGroupMemberInfo);
