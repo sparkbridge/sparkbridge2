@@ -33,6 +33,7 @@ class Builder {
         return { type: 'image', data: { file: file, subType: 0 } }
     }
     static at(qid) {
+        qid=qid.toString()
         return { type: "at", data: { "qq": qid } };
     }
     static face(id) {
