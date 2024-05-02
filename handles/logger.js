@@ -4,7 +4,7 @@ const dayjs = require('dayjs');
 const today = dayjs();
 
 const myFormat = printf(({ level, message, label}) => {
-    return `${dayjs().format("YYYY-MM-DD h:mm:ss")} [${label}] [${ level}] ${message}`;
+    return `${dayjs().format("YYYY-MM-DD HH:mm:ss")} [${label}] [${ level}] ${message}`;
   });
 
 function SparkLogger(plugin_name){
