@@ -31,7 +31,9 @@ logger.info("Hi!")//输出
 
 ```js
 const configFile = spark.getFileHelper('Example');//获取Example插件的配置文件目录
-let a=configFile.getFile("a.jpg")//获取目录下指定文件
+let a=configFile.getFile("a.txt")//获取目录下指定文本文件
+let b=configFile.getBuffer("b.jpg")//获取插件目录下指定二进制文件（如图片，音视频等等）
+
 ```
 ## QQ发送 API
 
