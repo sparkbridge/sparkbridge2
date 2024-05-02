@@ -1,6 +1,6 @@
 # Spark事件文档
 
->更多事件可以参考Gocq或者Onebot的文档，或者前往./spark/index.js
+>更多事件可以参考[Go-CqHttp-事件](https://docs.go-cqhttp.org/event)或者[Onebot](https://github.com/botuniverse/onebot-11/blob/master/event/README.md)的文档，或者前往./spark/index.js
 
 ```js
 class Spark {
@@ -14,6 +14,10 @@ class Spark {
 重新运行程序就可以看到所有的正在触发的事件。
 
 常用事件：
+
+> 触发事件格式为：#post_type#.#message_type#.#sub_type#
+
+> 如下文message.group.normal
 
 
 ## 群信息事件
