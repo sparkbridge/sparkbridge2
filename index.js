@@ -8,7 +8,7 @@ const Spark = require("./spark");
 const PLUGIN_ROOT_DIR = './plugins/nodejs/sparkbridge2';
 const logger = lg.getLogger('sparkbridge2');
 process.on('unhandledRejection', (reason, promise) => {
-logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
+
 });
 var PLUGIN_DATA_DIR;
 
