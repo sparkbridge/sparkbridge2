@@ -18,7 +18,7 @@ spark.#插件名字#.something()
 ## Log记录器
 
 ```js
-const lg = require('./handles/logger');//导入logger库
+const lg = require('../../handles/logger');//导入logger库
 
 const logger = lg.getLogger('foobar');//为你的插件log命名
 
@@ -106,7 +106,7 @@ spark.QClient.sendWSPack(packbuilder.GroupMessagePack(gid, msg, tmp_id));
 ```
 
 
-# Msgbuilder API 文档
+## Msgbuilder API 文档
 
 这一部分用于更加灵活地构建信息
 
@@ -137,7 +137,7 @@ reply(string)
 
 ---
 
-## `img(file)`
+### `img(file)`
 
 返回表示图片消息的对象。
 
@@ -149,7 +149,7 @@ reply(string)
 
 ---
 
-## `at(qid)`
+### `at(qid)`
 
 返回表示 @提及 消息的对象。
 
@@ -161,7 +161,7 @@ reply(string)
 
 ---
 
-## `face(id)`
+### `face(id)`
 
 返回表示表情消息的对象。
 
@@ -173,7 +173,7 @@ reply(string)
 
 ---
 
-## `text(raw)`
+### `text(raw)`
 
 返回表示文本消息的对象。
 
@@ -185,7 +185,7 @@ reply(string)
 
 ---
 
-## `poke(id)`
+### `poke(id)`
 
 返回表示戳一戳消息的对象。
 
@@ -197,7 +197,7 @@ reply(string)
 
 ---
 
-## `reply(id)`
+### `reply(id)`
 
 返回表示回复消息的对象。
 
@@ -209,7 +209,7 @@ reply(string)
 
 ---
 
-## `format(msg)`
+### `format(msg)`
 
 格式化消息以确保其结构正确。
 
@@ -221,7 +221,7 @@ reply(string)
 
 ---
 
-## `ForwardMsgBuilder()`
+### `ForwardMsgBuilder()`
 
 返回 ForwardMsgBuilder 的新实例。
 
