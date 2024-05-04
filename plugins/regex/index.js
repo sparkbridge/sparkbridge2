@@ -124,11 +124,11 @@ regCmd('g', (_arg, reg, e, reply) => {
 })
 
 
-let JandQuitConfig=JSON.parse(spark.getFileHelper('JandLandCmsg').getFile('config.json'))
-function hasShield(raw){
+let JandQuitConfig = JSON.parse(spark.getFileHelper('JandLandCmsg').getFile('config.json'))
+function hasShield(raw) {
     var ret = false;
-  JandQuitConfig.chatShield.forEach(et => {
-        if(raw.match(et)){
+    JandQuitConfig.chatShield.forEach(et => {
+        if (raw.match(et)) {
             ret = true
         }
     });
@@ -139,14 +139,14 @@ regCmd('t', (arg, reg, e, reply) => {
     let t_and_m = arg.split(':');
     let tp = t_and_m[0];
     let ms = t_and_m[1];
-    
+
     if (tp == 'all') {
-        let tellallMsg=buildString(ms, reg, e).trim()
-        if(tellallMsg.length > JandQuitConfig.chatMaxLength+ms.replace(/\$1/g, '').length){
-            tellallMsg='[群聊]聊天长度过长，将不会转发'
+        let tellallMsg = buildString(ms, reg, e).trim()
+        if (tellallMsg.length > JandQuitConfig.chatMaxLength + ms.replace(/\$1/g, '').length) {
+            tellallMsg = '[群聊]聊天长度过长，将不会转发'
         }
-        if(hasShield(tellallMsg)){
-            tellallMsg='[群聊]聊天包含违禁词，将不会转发'
+        if (hasShield(tellallMsg)) {
+            tellallMsg = '[群聊]聊天包含违禁词，将不会转发'
         }
 
         mc.broadcast(tellallMsg);
@@ -220,8 +220,8 @@ function regPlaceHolder(key, recall) {
 
 spark.Cmd.regPlaceHolder = regPlaceHolder;
 
-spark.Cmd.addRegex = (key,item) =>{
-    if(regexs[key] != undefined) return false;
+spark.Cmd.addRegex = (key, item) => {
+    if (regexs[key] != undefined) return false;
     regexs[key] = item;
     return true;
 }
@@ -269,10 +269,10 @@ function formatMsg(msg) {
     return msg.map(t => {
         switch (t.type) {
             case 'at':
-                if(spark.mc.getXbox(t.data.qq) == undefined){
+                if (spark.mc.getXbox(t.data.qq) == undefined) {
                     return '@' + t.data.qq;
                 }
-                return '@' +spark.mc.getXbox(t.data.qq);
+                return '@' + spark.mc.getXbox(t.data.qq);
             case 'text':
                 return t.data.text;
             case 'image':
@@ -289,7 +289,7 @@ spark.on('message.group.normal', (e, reply) => {
     const { raw_message, group_id, user_id } = e;
     //console.log(raw_message, group_id, user_id ,GROUP);
     const raw = formatMsg(e.message);
-   
+
     //console.log(raw);
     if (group_id !== GROUP) return;
     for (let reg_it in regexs) {
@@ -304,12 +304,24 @@ spark.on('message.group.normal', (e, reply) => {
         }
         try {
             regexs[reg_it].cmd.split(';').forEach(regtmp => {
-                    commandParse(regtmp, tmp, e, reply);
-            
-                })
+                commandParse(regtmp, tmp, e, reply);
+
+            })
         } catch (err) {
             console.log(err);
         }
     }
 });
 
+
+spark.on('notice.group_decrease', (e) => {
+
+    const { self_id, user_id, group_id} = e;
+    if (group_id != spark.mc.config.group || user_id == self_id) return
+    if (spark.mc.getXbox(user_id) != undefined) {
+        let xb = spark.mc.getXbox(user_id);
+        spark.mc.remXboxByQid(user_id);
+        spark.QClient.sendGroupMsg(group_id, `用户${xb}退出群聊，已从白名单移除`)
+        mc.runcmd('allowlist remove "' + xb + '"');
+    }
+})
