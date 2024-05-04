@@ -12,6 +12,6 @@ cd ./sparkbridge2/buildtool
 
 cd ../../tmp
 
-REN sparkbridge2.zip sparkbridge2.llplugin
+
 
 pause
