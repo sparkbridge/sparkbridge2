@@ -37,21 +37,13 @@ by [户山兔兔](https://www.minebbs.com/members/daniel.25994/)
 
 链接：https://www.minebbs.com/resources/spark-welcome-q.5753/
 
-## DeathMessages - 更生动具体的死亡信息
+## DeathMessages - spark死亡信息适配
 
-来自[@Tsubasa6848](https://www.minebbs.com/members/tsubasa6848.39046/)的扩展，内置sparkAPI，丰富的死亡讯息（移植了java）以及自动转发群
+来自[@Tsubasa6848](https://www.minebbs.com/members/tsubasa6848.39046/)的扩展
 
 ![](/store/diemsg1.jpg)
 
-链接：https://www.minebbs.com/resources/deathmessages-java.4897/
-
-## Advancements - 还原Java版全部进度/成就系统
-
-来自[@Tsubasa6848](https://www.minebbs.com/members/tsubasa6848.39046/)的扩展，移植java几乎所有成就，内置sparkAPI，完成时自动转发群聊。
-
-![](/store/adventure.jpg)
-
-链接：https://www.minebbs.com/resources/advancements-java.4949/
+链接：https://www.minebbs.com/threads/spark2-deathmessage.25976/
 
 ## homo - homo娱乐插件
 
@@ -87,6 +79,14 @@ by [户山兔兔](https://www.minebbs.com/members/daniel.25994/)
 ![](/store/qbot.jpg)
 
 链接:https://www.minebbs.com/resources/spark-qbot.5744/
+
+## spark.weather
+
+by [户山兔兔](https://www.minebbs.com/members/daniel.25994/)
+
+基于韩小韩api的天气插件
+
+链接:https://www.minebbs.com/resources/spark-weather-bot.5799/
 
 ## spark.pic
 
