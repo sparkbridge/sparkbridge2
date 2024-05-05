@@ -35,6 +35,23 @@ let a=configFile.getFile("a.txt")//获取目录下指定文本文件
 let b=configFile.getBuffer("b.jpg")//获取插件目录下指定二进制文件（如图片，音视频等等）
 
 ```
+## 正则表达式自定义变量
+
+通过插件regex，我们可以通过预留的占位符变量来在信息中插入变量，如%User_Name%
+
+那我们能不能自己创建占位符变量呢
+
+当然可以，我们在框架中预留了自定义占位符api，调用如下：
+
+```js
+//例如，我们想要通过变量%Game_Version%回复游戏版本，那可以进行如下操作
+spark.Cmd.regPlaceHolder('Game_Version', () => {
+    return mc.getBDSVersion();
+});
+
+```
+你可以自制插件导入库实现更多功能。
+
 ## QQ发送 API
 
 使用QCilent调用这些通用api：

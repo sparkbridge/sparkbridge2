@@ -86,10 +86,9 @@ remwl|Lition
 
 |变量|含义|
 |:-:|:-:|
-|%NICKNAME%|发信人QQ昵称|
-|%CARD%|发信人群昵称|
-|%XBOXID%|发信人绑定的游戏ID|
-|%NAME%|如果未绑定游戏ID，则返回群昵称，反之则返回游戏ID|
+|%USER_NAME%|发信人QQ昵称|
+|%USER_CARD%|发信人群昵称|
+|%USER_XBOXID%|发信人绑定的游戏ID|
 
 可直接在正则表达式中调用变量。
 如：
@@ -102,7 +101,9 @@ remwl|Lition
     }
 }
 ```
-此时群里发送“我是%XBOXID%”
+此时群里发送“我是%USER_XBOXID%”
 返回“你是xxxxxxx”（发信人绑定的游戏ID）
+
+Tips:你可以在开发文档中找到一写关于自定义占位符的内容
 
 ## [-->常见问题](/subpages/qa.md)
