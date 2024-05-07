@@ -105,8 +105,8 @@ function sendGroupMsg(gid, msg) {
         });
         setTimeout(() => {
             rej({ reason: 'timeout' });
-        }, 10e3).catch(defaultErrorHandler);
-    });
+        }, 10e3);
+    }).catch(defaultErrorHandler);
 }
 spark.QClient.setOwnProperty('sendGroupMsg', sendGroupMsg);
 
@@ -120,8 +120,8 @@ function sendPrivateMsg(fid, msg) {
         });
         setTimeout(() => {
             rej({ reason: 'timeout' });
-        }, 10e3).catch(defaultErrorHandler);
-    });
+        }, 10e3);
+    }).catch(defaultErrorHandler);
 }
 spark.QClient.setOwnProperty('sendPrivateMsg', sendPrivateMsg);
 
@@ -134,8 +134,8 @@ function sendGroupForwardMsg(gid, msg) {
         });
         setTimeout(() => {
             rej({ reason: 'timeout' });
-        }, 10e3).catch(defaultErrorHandler);
-    });
+        }, 10e3);
+    }).catch(defaultErrorHandler);
 }
 spark.QClient.setOwnProperty('sendGroupForwardMsg', sendGroupForwardMsg);
 
@@ -158,8 +158,8 @@ function getGroupMemberList(gid) {
         });
         setTimeout(() => {
             rej({ reason: 'timeout' });
-        }, 10e3).catch(defaultErrorHandler);
-    })
+        }, 10e3);
+    }).catch(defaultErrorHandler)
 }
 spark.QClient.setOwnProperty('getGroupMemberList', getGroupMemberList)
 
@@ -172,8 +172,8 @@ function getGroupMemberInfo(gid, mid) {
         });
         setTimeout(() => {
             rej({ reason: 'timeout' });
-        }, 10e3).catch(defaultErrorHandler);
-    })
+        }, 10e3);
+    }).catch(defaultErrorHandler)
 }
 spark.QClient.setOwnProperty('getGroupMemberInfo', getGroupMemberInfo);
 
