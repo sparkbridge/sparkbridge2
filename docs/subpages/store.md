@@ -100,7 +100,7 @@ by [户山兔兔](https://www.minebbs.com/members/daniel.25994/)
 
 ## spark.RegexEssentials -正则基础插件
 
-by [铭记mingji](https://www.minebbs.com/members/mingji.40363/)and[yufengya0420](https://www.minebbs.com/members/yufengya0420.22048/)
+by [铭记mingji](https://www.minebbs.com/members/mingji.40363/)与[yufengya0420](https://www.minebbs.com/members/yufengya0420.22048/)
 
 正则基础插件为SB2加入Q群功能
 
