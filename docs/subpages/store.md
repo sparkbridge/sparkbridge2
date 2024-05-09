@@ -98,6 +98,14 @@ by [户山兔兔](https://www.minebbs.com/members/daniel.25994/)
 
 链接：https://www.minebbs.com/resources/spark-pic.5743/
 
+## spark.RegexEssentials -正则基础插件
+
+by [铭记mingji](https://www.minebbs.com/members/mingji.40363/)
+
+正则基础插件为SB2加入Q群功能
+
+链接:https://www.minebbs.com/resources/spark-regexessentials.5838/
+
 >>[前往minebbs以寻找更多](https://www.minebbs.com/search/1291389/?q=spark.&o=relevance)
 
 ## [-->装载插件](/subpages/plugin.md)
