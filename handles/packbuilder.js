@@ -27,7 +27,7 @@ class Builder {
             action: 'send_like',
             params: {
                 user_id: fid,
-                times : 10
+                times: 10
 
             }
         }
@@ -50,22 +50,22 @@ class Builder {
             }
         }
     }
-    static GroupRequestPack(flag,sub_type,approve,echo){
+    static GroupRequestPack(flag, sub_type, approve, echo) {
         return {
-            action:'set_group_add_request',
+            action: 'set_group_add_request',
             echo: echo,
-            params:{
+            params: {
                 flag,
                 sub_type,
                 approve
             }
         }
     }
-    static FriendRequestPack(flag,approve,echo){
+    static FriendRequestPack(flag, approve, echo) {
         return {
-            action:'set_friend_add_request',
+            action: 'set_friend_add_request',
             echo: echo,
-            params:{
+            params: {
                 flag,
                 approve
             }
@@ -90,13 +90,23 @@ class Builder {
             }
         }
     }
-    static GroupForwardMessagePack(gid,msg,id){
+    static GroupForwardMessagePack(gid, msg, id) {
         return {
-            action : 'send_group_forward_msg',
-            echo:id,
-            params:{
-                group_id : gid,
-                messages:msg
+            action: 'send_group_forward_msg',
+            echo: id,
+            params: {
+                group_id: gid,
+                messages: msg
+            }
+        }
+    }
+    static GroupCardSet(gid, mid, card) {
+        return {
+            action: 'set_group_card',
+            params: {
+                group_id: gid,
+                user_id: mid,
+                card: card
             }
         }
     }
