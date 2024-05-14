@@ -16,7 +16,7 @@ function sendWSPack(json){
     return spark.QClient.sendWSPack(json);
 }
 ll.exports(callCustomEvent,"SparkAPI","callCustomEvent");
-ll.exports(GetGroupId,"SparjAPI","GetGroupId")
+ll.exports(GetGroupId,"SparkAPI","GetGroupId")
 ll.exports(sendWSPack,"SparkAPI","sendWSPack");//直接spark.QClient.sendWSPack会报错
 ll.exports(spark.QClient.deleteMsg,"SparkAPI","deleteMsg");
 ll.exports(spark.QClient.sendGroupMsg,"SparkAPI","sendGroupMsg");
