@@ -121,9 +121,7 @@ if (spark.onBDS) {
     /* introduction */ "a qq bot system",
     /* version */[2, 0, 2]
     );
-    mc.listen('onServerStarted', () => {
-        readPluginDir();
-    })
+    readPluginDir();
 } else {
     console.log('\n');
     logger.warn('====本地调试器====');
