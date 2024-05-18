@@ -22,6 +22,16 @@ class Builder {
     static GroupMessagePack(gid, msg, id) {
         return this.MessagePack(gid, 'group', msg, id);
     }
+    static SandGroupMessagePack(gid, msg, escape = false) {
+        return {
+            action: 'send_group_msg',
+            params: {
+                group_id: gid,
+                message: msg,
+                auto_escape: escape
+            }
+        }
+    }
     static LikePack(fid) {
         return {
             action: 'send_like',
@@ -37,6 +47,15 @@ class Builder {
             action: 'delete_msg',
             params: {
                 message_id: id
+            }
+        }
+    }
+    static GetMsgPack(mid, id) {
+        return {
+            action: 'get_msg',
+            echo: id,
+            params: {
+                message_id: mid
             }
         }
     }
