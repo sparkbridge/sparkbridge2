@@ -8,7 +8,7 @@ xcopy sparkbridge2 "tmp/sparkbridge2" /s /e /exclude:%cd%\sparkbridge2\buildtool
 
 cd ./sparkbridge2/buildtool
 
-7za.exe a ../../tmp/sparkbridge2.zip ../../tmp/sparkbridge2/*
+7za.exe a ../../tmp/sparkbridge2.zip ../../tmp/sparkbridge2
 
 cd ../../tmp
 
