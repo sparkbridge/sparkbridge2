@@ -1,5 +1,5 @@
 const logger = spark.getLogger('regex');
-
+const JSON5 = require('json5');
 spark.setOwnProperty('Cmd', {});
 
 /**
@@ -262,7 +262,7 @@ const PRE_CONFIG = {
 }
 
 _config.initFile('data.json', PRE_CONFIG);
-const regexs = JSON.parse(_config.getFile('data.json'));
+const regexs = JSON5.parse(_config.getFile('data.json'));
 
 function formatMsg(msg) {
     //console.log(msg);
