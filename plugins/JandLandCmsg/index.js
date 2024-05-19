@@ -40,7 +40,7 @@ _config.initFile('lang.json', {
 });
 
 const config = JSON5.parse(_config.getFile('config.json'));
-const lang = JSON.parse(_config.getFile('lang.json'));
+const lang = JSON5.parse(_config.getFile('lang.json'));
 
 spark.Cmd.regPlaceHolder('PLAYER_NAME', e => {
     return e.realName;
