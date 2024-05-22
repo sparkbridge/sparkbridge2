@@ -13,10 +13,18 @@ process.on('unhandledRejection', (reason, promise) => {
 var PLUGIN_DATA_DIR;
 
 if (typeof mc !== 'undefined') {
-    PLUGIN_DATA_DIR = './plugins/sparkbridge2/serverdata';
+    if (!fhelper.exists('./plugins/LeviLamina')) {
+        PLUGIN_DATA_DIR = './plugins/nodejs/sparkbridge2/serverdata'
+
+    }
+    else {
+        PLUGIN_DATA_DIR = './plugins/sparkbridge2/serverdata'
+    }
 } else {
-    PLUGIN_DATA_DIR = './testdata/';
+    PLUGIN_DATA_DIR = './testdata'
 }
+
+
 
 if (fhelper.exists(PLUGIN_DATA_DIR) == false) fhelper.mkdir(PLUGIN_DATA_DIR);
 console.log(fhelper.read(path.join(__dirname, 'logo.txt')));
