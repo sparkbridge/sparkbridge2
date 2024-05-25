@@ -32,13 +32,20 @@ class Builder {
             }
         }
     }
-    static LikePack(fid) {
+    static LikePack(fid, times) {
         return {
             action: 'send_like',
             params: {
                 user_id: fid,
-                times: 10
-
+                times
+            }
+        }
+    }
+    static GetMsgPack(id) {
+        return {
+            action: 'get_msg',
+            params: {
+                message_id: id
             }
         }
     }
@@ -55,7 +62,7 @@ class Builder {
             action: 'get_msg',
             echo: id,
             params: {
-                message_id: mid
+                message_id: mid,
             }
         }
     }
@@ -69,10 +76,9 @@ class Builder {
             }
         }
     }
-    static GroupRequestPack(flag, sub_type, approve, echo) {
+    static GroupRequestPack(flag, sub_type, approve) {
         return {
             action: 'set_group_add_request',
-            echo: echo,
             params: {
                 flag,
                 sub_type,
@@ -80,10 +86,9 @@ class Builder {
             }
         }
     }
-    static FriendRequestPack(flag, approve, echo) {
+    static FriendRequestPack(flag, approve) {
         return {
             action: 'set_friend_add_request',
-            echo: echo,
             params: {
                 flag,
                 approve
@@ -127,6 +132,101 @@ class Builder {
                 user_id: mid,
                 card: card
             }
+        }
+    }
+    static GroupKickPack(gid, mid, rej) {
+        return {
+            action: 'set_group_kick',
+            params: {
+                group_id: gid,
+                user_id : mid,
+                reject_add_request : rej
+            }
+        }
+    }
+    static GroupLeavePack(gid, dismiss) {
+        return {
+            action: 'set_group_leave',
+            params: {
+                group_id: gid,
+                is_dismiss : dismiss
+            }
+        }
+    }
+    static GroupWholeBanPack(gid, enable) {
+        return {
+            action: 'set_group_whole_ban',
+            params: {
+                group_id: gid,
+                enable
+            }
+        }
+    }
+    static GroupNamePack(gid, name) {
+        return {
+            action: 'set_group_name',
+            params: {
+                group_id: gid,
+                group_name : name
+            }
+        }
+    }
+    static StrangerInfoPack(sid, no_cache, id) {
+        return {
+            action: 'get_stanger_info',
+            echo: id,
+            params: {
+                user_id: sid,
+                no_cache
+            }
+        }
+    }
+    static FriendInfoPack(fid, no_cache, id) {
+        return {
+            action: 'get_friend_info',
+            echo: id,
+            params: {
+                user_id: fid,
+                no_cache
+            }
+        }
+    }
+    static GroupInfoPack(gid, no_cache, id) {
+        return {
+            action: 'get_group_info',
+            echo: id,
+            params: {
+                user_id: gid,
+                no_cache
+            }
+        }
+    }
+    static FriendListPack(id) {
+        return {
+            action: 'get_friend_list',
+            echo: id
+        }
+    }
+    static GroupListPack(id) {
+        return {
+            action: 'get_group_list',
+            echo: id
+        }
+    }
+    static GroupHonorInfoPack(gid, type, id) {
+        return {
+            action: 'get_group_honor_info',
+            echo: id,
+            params: {
+                user_id: gid,
+                type
+            }
+        }
+    }
+    static StatusPack(id) {
+        return {
+            action: 'get_status',
+            echo: id
         }
     }
 }
