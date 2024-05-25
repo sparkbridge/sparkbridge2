@@ -177,3 +177,163 @@ function getGroupMemberInfo(gid, mid) {
 }
 spark.QClient.setOwnProperty('getGroupMemberInfo', getGroupMemberInfo);
 
+function setGroupAddRequest(flag, sub_type, approve) {
+    spark.QClient.sendWSPack(packbuilder.GroupRequestPack(flag, sub_type, approve));
+}
+spark.QClient.setOwnProperty('setGroupAddRequest', setGroupAddRequest);
+
+function setFriendAddRequest(flag, approve) {
+    spark.QClient.sendWSPack(packbuilder.FriendRequestPack(flag, approve));
+}
+spark.QClient.setOwnProperty('setFriendAddRequest', setFriendAddRequest);
+
+function sendLike(fid, times) {
+    spark.QClient.sendWSPack(packbuilder.LikePack(fid, times));
+}
+spark.QClient.setOwnProperty('sendLike', sendLike);
+
+function getMsg(id) {
+    let tmp_id = uuid();
+    spark.QClient.sendWSPack(packbuilder.GetMsgPack(id, tmp_id));
+    return new Promise((res, rej) => {
+        spark.QClient.eventEmitter.once('packid_' + tmp_id, (data) => {
+            res(data);
+        });
+        setTimeout(() => {
+            rej({ reason: 'timeout' });
+        }, 10e3);
+    }).catch(defaultErrorHandler)
+}
+spark.QClient.setOwnProperty('getMsg', getMsg)
+
+function sendGroupForwardMessage(gid, msg) {
+    let tmp_id = uuid();
+    spark.QClient.sendWSPack(packbuilder.GroupForwardMessagePack(gid, msg, tmp_id));
+    return new Promise((res, rej) => {
+        spark.QClient.eventEmitter.once('packid_' + tmp_id, (data) => {
+            res(data);
+        });
+        setTimeout(() => {
+            rej({ reason: 'timeout' });
+        }, 10e3);
+    }).catch(defaultErrorHandler)
+}
+spark.QClient.setOwnProperty('sendGroupForwardMessage', sendGroupForwardMessage)
+
+function sendGroupWholeBan(gid, enable) {
+    spark.QClient.sendWSPack(packbuilder.GroupWholeBanPack(gid, enable));
+}
+spark.QClient.setOwnProperty('sendGroupWholeBan', sendGroupWholeBan)
+
+function setGroupKick(gid, mid, rej) {
+    spark.QClient.sendWSPack(packbuilder.GroupKickPack(gid, mid, rej));
+}
+spark.QClient.setOwnProperty('setGroupKick', setGroupKick);
+
+function setGroupLeave(gid, dismiss) {
+    spark.QClient.sendWSPack(packbuilder.GroupLeavePack(gid, dismiss));
+}
+spark.QClient.setOwnProperty('setGroupLeave', setGroupLeave);
+
+function setGroupName(gid, name) {
+    spark.QClient.sendWSPack(packbuilder.GroupNamePack(gid, name));
+}
+spark.QClient.setOwnProperty('setGroupName', setGroupName);
+
+function getStrangerInfo(sid, no_cache) {
+    let tmp_id = uuid();
+    spark.QClient.sendWSPack(packbuilder.StrangeInfoPack(sid, no_cache, tmp_id));
+    return new Promise((res, rej) => {
+        spark.QClient.eventEmitter.once('packid_' + tmp_id, (data) => {
+            res(data);
+        });
+        setTimeout(() => {
+            rej({ reason: 'timeout' });
+        }, 10e3);
+    }).catch(defaultErrorHandler)
+}
+spark.QClient.setOwnProperty('getStrangerInfo', getStrangerInfo);
+
+function getFriendInfo(fid, no_cache) {
+    let tmp_id = uuid();
+    spark.QClient.sendWSPack(packbuilder.FriendInfoPack(fid, no_cache, tmp_id));
+    return new Promise((res, rej) => {
+        spark.QClient.eventEmitter.once('packid_' + tmp_id, (data) => {
+            res(data);
+        });
+        setTimeout(() => {
+            rej({ reason: 'timeout' });
+        }, 10e3);
+    }).catch(defaultErrorHandler)
+}
+spark.QClient.setOwnProperty('getFriendInfo', getFriendInfo);
+
+function getGroupInfo(gid, no_cache) {
+    let tmp_id = uuid();
+    spark.QClient.sendWSPack(packbuilder.GroupInfoPack(gid, no_cache, tmp_id));
+    return new Promise((res, rej) => {
+        spark.QClient.eventEmitter.once('packid_' + tmp_id, (data) => {
+            res(data);
+        });
+        setTimeout(() => {
+            rej({ reason: 'timeout' });
+        }, 10e3);
+    }).catch(defaultErrorHandler)
+}
+spark.QClient.setOwnProperty('getGroupInfo', getGroupInfo);
+
+function getFriendList() {
+    let tmp_id = uuid();
+    spark.QClient.sendWSPack(packbuilder.FriendInfoPack(tmp_id));
+    return new Promise((res, rej) => {
+        spark.QClient.eventEmitter.once('packid_' + tmp_id, (data) => {
+            res(data);
+        });
+        setTimeout(() => {
+            rej({ reason: 'timeout' });
+        }, 10e3);
+    }).catch(defaultErrorHandler)
+}
+spark.QClient.setOwnProperty('getFriendList', getFriendList);
+
+function getGroupList() {
+    let tmp_id = uuid();
+    spark.QClient.sendWSPack(packbuilder.GroupInfoPack(tmp_id));
+    return new Promise((res, rej) => {
+        spark.QClient.eventEmitter.once('packid_' + tmp_id, (data) => {
+            res(data);
+        });
+        setTimeout(() => {
+            rej({ reason: 'timeout' });
+        }, 10e3);
+    }).catch(defaultErrorHandler)
+}
+spark.QClient.setOwnProperty('getGroupList', getGroupList);
+
+function getGroupHonorInfo(gid, type) {
+    let tmp_id = uuid();
+    spark.QClient.sendWSPack(packbuilder.GroupInfoPack(gid, type, tmp_id));
+    return new Promise((res, rej) => {
+        spark.QClient.eventEmitter.once('packid_' + tmp_id, (data) => {
+            res(data);
+        });
+        setTimeout(() => {
+            rej({ reason: 'timeout' });
+        }, 10e3);
+    }).catch(defaultErrorHandler)
+}
+spark.QClient.setOwnProperty('getGroupHonorInfo', getGroupHonorInfo);
+
+function getStatus() {
+    let tmp_id = uuid();
+    spark.QClient.sendWSPack(packbuilder.StatusPack(tmp_id));
+    return new Promise((res, rej) => {
+        spark.QClient.eventEmitter.once('packid_' + tmp_id, (data) => {
+            res(data);
+        });
+        setTimeout(() => {
+            rej({ reason: 'timeout' });
+        }, 10e3);
+    }).catch(defaultErrorHandler)
+}
+spark.QClient.setOwnProperty('getStatus', getStatus);
