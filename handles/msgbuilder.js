@@ -46,6 +46,7 @@ class Builder {
         return { type: 'poke', data: { qq: id } }
     }
     static reply(id) {
+        id=id.toString()
         return { type: 'reply', data: { id } };
     }
     static format(msg) {

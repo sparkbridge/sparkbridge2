@@ -1,7 +1,14 @@
 # SparkBridge2
 
-## 本地调试模式
+> ✨向BDS推出的使用Onebot标准的机器人框架✨
 
-文件存储位于`testdata/`文件夹，代替`plugins/sparkbridge2/`
+ - Nodejs提供强力支持
+ - Onebot框架，兼容广泛
+ - 同时支持String,array工作方式
+ - NilBridge原班人马为您带来全新的互通机器人方案。
+ - 支持内核分离方案，轻松二次开发。
 
-请严格按照`spark.getFileHelper`来使用，不要私自读取文件
+
+[开始查阅](https://sparkbridge.cn)
+
+[Minebbs链接](https://www.minebbs.com/resources/sparkbridge-bot-qq.5480/)
