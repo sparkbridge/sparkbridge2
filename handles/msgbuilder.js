@@ -37,12 +37,14 @@ class Builder {
         return { type: "at", data: { "qq": qid } };
     }
     static face(id) {
+        id=id.toString()
         return { type: 'face', data: { id } }
     }
     static text(raw) {
         return { type: 'text', data: { text: raw } };
     }
     static poke(id) {
+        id=id.toString()
         return { type: 'poke', data: { qq: id } }
     }
     static reply(id) {
