@@ -1,19 +1,15 @@
-const CallEvent = ll.imports("SparkAPI", "callCustomEvent");
-let NextEventId = 0;
-function getNextEventId() {
-    NextEventId++;
-    return "SparkBridge_Event_" + NextEventId;
-}
-class Event {
+const CallEvent=ll.imports("SparkAPI","callCustomEvent");
+const GetEventID=ll.imports("SparkAPI","GetEventID");
+class Spark{
     constructor() {
         throw new Error("Static class cannot be instantiated");
     }
-    static listen(event, callback) {
-        let eventId = getNextEventId();
+    static on(event, callback) {
+        let eventId=GetEventID();
         ll.exports(callback, event, eventId);
         CallEvent(event, eventId);
     }
 }
 module.exports = {
-    Event
+    Spark
 };
