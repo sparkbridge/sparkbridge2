@@ -8,5 +8,6 @@
 [开发指南](/subpages/develop.md)
 [Event事件文档](/subpages/Event.md)
 [API指南](/subpages/API.md)
+[导出API指南](/subpages/LLAPI.md)
 [Sparkbridge1指南](https://sparkbridge.github.io/docs/)
 [关于我们](/subpages/about.md)
