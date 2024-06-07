@@ -55,7 +55,7 @@ spark.on('message.private.friend', (e, reply) => {
 ### bot.online
 
 ```js
-spark.QClient.on('bot.online', () => { //当bot登录时
+spark.on('bot.online', () => { //当bot登录时
     spark.QClient.sendGroupMsg(spark.mc.config.group, '我来啦');向指定群发送字符
 });//bot上线时执行的命令
 
