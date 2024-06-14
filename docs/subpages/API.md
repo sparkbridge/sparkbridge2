@@ -57,7 +57,7 @@ spark.Cmd.regPlaceHolder('Game_Version', () => {
 > 我们在其中接入了大部分Onebot支持的API，具体是否可用参照你所使用的Onebot实现。
 
 
-### 1. `spark.QClient.sendGroupMsg`
+### `spark.QClient.sendGroupMsg`
 **描述:**
 发送群组消息。
 
@@ -75,7 +75,7 @@ spark.QClient.sendGroupMsg(12345678, { type: 'text', data: { text: '你好，群
     .catch(error => console.error(error));
 ```
 
-### 2. `spark.QClient.sendPrivateMsg`
+### `spark.QClient.sendPrivateMsg`
 **描述:**
 发送私聊消息。
 
@@ -93,7 +93,7 @@ spark.QClient.sendPrivateMsg(87654321, { type: 'text', data: { text: '你好，�
     .catch(error => console.error(error));
 ```
 
-### 3. `spark.QClient.sendGroupForwardMsg`
+### `spark.QClient.sendGroupForwardMsg`
 **描述:**
 发送群组转发消息。
 
@@ -111,7 +111,7 @@ spark.QClient.sendGroupForwardMsg(12345678, { ... })
     .catch(error => console.error(error));
 ```
 
-### 4. `spark.QClient.sendGroupBan`
+###  `spark.QClient.sendGroupBan`
 **描述:**
 设置群组成员禁言。
 
@@ -125,7 +125,7 @@ spark.QClient.sendGroupForwardMsg(12345678, { ... })
 spark.QClient.sendGroupBan(12345678, 87654321, 3600);
 ```
 
-### 5. `spark.QClient.deleteMsg`
+###  `spark.QClient.deleteMsg`
 **描述:**
 删除消息。
 
@@ -137,7 +137,7 @@ spark.QClient.sendGroupBan(12345678, 87654321, 3600);
 spark.QClient.deleteMsg(12345678);
 ```
 
-### 6. `spark.QClient.getGroupMemberList`
+###  `spark.QClient.getGroupMemberList`
 **描述:**
 获取群组成员列表。
 
@@ -154,7 +154,7 @@ spark.QClient.getGroupMemberList(12345678)
     .catch(error => console.error(error));
 ```
 
-### 7. `spark.QClient.getGroupMemberInfo`
+###  `spark.QClient.getGroupMemberInfo`
 **描述:**
 获取群组成员信息。
 
@@ -172,7 +172,7 @@ spark.QClient.getGroupMemberInfo(12345678, 87654321)
     .catch(error => console.error(error));
 ```
 
-### 8. `spark.QClient.setGroupAddRequest`
+###  `spark.QClient.setGroupAddRequest`
 **描述:**
 处理群组添加请求。
 
@@ -186,7 +186,7 @@ spark.QClient.getGroupMemberInfo(12345678, 87654321)
 spark.QClient.setGroupAddRequest('flag_example', 'add', true);
 ```
 
-### 9. `spark.QClient.setFriendAddRequest`
+###  `spark.QClient.setFriendAddRequest`
 **描述:**
 处理好友添加请求。
 
@@ -199,7 +199,7 @@ spark.QClient.setGroupAddRequest('flag_example', 'add', true);
 spark.QClient.setFriendAddRequest('flag_example', true);
 ```
 
-### 10. `spark.QClient.sendLike`
+###  `spark.QClient.sendLike`
 **描述:**
 发送点赞消息。
 
@@ -212,7 +212,7 @@ spark.QClient.setFriendAddRequest('flag_example', true);
 spark.QClient.sendLike(87654321, 10);
 ```
 
-### 11. `spark.QClient.getMsg`
+###  `spark.QClient.getMsg`
 **描述:**
 获取消息。
 
@@ -229,25 +229,8 @@ spark.QClient.getMsg(12345678)
     .catch(error => console.error(error));
 ```
 
-### 12. `spark.QClient.sendGroupForwardMessage`
-**描述:**
-发送群组转发消息。
 
-**参数:**
-- `gid` (数字): 群组ID。
-- `msg` (消息对象): 转发消息内容。
-
-**返回值:**
-- Promise 对象，解析为服务器响应数据。
-
-**用法:**
-```javascript
-spark.QClient.sendGroupForwardMessage(12345678, { ... })
-    .then(data => console.log(data))
-    .catch(error => console.error(error));
-```
-
-### 13. `spark.QClient.sendGroupWholeBan`
+###  `spark.QClient.sendGroupWholeBan`
 **描述:**
 设置群组全体禁言。
 
@@ -260,7 +243,7 @@ spark.QClient.sendGroupForwardMessage(12345678, { ... })
 spark.QClient.sendGroupWholeBan(12345678, true);
 ```
 
-### 14. `spark.QClient.setGroupKick`
+###  `spark.QClient.setGroupKick`
 **描述:**
 将成员移出群组。
 
@@ -274,7 +257,7 @@ spark.QClient.sendGroupWholeBan(12345678, true);
 spark.QClient.setGroupKick(12345678, 87654321, true);
 ```
 
-### 15. `spark.QClient.setGroupLeave`
+###  `spark.QClient.setGroupLeave`
 **描述:**
 退出或解散群组。
 
@@ -287,7 +270,7 @@ spark.QClient.setGroupKick(12345678, 87654321, true);
 spark.QClient.setGroupLeave(12345678, true);
 ```
 
-### 16. `spark.QClient.setGroupName`
+###  `spark.QClient.setGroupName`
 **描述:**
 设置群组名称。
 
@@ -300,7 +283,7 @@ spark.QClient.setGroupLeave(12345678, true);
 spark.QClient.setGroupName(12345678, '新群名称');
 ```
 
-### 17. `spark.QClient.getStrangerInfo`
+###  `spark.QClient.getStrangerInfo`
 **描述:**
 获取陌生人信息。
 
@@ -318,7 +301,7 @@ spark.QClient.getStrangerInfo(87654321, true)
     .catch(error => console.error(error));
 ```
 
-### 18. `spark.QClient.getFriendInfo`
+###  `spark.QClient.getFriendInfo`
 **描述:**
 获取好友信息。
 
@@ -336,7 +319,7 @@ spark.QClient.getFriendInfo(87654321, true)
     .catch(error => console.error(error));
 ```
 
-### 19. `spark.QClient.getGroupInfo`
+###  `spark.QClient.getGroupInfo`
 **描述:**
 获取群组信息。
 
@@ -354,7 +337,7 @@ spark.QClient.getGroupInfo(12345678, true)
     .catch(error => console.error(error));
 ```
 
-### 20. `spark.QClient.getFriendList`
+###  `spark.QClient.getFriendList`
 **描述:**
 获取好友列表。
 
@@ -368,7 +351,7 @@ spark.QClient.getFriendList()
     .catch(error => console.error(error));
 ```
 
-### 21. `spark.QClient.getGroupList`
+###  `spark.QClient.getGroupList`
 **描述:**
 获取群组列表。
 
@@ -382,7 +365,7 @@ spark.QClient.getGroupList()
     .catch(error => console.error(error));
 ```
 
-### 22. `spark.QClient.getGroupHonorInfo`
+###  `spark.QClient.getGroupHonorInfo`
 **描述:**
 获取群组荣誉信息。
 
@@ -402,7 +385,7 @@ spark.QClient.getGroupHonorInfo(12345678, 'talkative')
     .catch(error => console.error(error));
 ```
 
-### 23. `spark.QClient.getStatus`
+###  `spark.QClient.getStatus`
 **描述:**
 获取客户端状态。
 
