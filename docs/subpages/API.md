@@ -52,64 +52,369 @@ spark.Cmd.regPlaceHolder('Game_Version', () => {
 ```
 你可以自制插件导入库实现更多功能。
 
-## QQ发送 API
+## spark.QClient 开发文档
 
-使用QCilent调用这些通用api：
-```js
-spark.QClient.SOMEFUNCTION()
+> 我们在其中接入了大部分Onebot支持的API，具体是否可用参照你所使用的Onebot实现。
+
+
+### 1. `spark.QClient.sendGroupMsg`
+**描述:**
+发送群组消息。
+
+**参数:**
+- `gid` (数字): 群组ID。
+- `msg` (消息对象): 要发送的消息。
+
+**返回值:**
+- Promise 对象，解析为服务器响应数据。
+
+**用法:**
+```javascript
+spark.QClient.sendGroupMsg(12345678, { type: 'text', data: { text: '你好，群组！' } })
+    .then(data => console.log(data))
+    .catch(error => console.error(error));
 ```
 
-获取返回值：
-```js
-async function SOMEFUNCTION() {
-            try {
-                let data = await spark.QClient.SOMEFUNCTION();
-               // console.log("Received data:", data);
-                return data;
-            } catch (error) {
-                console.error("Error:", error);
-                throw error; // 可以选择抛出错误或者处理错误
-            }
-        }
-        //使用async创建函数
+### 2. `spark.QClient.sendPrivateMsg`
+**描述:**
+发送私聊消息。
 
-let getsth =await SOMEFUNCTION()
-console.log(getsth)//拿到message传回值，详细规则参见GocqHttp文档。
+**参数:**
+- `fid` (数字): 用户ID。
+- `msg` (消息对象): 要发送的消息。
+
+**返回值:**
+- Promise 对象，解析为服务器响应数据。
+
+**用法:**
+```javascript
+spark.QClient.sendPrivateMsg(87654321, { type: 'text', data: { text: '你好，朋友！' } })
+    .then(data => console.log(data))
+    .catch(error => console.error(error));
 ```
 
-### sendGroupMsg(gid, msg)
+### 3. `spark.QClient.sendGroupForwardMsg`
+**描述:**
+发送群组转发消息。
 
-发送一个群信息
+**参数:**
+- `gid` (数字): 群组ID。
+- `msg` (消息对象): 要发送的转发消息。
 
-- **参数：**
-  - `gid`：群ID。
-  - `msg`：信息内容。
+**返回值:**
+- Promise 对象，解析为服务器响应数据。
+
+**用法:**
+```javascript
+spark.QClient.sendGroupForwardMsg(12345678, { ... })
+    .then(data => console.log(data))
+    .catch(error => console.error(error));
+```
+
+### 4. `spark.QClient.sendGroupBan`
+**描述:**
+设置群组成员禁言。
+
+**参数:**
+- `gid` (数字): 群组ID。
+- `mid` (数字): 成员ID。
+- `d` (数字): 禁言时长（秒）。
+
+**用法:**
+```javascript
+spark.QClient.sendGroupBan(12345678, 87654321, 3600);
+```
+
+### 5. `spark.QClient.deleteMsg`
+**描述:**
+删除消息。
+
+**参数:**
+- `id` (数字): 消息ID。
+
+**用法:**
+```javascript
+spark.QClient.deleteMsg(12345678);
+```
+
+### 6. `spark.QClient.getGroupMemberList`
+**描述:**
+获取群组成员列表。
+
+**参数:**
+- `gid` (数字): 群组ID。
+
+**返回值:**
+- Promise 对象，解析为成员列表数据。
+
+**用法:**
+```javascript
+spark.QClient.getGroupMemberList(12345678)
+    .then(data => console.log(data))
+    .catch(error => console.error(error));
+```
+
+### 7. `spark.QClient.getGroupMemberInfo`
+**描述:**
+获取群组成员信息。
+
+**参数:**
+- `gid` (数字): 群组ID。
+- `mid` (数字): 成员ID。
+
+**返回值:**
+- Promise 对象，解析为成员信息数据。
+
+**用法:**
+```javascript
+spark.QClient.getGroupMemberInfo(12345678, 87654321)
+    .then(data => console.log(data))
+    .catch(error => console.error(error));
+```
+
+### 8. `spark.QClient.setGroupAddRequest`
+**描述:**
+处理群组添加请求。
+
+**参数:**
+- `flag` (字符串): 请求标识。
+- `sub_type` (字符串): 请求类型。
+- `approve` (布尔值): 是否批准。
+
+**用法:**
+```javascript
+spark.QClient.setGroupAddRequest('flag_example', 'add', true);
+```
+
+### 9. `spark.QClient.setFriendAddRequest`
+**描述:**
+处理好友添加请求。
+
+**参数:**
+- `flag` (字符串): 请求标识。
+- `approve` (布尔值): 是否批准。
+
+**用法:**
+```javascript
+spark.QClient.setFriendAddRequest('flag_example', true);
+```
+
+### 10. `spark.QClient.sendLike`
+**描述:**
+发送点赞消息。
+
+**参数:**
+- `fid` (数字): 用户ID。
+- `times` (数字): 点赞次数。
+
+**用法:**
+```javascript
+spark.QClient.sendLike(87654321, 10);
+```
+
+### 11. `spark.QClient.getMsg`
+**描述:**
+获取消息。
+
+**参数:**
+- `id` (数字): 消息ID。
+
+**返回值:**
+- Promise 对象，解析为消息数据。
+
+**用法:**
+```javascript
+spark.QClient.getMsg(12345678)
+    .then(data => console.log(data))
+    .catch(error => console.error(error));
+```
+
+### 12. `spark.QClient.sendGroupForwardMessage`
+**描述:**
+发送群组转发消息。
+
+**参数:**
+- `gid` (数字): 群组ID。
+- `msg` (消息对象): 转发消息内容。
+
+**返回值:**
+- Promise 对象，解析为服务器响应数据。
+
+**用法:**
+```javascript
+spark.QClient.sendGroupForwardMessage(12345678, { ... })
+    .then(data => console.log(data))
+    .catch(error => console.error(error));
+```
+
+### 13. `spark.QClient.sendGroupWholeBan`
+**描述:**
+设置群组全体禁言。
+
+**参数:**
+- `gid` (数字): 群组ID。
+- `enable` (布尔值): 是否启用禁言。
+
+**用法:**
+```javascript
+spark.QClient.sendGroupWholeBan(12345678, true);
+```
+
+### 14. `spark.QClient.setGroupKick`
+**描述:**
+将成员移出群组。
+
+**参数:**
+- `gid` (数字): 群组ID。
+- `mid` (数字): 成员ID。
+- `rej` (布尔值): 是否拒绝再次申请加入。
+
+**用法:**
+```javascript
+spark.QClient.setGroupKick(12345678, 87654321, true);
+```
+
+### 15. `spark.QClient.setGroupLeave`
+**描述:**
+退出或解散群组。
+
+**参数:**
+- `gid` (数字): 群组ID。
+- `dismiss` (布尔值): 是否解散群组。
+
+**用法:**
+```javascript
+spark.QClient.setGroupLeave(12345678, true);
+```
+
+### 16. `spark.QClient.setGroupName`
+**描述:**
+设置群组名称。
+
+**参数:**
+- `gid` (数字): 群组ID。
+- `name` (字符串): 新的群组名称。
+
+**用法:**
+```javascript
+spark.QClient.setGroupName(12345678, '新群名称');
+```
+
+### 17. `spark.QClient.getStrangerInfo`
+**描述:**
+获取陌生人信息。
+
+**参数:**
+- `sid` (数字): 陌生人ID。
+- `no_cache` (布尔值): 是否不使用缓存。
+
+**返回值:**
+- Promise 对象，解析为陌生人信息数据。
+
+**用法:**
+```javascript
+spark.QClient.getStrangerInfo(87654321, true)
+    .then(data => console.log(data))
+    .catch(error => console.error(error));
+```
+
+### 18. `spark.QClient.getFriendInfo`
+**描述:**
+获取好友信息。
+
+**参数:**
+- `fid` (数字): 好友ID。
+- `no_cache` (布尔值): 是否不使用缓存。
+
+**返回值:**
+- Promise 对象，解析为好友信息数据。
+
+**用法:**
+```javascript
+spark.QClient.getFriendInfo(87654321, true)
+    .then(data => console.log(data))
+    .catch(error => console.error(error));
+```
+
+### 19. `spark.QClient.getGroupInfo`
+**描述:**
+获取群组信息。
+
+**参数:**
+- `gid` (数字): 群组ID。
+- `no_cache` (布尔值): 是否不使用缓存。
+
+**返回值:**
+- Promise 对象，解析为群组信息数据。
+
+**用法:**
+```javascript
+spark.QClient.getGroupInfo(12345678, true)
+    .then(data => console.log(data))
+    .catch(error => console.error(error));
+```
+
+### 20. `spark.QClient.getFriendList`
+**描述:**
+获取好友列表。
+
+**返回值:**
+- Promise 对象，解析为好友列表数据。
+
+**用法:**
+```javascript
+spark.QClient.getFriendList()
+    .then(data => console.log(data))
+    .catch(error => console.error(error));
+```
+
+### 21. `spark.QClient.getGroupList`
+**描述:**
+获取群组列表。
+
+**返回值:**
+- Promise 对象，解析为群组列表数据。
+
+**用法:**
+```javascript
+spark.QClient.getGroupList()
+    .then(data => console.log(data))
+    .catch(error => console.error(error));
+```
+
+### 22. `spark.QClient.getGroupHonorInfo`
+**描述:**
+获取群组荣誉信息。
+
+**参数:**
+- `gid` (数字): 群组ID。
+- `type` (字符串): 荣誉类型。
+
+**返回值:**
+- Promise 对象，解析为荣誉信息数据。
+
+**用法:**
+```javascript
 
 
+spark.QClient.getGroupHonorInfo(12345678, 'talkative')
+    .then(data => console.log(data))
+    .catch(error => console.error(error));
+```
 
-### sendPrivateMsg(fid, msg)
+### 23. `spark.QClient.getStatus`
+**描述:**
+获取客户端状态。
 
-发送一个私信信息
+**返回值:**
+- Promise 对象，解析为状态数据。
 
-- **参数：**
-  - `fid`：好友ID。
-  - `msg`：信息内容。
-
-### sendGroupForwardMsg(gid, msg) 
-
-发送群合并聊天信息
-
-- **参数：**
-  - `gid`：群ID。
-  - `msg`：自定义转发消息, 具体看 [CQcode](https://docs.go-cqhttp.org/cqcode/#%E5%90%88%E5%B9%B6%E8%BD%AC%E5%8F%91%E6%B6%88%E6%81%AF%E8%8A%82%E7%82%B9)。
-
-
-### deleteMsg(id)
-撤回某个信息
-
-- **参数：**
-  - `id`：信息id
-
+**用法:**
+```javascript
+spark.QClient.getStatus()
+    .then(data => console.log(data))
+    .catch(error => console.error(error));
+```
 ## 如何自行实现api
 
 使用
