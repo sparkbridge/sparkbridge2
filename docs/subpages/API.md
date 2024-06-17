@@ -96,7 +96,7 @@ spark.Cmd.regPlaceHolder('Game_Version', () => {
 
 **用法:**
 ```javascript
-spark.QClient.sendGroupMsg(12345678, { type: 'text', data: { text: '你好，群组！' } })
+spark.QClient.sendGroupMsg(12345678, "Hey Guys!")
     .then(data => console.log(data))
     .catch(error => console.error(error));
 ```
@@ -114,7 +114,7 @@ spark.QClient.sendGroupMsg(12345678, { type: 'text', data: { text: '你好，群
 
 **用法:**
 ```javascript
-spark.QClient.sendPrivateMsg(87654321, { type: 'text', data: { text: '你好，朋友！' } })
+spark.QClient.sendPrivateMsg(87654321, "Hey Guys!")
     .then(data => console.log(data))
     .catch(error => console.error(error));
 ```
@@ -153,7 +153,7 @@ spark.QClient.sendGroupBan(12345678, 87654321, 3600);
 
 ###  `spark.QClient.deleteMsg`
 **描述:**
-删除消息。
+撤回消息。
 
 **参数:**
 - `id` (数字): 消息ID。
@@ -203,7 +203,7 @@ spark.QClient.getGroupMemberInfo(12345678, 87654321)
 处理群组添加请求。
 
 **参数:**
-- `flag` (字符串): 请求标识。
+- `flag` (字符串): 请求标识（如果收到了添加请求会获得一个针对当前请求的字符串）。
 - `sub_type` (字符串): 请求类型。
 - `approve` (布尔值): 是否批准。
 
@@ -397,7 +397,7 @@ spark.QClient.getGroupList()
 
 **参数:**
 - `gid` (数字): 群组ID。
-- `type` (字符串): 荣誉类型。
+- `type` (字符串): 要获取的群荣誉类型，可传入 `talkative` `performer` `legend` `strong_newbie` `emotion` 以分别获取单个类型的群荣誉数据，或传入 `all` 获取所有数据 。
 
 **返回值:**
 - Promise 对象，解析为荣誉信息数据。
