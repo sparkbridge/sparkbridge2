@@ -106,7 +106,7 @@ if (config.switch.left) {
 }
 
 function hasShield(raw){
-    var ret = false;
+    let ret = false;
     config.chatShield.forEach(et => {
         if(raw.match(et)){
             ret = true

@@ -10,7 +10,7 @@ spark.setOwnProperty('Cmd', {});
  */
 function buildString(str, reg, ...arg) {
     if (spark.debug) console.log(reg);
-    var i = 0;
+    let i = 0;
     reg.forEach(s => {
         str = str.replace(`\$${i}`, s);
         i++
@@ -126,7 +126,7 @@ regCmd('g', (_arg, reg, e, reply) => {
 
 let JandQuitConfig = JSON.parse(spark.getFileHelper('JandLandCmsg').getFile('config.json'))
 function hasShield(raw) {
-    var ret = false;
+    let ret = false;
     JandQuitConfig.chatShield.forEach(et => {
         if (raw.match(et)) {
             ret = true
