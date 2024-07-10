@@ -22,8 +22,8 @@ function parseCQString(codeStr) {
     let currentText = '';
 
     let totalCode = [];
-    for (var i in codeStr) {
-        var currentChar = codeStr[i];
+    for (let i in codeStr) {
+        let currentChar = codeStr[i];
         if (currentChar === '[') {
             inCode = true;
             if (currentText !== '') {

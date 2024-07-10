@@ -51,8 +51,8 @@ spark.on('gocq.pack', (pack) => {
             if (!_isArray) {
                 //console.log("in",typeof pack.message);
                 let _pmessage = parseCQString(pack.message.toString());
-                 pack.message = _pmessage;
-              //console.log(_pmessage);
+                pack.message = _pmessage;
+                //console.log(_pmessage);
             }
             if (pack.raw_message.includes('&#91;') || pack.raw_message.includes('&#93;') || pack.raw_message.includes('&#44') || pack.raw_message.includes('&amp;')) {
                 pack.raw_message = pack.raw_message.replace('&#91;', '[');
@@ -73,21 +73,21 @@ spark.on('gocq.pack', (pack) => {
 });
 
 function uuid() {
-    var s = []
-    var hexDigits = '0123456789abcdef'
-    for (var i = 0; i < 36; i++) {
+    let s = []
+    let hexDigits = '0123456789abcdef'
+    for (let i = 0; i < 36; i++) {
         s[i] = hexDigits.substring(Math.floor(Math.random() * 0x10), 1)
     }
     s[14] = '4' // bits 12-15 of the time_hi_and_version field to 0010
     s[19] = hexDigits.substring((s[19] & 0x3) | 0x8, 1) // bits 6-7 of the clock_seq_hi_and_reserved to 01
     s[8] = s[13] = s[18] = s[23] = '-'
 
-    var uuid = s.join('')
+    let uuid = s.join('')
     return uuid
 }
 function defaultErrorHandler(error) {
     if (error.reason === 'timeout') {
-       logger.warn("请求超时,此信息可能发送失败");
+        logger.warn("请求超时,此信息可能发送失败");
         // 这里可以做一些超时后的默认处理，比如重试等
     } else {
         logger.error("请求发送时发生错误:", error);
