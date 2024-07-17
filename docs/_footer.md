@@ -1,4 +1,4 @@
-Copyright © 2023 [SparkBridge](https://github.com/sparkbridge). All Rights Reserved.
+Copyright © 2024 [SparkBridge](https://github.com/sparkbridge). All Rights Reserved.
 
 此软件与Mojang Studio、网易、Microsoft没有从属关系。
 
