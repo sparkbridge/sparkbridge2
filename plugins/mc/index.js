@@ -60,6 +60,9 @@ function remXboxByQid(qid) {
     delete xboxs[qid];
     _config.updateFile('xbox.json', xboxs);
 }
+function getQQByXbox(xbox) {
+    return Object.keys(xboxs).find(key => xboxs[key] === xbox);
+}
 
 
 spark.mc.remXboxByName = remXboxByName;
@@ -67,3 +70,4 @@ spark.mc.addXbox = addXbox;
 spark.mc.remXboxByQid = remXboxByQid;
 spark.mc.getXbox = getXbox;
 spark.mc.hasXbox = hasXbox;
+spark.mc.getQQByXbox = getQQByXbox;
