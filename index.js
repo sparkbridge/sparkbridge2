@@ -30,7 +30,7 @@ if (fhelper.exists(PLUGIN_DATA_DIR) == false) fhelper.mkdir(PLUGIN_DATA_DIR);
 console.log(fhelper.read(path.join(__dirname, 'logo.txt')));
 
 let ROOT_FILE_HELPER = new fhelper.FileObj('base');
-ROOT_FILE_HELPER.initFile('config.json', { target: "ws://127.0.0.1:8080", qid: 114514, pwd: '', onebot_mode_v11:true });
+ROOT_FILE_HELPER.initFile('config.json', { target: "ws://127.0.0.1:8080", qid: 114514, pwd: '', onebot_mode_v11: true });
 let RAW_CONFIG = ROOT_FILE_HELPER.getFile('config.json');
 const CONFIG = JSON5.parse(RAW_CONFIG);
 
@@ -55,11 +55,12 @@ function loadPlugin(_name) {
         let pl_info = require('./plugins/' + _name + "/spark.json");
         if (pl_info.load) {
             let pl_obj = require('./plugins/' + _name);
+            logger.info(`加载 ${pl_info.name}`);
+            logger.info(`${pl_info.name} 加载完成，作者：${pl_info.author}`);
         } else {
             logger.info('跳过加载插件：' + _name);
         }
-        logger.info(`加载 ${pl_info.name}`);
-        logger.info(`${pl_info.name} 加载完成，作者：${pl_info.author}`);
+
     } catch (err) {
         console.log(err);
         logger.error(`插件 ${_name} 加载失败`);
@@ -72,13 +73,12 @@ function readPluginDir() {
 
     // 这里获取旧插件list
     const plugins_load_list = JSON.parse(fhelper.read(path.join(__dirname, 'plugins', 'list.json')));
-    logger.info('检测到了' + plugins_list.length + '个插件');
     // 这里遍历 plugins文件夹，读取spark.json
     const current_list = {};
     plugins_list.forEach(epl => {
         const sata = fs.statSync(path.join(PLUGINS_PATH, epl));
         if (!sata.isDirectory()) return;
-        logger.info('loading ' + epl);
+        logger.info('Initializing ' + epl);
         let i_info = JSON.parse(fhelper.read(path.join(__dirname, 'plugins', epl, 'spark.json')));
         current_list[i_info.name] = epl;
     });
@@ -92,7 +92,7 @@ function readPluginDir() {
             plugins_load_list.push(i);
         }
     }
-
+    logger.info('检测到了' + plugins_load_list.length+ '个插件');
     bootUpPlugins(plugins_load_list, current_list);
 }
 
