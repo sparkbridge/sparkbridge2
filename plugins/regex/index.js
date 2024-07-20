@@ -142,6 +142,7 @@ regCmd('t', (arg, reg, e, reply) => {
 
     if (tp == 'all') {
         let tellallMsg = buildString(ms, reg, e).trim()
+       // console.log(tellallMsg)
         if (tellallMsg.length > JandQuitConfig.chatMaxLength + ms.replace(/\$1/g, '').length) {
             tellallMsg = '[群聊]聊天长度过长，将不会转发'
         }
@@ -264,15 +265,32 @@ const PRE_CONFIG = {
 _config.initFile('data.json', PRE_CONFIG);
 const regexs = JSON5.parse(_config.getFile('data.json'));
 
-function formatMsg(msg) {
-    //console.log(msg);
-    return msg.map(t => {
+async function formatMsg(msg) {
+    const formattedMessages = await Promise.all(msg.map(async (t) => {
         switch (t.type) {
             case 'at':
-                if (spark.mc.getXbox(t.data.qq) == undefined) {
+                try {
+                    if (spark.mc.getXbox(t.data.qq) == undefined) {
+                        const data = await spark.QClient.getGroupMemberInfo(spark.mc.config.group, t.data.qq);
+                        if (data) {
+                            let name
+                            if (data.card == "") {
+                                name = data.nickname;
+                            }
+                            else {
+                                name = data.card;
+                            }
+                            return '@' + name;
+                        } else {
+                            return '@' + t.data.qq;
+                        }
+                    }else{
+                        return '@' + spark.mc.getXbox(t.data.qq);
+                    }
+                } catch (error) {
+                    console.error(error);
                     return '@' + t.data.qq;
                 }
-                return '@' + spark.mc.getXbox(t.data.qq);
             case 'text':
                 return t.data.text;
             case 'image':
@@ -280,15 +298,17 @@ function formatMsg(msg) {
             case 'face':
                 return '[表情]';
         }
-    }).join('');
+    }));
+
+    return formattedMessages.join('');
 }
 
 //spark.debug = true;
-spark.on('message.group.normal', (e, reply) => {
+spark.on('message.group.normal', async (e, reply) => {
     //reply("?")
     const { raw_message, group_id, user_id } = e;
     //console.log(raw_message, group_id, user_id ,GROUP);
-    const raw = formatMsg(e.message);
+    const raw = await formatMsg(e.message);
 
     //console.log(raw);
     if (group_id !== GROUP) return;
@@ -316,7 +336,7 @@ spark.on('message.group.normal', (e, reply) => {
 
 spark.on('notice.group_decrease', (e) => {
 
-    const { self_id, user_id, group_id} = e;
+    const { self_id, user_id, group_id } = e;
     if (group_id != spark.mc.config.group || user_id == self_id) return
     if (spark.mc.getXbox(user_id) != undefined) {
         let xb = spark.mc.getXbox(user_id);

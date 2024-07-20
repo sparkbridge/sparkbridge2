@@ -1,19 +1,42 @@
 const _config = spark.getFileHelper('JandLandCmsg');
 const JSON5 = require('json5');
 
-function formatMsg(msg) {
-    return msg.map(t => {
+async function formatMsg(msg) {
+    const formattedMessages = await Promise.all(msg.map(async (t) => {
         switch (t.type) {
             case 'at':
-                return '@' + t.data.qq;
+                try {
+                    if (spark.mc.getXbox(t.data.qq) == undefined) {
+                        const data = await spark.QClient.getGroupMemberInfo(spark.mc.config.group, t.data.qq);
+                        if (data) {
+                            let name
+                            if (data.card == "") {
+                                name = data.nickname;
+                            }
+                            else {
+                                name = data.card;
+                            }
+                            return '@' + name;
+                        } else {
+                            return '@' + t.data.qq;
+                        }
+                    }else{
+                        return '@' + spark.mc.getXbox(t.data.qq);
+                    }
+                } catch (error) {
+                    console.error(error);
+                    return '@' + t.data.qq;
+                }
             case 'text':
                 return t.data.text;
-            case 'img':
+            case 'image':
                 return '[图片]';
             case 'face':
                 return '[表情]';
         }
-    }).join('');
+    }));
+
+    return formattedMessages.join('');
 }
 
 
@@ -131,10 +154,10 @@ if (config.switch.chat.group) {
 
 if (config.switch.chat.server) {
     
-    spark.on('message.group.normal', (e) => {
+    spark.on('message.group.normal', async (e) => {
         if (e.group_id !== GROUP_ID) return;
-        let msg = formatMsg(e.message);
-        
+        let msg =await formatMsg(e.message);
+   //     console.log(spark.Cmd.buildString(lang.chat.server, [], e.sender, msg));
         mc.broadcast(spark.Cmd.buildString(lang.chat.server, [], e.sender, msg));
     });
 }
