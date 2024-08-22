@@ -1,7 +1,7 @@
 {
   "name": "sparkbridge2",
-  "version": "1.0.2",
-  "description": "a new adapter",
+  "version": "2.4.0",
+  "description": "all new adapter",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

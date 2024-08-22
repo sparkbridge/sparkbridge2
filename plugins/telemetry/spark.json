@@ -1,0 +1,11 @@
+{
+    "name": "telemetry",
+    "author": "lition",
+    "version": [
+        0,
+        0,
+        2
+    ],
+    "desc": "回传数据定义器",
+    "load":true
+}

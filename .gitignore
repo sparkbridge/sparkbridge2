@@ -1,5 +1,7 @@
 # sandbox
 testdata/
+serverdata/
+tmp/
 
 # idea
 .vscode/
