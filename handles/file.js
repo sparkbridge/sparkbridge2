@@ -3,7 +3,6 @@ var PLUGIN_DATA_DIR;
 if (typeof mc !== 'undefined') {
     if (!exists('./plugins/LeviLamina')) {
         PLUGIN_DATA_DIR = './plugins/nodejs/sparkbridge2/serverdata'
-
     }
     else {
         PLUGIN_DATA_DIR = './plugins/sparkbridge2/serverdata'
