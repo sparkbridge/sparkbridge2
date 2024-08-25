@@ -1,7 +1,34 @@
-title µ÷ÊÔÄ£Ê½
-echo off
-cls
-echo Èç¹ûÄãÊÇ¿ª·şÓÃ»§£¬Äã²»ĞèÒª´ò¿ªÕâ¸öÎÄ¼ş£¬ÕâÊÇ¿ª·¢Ä£ÄâÓÃµÄ¡£
-echo Èç¹û±¨´íÎŞ·¨Æô¶¯É³ºĞ¿´µ½logo£¬ÇëÏÈÖ´ĞĞnode i¡£
-node index
+chcp 65001
+@echo off
+title è°ƒè¯•æ¨¡å¼
+REM æ£€æµ‹Node.jså’Œnode_modulesæ–‡ä»¶å¤¹çš„æ‰¹å¤„ç†è„šæœ¬
+
+REM æ£€æµ‹Node.jsç¯å¢ƒ
+where node >nul 2>&1
+if %errorlevel% neq 0 (
+    echo Node.js æœªå®‰è£…æˆ–æœªæ·»åŠ åˆ°ç³»ç»Ÿç¯å¢ƒå˜é‡ã€‚
+    goto end
+)else (
+    echo Node.js å·²å®‰è£…ã€‚
+    node -v
+)
+REM æ£€æµ‹node_modulesæ–‡ä»¶å¤¹æ˜¯å¦å­˜åœ¨
+if not exist node_modules (
+    echo node_modules æ–‡ä»¶å¤¹ä¸å­˜åœ¨ï¼Œæ­£åœ¨å°è¯•å®‰è£…...
+    REM æ‰§è¡Œnpm install
+    npm install
+    if %errorlevel% neq 0 (
+        echo npm install å¤±è´¥ï¼Œè¯·æ£€æŸ¥ç½‘ç»œè¿æ¥æˆ–npmé…ç½®ã€‚
+        goto end
+    ) else (
+        echo npm install å®Œæˆã€‚
+    )
+) else (
+    echo node_modules æ–‡ä»¶å¤¹å·²å­˜åœ¨ã€‚
+)
+
+echo å¦‚æœä½ æ˜¯å¼€æœç”¨æˆ·ï¼Œä½ ä¸éœ€è¦æ‰“å¼€è¿™ä¸ªæ–‡ä»¶ï¼Œè¿™æ˜¯å¼€å‘æ¨¡æ‹Ÿç”¨çš„ã€‚
+npm run dev
+
+:end
 pause

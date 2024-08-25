@@ -44,7 +44,13 @@ const fs = require('fs');
 // 创建HTTP服务器
 const server = http.createServer((req, res) => {
     const { pathname, query } = parse(req.url);
-
+    // console.log(req.socket.remoteAddress);
+    // const isLocal = req.headers.host.startsWith('localhost') || req.headers.host.startsWith('127.0.0.1');
+    const isLocal = req.socket.remoteAddress === '::1';
+    if(config.allow_global == false && isLocal == false){
+        logger.info(`收到外部网络${req.socket.remoteAddress}的访问，已拒绝`);
+        return;
+    } 
     // 定义一个中间件来处理请求数据
     function handleRequest(req, res, next) {
         if (req.method === 'POST') {
