@@ -1,8 +1,8 @@
 global.mc = {};
 global.ll = {};
 
-ll.export = (fnc,name) =>{
-    console.log('共享：' + name);
+ll.exports = (fnc,name) =>{
+    console.log('共享：'+name +'=>'+ fnc.name);
 }
 
 mc.listen = (evk, func) => {
