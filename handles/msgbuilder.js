@@ -1,27 +1,27 @@
 const fs = require('fs');
-const fhelper = require('./file')
+const fhelper = require('./file');
 
-class ForwardMsgBuilder{
-    msg = []
-    addMsgById(id){
+class ForwardMsgBuilder {
+    msg = [];
+    addMsgById(id) {
         this.msg.push({
-            type:'node',
-            data:{
+            type: 'node',
+            data: {
                 id
             }
-        })
+        });
     }
-    addCustomsMsg(name,uin,content){
+    addCustomsMsg(name, uin, content) {
         this.msg.push({
-            type:'node',
-            data:{
+            type: 'node',
+            data: {
                 name,
                 uin,
                 content
             }
-        })
+        });
     }
-    getMsg(){
+    getMsg() {
         return this.msg;
     }
 }
@@ -30,25 +30,28 @@ class Builder {
     static img(file) {
         if (typeof file === 'string' && fhelper.exists(file)) file = fs.readFileSync(file);
         if (file instanceof Buffer) file = `base64://${file.toString('base64')}`;
-        return { type: 'image', data: { file: file, subType: 0 } }
+        return { type: 'image', data: { file: file, subType: 0 } };
     }
     static at(qid) {
-        qid=qid.toString()
+        qid = qid.toString();
         return { type: "at", data: { "qq": qid } };
     }
     static face(id) {
-        id=id.toString()
-        return { type: 'face', data: { id } }
+        id = id.toString();
+        return { type: 'face', data: { id } };
     }
     static text(raw) {
         return { type: 'text', data: { text: raw } };
     }
     static poke(id) {
-        id=id.toString()
-        return { type: 'poke', data: { qq: id } }
+        id = id.toString();
+        return { type: 'poke', data: { qq: id } };
+    }
+    static video(data) {
+        return { type: 'video', data: { file: data } };
     }
     static reply(id) {
-        id=id.toString()
+        id = id.toString();
         return { type: 'reply', data: { id } };
     }
     static format(msg) {
@@ -61,10 +64,10 @@ class Builder {
                 msg[index] = Builder.text(imsg);
             }
         }
-        if (spark.debug) console.log('build msg -->' + JSON.stringify(msg))
+        if (spark.debug) console.log('build msg -->' + JSON.stringify(msg));
         return msg;
     }
-    static ForwardMsgBuilder(){
+    static ForwardMsgBuilder() {
         return new ForwardMsgBuilder();
     }
 }
