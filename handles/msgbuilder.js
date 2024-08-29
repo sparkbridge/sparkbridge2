@@ -47,8 +47,13 @@ class Builder {
         id = id.toString();
         return { type: 'poke', data: { qq: id } };
     }
-    static video(data) {
-        return { type: 'video', data: { file: data } };
+    static video(file) {
+        file = file.toString();
+        return { type: 'video', data: { file: file } };
+    }
+    static record(file) {
+        file = file.toString();
+        return { type: "record", data: { file: file } };
     }
     static reply(id) {
         id = id.toString();
