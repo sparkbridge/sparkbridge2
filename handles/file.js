@@ -22,9 +22,32 @@ class FileObj {
         }
     }
     initFile(fname, init_obj, json = JSON) {
-        if (exists(PLUGIN_DATA_DIR + '/' + this.pname + '/' + fname) == false)
-            writeTo(PLUGIN_DATA_DIR + '/' + this.pname + '/' + fname, json.stringify(init_obj, null, 4));
+        const filePath = PLUGIN_DATA_DIR + '/' + this.pname + '/' + fname;
+    
+        // 检查文件是否存在
+        if (!exists(filePath)) {
+            // 文件不存在，直接创建并写入初始对象
+            writeTo(filePath, json.stringify(init_obj, null, 4));
+        } else {
+            // 文件存在，读取内容
+            const existingData = json.parse(read(filePath));
+    
+            // 遍历初始对象，检查现存文件中的项是否缺失
+            let updated = false;
+            for (const key in init_obj) {
+                if (!(key in existingData)) {
+                    existingData[key] = init_obj[key];  // 补全缺失项
+                    updated = true;
+                }
+            }
+    
+            // 如果有更新，重新写入文件
+            if (updated) {
+                writeTo(filePath, json.stringify(existingData, null, 4));
+            }
+        }
     }
+    
     getFile(fname) {
         if (exists(PLUGIN_DATA_DIR + '/' + this.pname) == false) {
             return null;
