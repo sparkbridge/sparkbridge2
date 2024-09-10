@@ -22,7 +22,7 @@ class FileObj {
         }
     }
     initFile(fname, init_obj, json = JSON) {
-        const filePath = PLUGIN_DATA_DIR + '/' + this.pname + '/' + fname;
+        let filePath = PLUGIN_DATA_DIR + '/' + this.pname + '/' + fname;
     
         // 检查文件是否存在
         if (!exists(filePath)) {
