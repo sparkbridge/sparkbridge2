@@ -22,7 +22,7 @@ class Builder {
     static GroupMessagePack(gid, msg, id) {
         return this.MessagePack(gid, 'group', msg, id);
     }
-    static SandGroupMessagePack(gid, msg, escape = false) {
+    static SendGroupMessagePack(gid, msg, escape = false) {
         return {
             action: 'send_group_msg',
             params: {
@@ -31,6 +31,10 @@ class Builder {
                 auto_escape: escape
             }
         }
+    }
+    static SandGroupMessagePack(gid, msg, escape = false) {
+        return SendGroupMessagePack(gid, msg, escape)
+        
     }
     static LikePack(fid, times) {
         return {
