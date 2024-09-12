@@ -34,7 +34,7 @@ class Builder {
     }
     static SandGroupMessagePack(gid, msg, escape = false) {
         return SendGroupMessagePack(gid, msg, escape)
-        
+        //由铭记制造的历史遗留问题
     }
     static LikePack(fid, times) {
         return {
