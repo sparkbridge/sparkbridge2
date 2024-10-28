@@ -242,7 +242,7 @@ spark.QClient.setOwnProperty('setGroupName', setGroupName);
 
 function getStrangerInfo(sid, no_cache) {
     let tmp_id = uuid();
-    spark.QClient.sendWSPack(packbuilder.StrangeInfoPack(sid, no_cache, tmp_id));
+    spark.QClient.sendWSPack(packbuilder.StrangerInfoPack(sid, no_cache, tmp_id));
     return new Promise((res, rej) => {
         spark.QClient.eventEmitter.once('packid_' + tmp_id, (data) => {
             res(data);

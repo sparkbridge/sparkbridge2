@@ -45,14 +45,7 @@ class Builder {
             }
         }
     }
-    static GetMsgPack(id) {
-        return {
-            action: 'get_msg',
-            params: {
-                message_id: id
-            }
-        }
-    }
+
     static DeleteMsgPack(id) {
         return {
             action: 'delete_msg',

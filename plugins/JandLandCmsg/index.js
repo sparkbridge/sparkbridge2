@@ -183,6 +183,9 @@ const GROUP_ID = spark.mc.config.group;
 
 if (config.switch.join) {
     spark.mc.on('onJoin', (player) => {
+        if(player.isSimulatedPlayer()){
+            return;
+        }
         spark.QClient.sendGroupMsg(GROUP_ID, spark.Cmd.buildString(lang.join, [], player));
     });
 }
