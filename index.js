@@ -110,6 +110,7 @@ function readPluginDir() {
         }
     }
     logger.info('检测到了' + plugins_load_list.length+ '个插件');
+    spark.plugins_list = plugins_load_list;
     bootUpPlugins(plugins_load_list, current_list);
 }
 

@@ -54,10 +54,16 @@ class Qadapter {
     on(evk, func) {
         if (spark.debug) console.log('触发on', evk);
         this.eventEmitter.on(evk, func);
-        this.eventEmitter.setMaxListeners(20)
-        //if(this.eventKeyMap.has(evk)==false) this.eventKeyMap.set(evk,[]);
-        //this.eventKeyMap.get(evk).push(func);
+    
+        // 初始化spark.plugins_list 
+        spark.plugins_list = spark.plugins_list || [];
+
+        // 设置最大监听器数量
+        const maxListeners = 10 + spark.plugins_list.length;
+        this.eventEmitter.setMaxListeners(maxListeners);
+    
     }
+    
     emit(evk, ...arg) {
         if (spark.debug) console.log('触发emit', evk);
         /* if(this.eventKeyMap.has(evk)){
