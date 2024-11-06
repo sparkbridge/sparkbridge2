@@ -59,7 +59,7 @@ class Qadapter {
         spark.plugins_list = spark.plugins_list || [];
 
         // 设置最大监听器数量
-        const maxListeners = 10 + spark.plugins_list.length;
+        const maxListeners = 10 + (spark.plugins_list.length) * 3;
         this.eventEmitter.setMaxListeners(maxListeners);
     
     }
