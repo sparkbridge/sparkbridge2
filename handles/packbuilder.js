@@ -136,8 +136,8 @@ class Builder {
             action: 'set_group_kick',
             params: {
                 group_id: gid,
-                user_id : mid,
-                reject_add_request : rej
+                user_id: mid,
+                reject_add_request: rej
             }
         }
     }
@@ -146,7 +146,7 @@ class Builder {
             action: 'set_group_leave',
             params: {
                 group_id: gid,
-                is_dismiss : dismiss
+                is_dismiss: dismiss
             }
         }
     }
@@ -164,7 +164,7 @@ class Builder {
             action: 'set_group_name',
             params: {
                 group_id: gid,
-                group_name : name
+                group_name: name
             }
         }
     }
@@ -225,6 +225,26 @@ class Builder {
             action: 'get_status',
             echo: id
         }
+    }
+    static GroupRootFilesPack(gid, id) {
+        return {
+            action: "get_group_root_files",
+            echo: id,
+            params: {
+                group_id: gid, // 群号
+            }
+        }
+    }
+    static UploadGroupFilePack(gid, FileName, AsName, FolderID) {
+        return {
+            action: "upload_group_file",
+            params: {
+                group_id: gid, // 群号
+                file: FileName, // 本地文件路径
+                name: AsName, // 储存名称
+                folder: FolderID // 不提供父目录ID，默认上传到根目录
+            }
+        };
     }
 }
 

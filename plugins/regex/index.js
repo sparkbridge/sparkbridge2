@@ -100,7 +100,7 @@ function runCmd(_first, _args, reg, e, reply) {
 
 regCmd('reply', (_arg, reg, e, reply) => {
     let txt1 = buildString(_arg, reg, e);
-    reply(txt1, true);
+    reply(txt1.replace(/§[a-zA-Z0-9]/g, ''), true);
 });
 
 regCmd('f', (_arg, reg, e, reply) => {
@@ -167,7 +167,7 @@ regCmd('run', (arg, reg, e, reply) => {
     }
     else {
         // 没有
-        reply(r.output, true);
+        reply(r.output.replace(/§[a-zA-Z0-9]/g, ''), true);
     }
 })
 

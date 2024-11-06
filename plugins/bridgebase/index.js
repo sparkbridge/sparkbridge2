@@ -3,6 +3,8 @@ const packbuilder = require('../../handles/packbuilder');
 const { parseCQString } = require('../../handles/parserCQString');
 const lg = require('../../handles/logger')
 const logger = lg.getLogger('QClient');
+const JSON5 = require('json5');
+
 function text(str) {
     if (typeof str == 'string') return msgbuilder.text(str);
     else return str;
@@ -29,7 +31,7 @@ const build_reply = (id, type, mid) => {
 
 const _config = spark.getFileHelper('base');
 const _raw_file = _config.getFile("config.json");
-const _p_raw = JSON.parse(_raw_file);
+const _p_raw = JSON5.parse(_raw_file);
 const _isArray = _p_raw.onebot_mode_v11;
 //console.log(_isArray)
 spark.on('gocq.pack', (pack) => {
@@ -219,6 +221,30 @@ function sendGroupForwardMessage(gid, msg) {
     }).catch(defaultErrorHandler)
 }
 spark.QClient.setOwnProperty('sendGroupForwardMessage', sendGroupForwardMessage)
+
+function getGroupRootFiles(gid) {
+    try {
+        let tmp_id = uuid();
+        spark.QClient.sendWSPack(packbuilder.GroupRootFilesPack(gid, tmp_id));
+        return new Promise((res, rej) => {
+            spark.QClient.eventEmitter.once('packid_' + tmp_id, (data) => {
+                res(data);
+            });
+            setTimeout(() => {
+                rej({ reason: 'timeout' });
+            }, 10e3);
+        });
+    } catch (error) {
+        return defaultErrorHandler(error);
+    }
+}
+
+spark.QClient.setOwnProperty('getGroupRootFiles', getGroupRootFiles);
+
+function uploadGroupFile(gid, FileName, AsName, FolderID) {
+    spark.QClient.sendWSPack(packbuilder.UploadGroupFilePack(gid, FileName, AsName, FolderID))
+}
+spark.QClient.setOwnProperty('uploadGroupFile', uploadGroupFile);
 
 function sendGroupWholeBan(gid, enable) {
     spark.QClient.sendWSPack(packbuilder.GroupWholeBanPack(gid, enable));
