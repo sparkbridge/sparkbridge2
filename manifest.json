@@ -2,6 +2,8 @@
     "entry": "index.js",
     "name": "sparkbridge2",
     "type": "lse-nodejs",
+    "version": "2.4.7",
+    "author": "Sbaoor",
     "dependencies": [
         {
             "name": "legacy-script-engine-nodejs"
