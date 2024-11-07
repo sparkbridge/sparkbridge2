@@ -62,7 +62,7 @@ class Qadapter {
         // PS： JS并没有明确限制监听器数量，不设置maxlisteners就是无限个
         // const maxListeners = 10 + (spark.plugins_list.length) * 3;
         // this.eventEmitter.setMaxListeners(maxListeners);
-
+    
     }
 
     emit(evk, ...arg) {
