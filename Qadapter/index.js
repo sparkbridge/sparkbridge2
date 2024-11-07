@@ -20,7 +20,7 @@ class Qadapter {
     }
     login() {
         //console.log(this.pwd);
-        this.client = new WebSocket(this.target, { headers: { Authorization: 'Bearer ' + this.pwd }});// 
+        this.client = new WebSocket(this.target, { headers: { Authorization: 'Bearer ' + this.pwd } });// 
         this.client.on('open', () => {
             this.logger.info('登录成功，开始处理事件');
             this.eventEmitter.emit('bot.online');
@@ -54,16 +54,17 @@ class Qadapter {
     on(evk, func) {
         if (spark.debug) console.log('触发on', evk);
         this.eventEmitter.on(evk, func);
-    
+
         // 初始化spark.plugins_list 
         spark.plugins_list = spark.plugins_list || [];
 
         // 设置最大监听器数量
-        const maxListeners = 10 + (spark.plugins_list.length) * 3;
-        this.eventEmitter.setMaxListeners(maxListeners);
-    
+        // PS： JS并没有明确限制监听器数量，不设置maxlisteners就是无限个
+        // const maxListeners = 10 + (spark.plugins_list.length) * 3;
+        // this.eventEmitter.setMaxListeners(maxListeners);
+
     }
-    
+
     emit(evk, ...arg) {
         if (spark.debug) console.log('触发emit', evk);
         /* if(this.eventKeyMap.has(evk)){
@@ -80,7 +81,7 @@ class Qadapter {
     sendWSPack(pack) {
         if (typeof pack !== 'string') {
             pack = JSON.stringify(pack);
-             
+
         }
         if (spark.debug) console.log("send-->", pack);
         this.client.send(pack);
