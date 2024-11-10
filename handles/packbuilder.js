@@ -170,7 +170,7 @@ class Builder {
     }
     static StrangerInfoPack(sid, no_cache, id) {
         return {
-            action: 'get_stanger_info',
+            action: 'get_stranger_info',
             echo: id,
             params: {
                 user_id: sid,
