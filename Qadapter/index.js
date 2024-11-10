@@ -56,12 +56,12 @@ class Qadapter {
         this.eventEmitter.on(evk, func);
 
         // 初始化spark.plugins_list 
-        spark.plugins_list = spark.plugins_list || [];
+        //spark.plugins_list = spark.plugins_list || [];
 
         // 设置最大监听器数量
-        // PS： JS并没有明确限制监听器数量，不设置maxlisteners就是无限个
-        // const maxListeners = 10 + (spark.plugins_list.length) * 3;
-        // this.eventEmitter.setMaxListeners(maxListeners);
+        // PS：Nodejs中，监听器数量默认限制为10，否则会警告。设置为0才是无限个
+
+        this.eventEmitter.setMaxListeners(0);
     
     }
 
