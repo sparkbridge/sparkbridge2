@@ -73,13 +73,14 @@ class Builder {
             }
         }
     }
-    static GroupRequestPack(flag, sub_type, approve) {
+    static GroupRequestPack(flag, sub_type, approve,reason) {
         return {
             action: 'set_group_add_request',
             params: {
                 flag,
                 sub_type,
-                approve
+                approve,
+                reason
             }
         }
     }
