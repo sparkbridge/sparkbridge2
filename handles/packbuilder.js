@@ -194,7 +194,7 @@ class Builder {
             action: 'get_group_info',
             echo: id,
             params: {
-                user_id: gid,
+                group_id: gid,
                 no_cache
             }
         }
