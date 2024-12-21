@@ -5,7 +5,7 @@ const { WebConfigBuilder, WebConfigTye } = require('./webConfig');
 const _config = spark.getFileHelper('telemetry');
 _config.initFile('config.json', {
     webPort: 3002,
-    lock_panel:true,
+    lock_panel: true,
     allow_global: true
 });
 var config = JSON.parse(_config.getFile('config.json'));
@@ -22,18 +22,18 @@ spark.on("event.telemetry.pushconfig", (cObj) => {
 });
 spark.emit("event.telemetry.ready");
 
-spark.on("event.telemetry.updateconfig_telemetry",(id,changeK,value)=>{
+spark.on("event.telemetry.updateconfig_telemetry", (id, changeK, value) => {
     // console.log("触发回调",id,changeK,value);
     config[changeK] = value;
-    _config.updateFile('config.json',config);
+    _config.updateFile('config.json', config);
 })
 
 
 const wbc = new WebConfigBuilder("telemetry");
-wbc.addNumber("webPort", config.webPort,"网页端口");
-wbc.addSwitch("allow_global",config.allow_global,"是否允许外网访问");
-wbc.addSwitch("lock_panel",config.lock_panel,"是否锁定面板,锁定后只能提供私聊机器人获取临时密码");
-spark.emit("event.telemetry.pushconfig",wbc);
+wbc.addNumber("webPort", config.webPort, "网页端口");
+wbc.addSwitch("allow_global", config.allow_global, "是否允许外网访问");
+wbc.addSwitch("lock_panel", config.lock_panel, "是否锁定面板,锁定后只能提供私聊机器人获取临时密码");
+spark.emit("event.telemetry.pushconfig", wbc);
 
 // 以下为http服务器部分
 
@@ -47,10 +47,10 @@ const server = http.createServer((req, res) => {
     // console.log(req.socket.remoteAddress);
     // const isLocal = req.headers.host.startsWith('localhost') || req.headers.host.startsWith('127.0.0.1');
     const isLocal = req.socket.remoteAddress === '::1';
-    if(config.allow_global == false && isLocal == false){
+    if (config.allow_global == false && isLocal == false) {
         logger.info(`收到外部网络${req.socket.remoteAddress}的访问，已拒绝`);
         return;
-    } 
+    }
     // 定义一个中间件来处理请求数据
     function handleRequest(req, res, next) {
         if (req.method === 'POST') {
@@ -82,24 +82,24 @@ const server = http.createServer((req, res) => {
                 res.writeHead(200, { 'Content-Type': 'text/html' });
                 res.end(content);
             } catch (e) {
-                console.log('get err',e);
+                console.log('get err', e);
             }
         } else if (pathname.startsWith('/api/')) {
             // 处理GET类型的API请求
             handleApiRequest(pathname.substring('/api/'.length), null, req.method, res);
         } else if (pathname.startsWith('/static/')) {
-            try{
+            try {
                 var fileName = req.url.substring('/static/'.length);
                 const filePath = `${__dirname}/static/${fileName}`;
                 let data = fs.readFileSync(filePath, { encoding: 'utf-8' });
                 if (fileName.endsWith(".js"))
-                     res.setHeader("Content-Type", "text/javascript");
+                    res.setHeader("Content-Type", "text/javascript");
                 res.end(data);
-            }catch(err){
+            } catch (err) {
                 console.log(err);
             }
         }
-        
+
         else {
             // 其他GET请求，返回404页面
             // 这里需要实现404页面的发送逻辑
@@ -151,15 +151,15 @@ function handleApiRequest(apiName, requestBody, method, res) {
         // 处理POST请求
         try {
             const parsedBody = requestBody ? JSON.parse(requestBody) : {};
-            var  responseContent  = {}
-            switch(apiName){
+            var responseContent = {}
+            switch (apiName) {
                 case "update_global_config":
                     let cgK = parsedBody.value;
-                    if(GConfig[parsedBody.plugin_id][parsedBody.changeK].type == 5){
+                    if (GConfig[parsedBody.plugin_id][parsedBody.changeK].type == 5) {
                         cgK = Number(parsedBody.value);
                     }
                     GConfig[parsedBody.plugin_id][parsedBody.changeK].value = cgK;
-                    spark.emit("event.telemetry.updateconfig_"+parsedBody.plugin_id,parsedBody.plugin_id,parsedBody.changeK,cgK);
+                    spark.emit("event.telemetry.updateconfig_" + parsedBody.plugin_id, parsedBody.plugin_id, parsedBody.changeK, cgK);
                     responseContent.code = 0;
                     break;
 
@@ -174,11 +174,30 @@ function handleApiRequest(apiName, requestBody, method, res) {
     }
 }
 
-setTimeout(()=>{
-    
-server.listen(config.webPort, () => {
-    logger.info('服务器运行在 http://localhost:'+config.webPort+'/');
+server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+        logger.warn(`Port ${config.webPort} is already in use, trying next port...`);
+        config.webPort++;
+        server.close(() => { // 关闭当前服务器
+            startServer(); // 尝试下一个端口
+        });
+    } else {
+        console.error(err);
+    }
 });
 
+function startServer() {
+    logger.info(`Server starting on ${config.webPort}...`);
+    try {
 
-},500);
+        server.listen(config.webPort, () => {
+            logger.info('服务器运行在 http://localhost:' + config.webPort + '/');
+        });
+    } catch (e) { console.log(e); }
+}
+
+
+setTimeout(() => {
+    startServer();
+
+}, 500);
