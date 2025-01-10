@@ -12,10 +12,14 @@ function boom() {
     return sleep_t * 1e3;
 }
 
-function awa(){
-    sleep_t = sleep_t*2;
+function awa() {
+    if (sleep_t < 300) {
+        sleep_t = sleep_t * 2;
+        if (sleep_t > 300) {
+            sleep_t = 300;
+        }
+    }
 }
-
 module.exports = {
     boom,
     awa

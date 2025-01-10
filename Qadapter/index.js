@@ -31,7 +31,7 @@ class Qadapter {
             console.log(e);
         });
         this.client.on('close', (e) => {
-            this.logger.warn('websocket 已经断开');
+            this.logger.warn(`websocket 已经断开,将在 ${(new Date(Date.now() + boom())).toISOString()} 尝试重连`);
             setTimeout(() => {
                 this.login()
             }, boom());

@@ -31,7 +31,7 @@ spark.on("event.telemetry.updateconfig_telemetry", (id, changeK, value) => {
 
 const wbc = new WebConfigBuilder("telemetry");
 wbc.addNumber("webPort", config.webPort, "网页端口");
-wbc.addSwitch("allow_global", config.allow_global, "是否允许外网访问");
+wbc.addSwitch("allow_global", config.allow_global, "是否允许外网访问(锁定未实装，谨慎开启)");
 wbc.addSwitch("lock_panel", config.lock_panel, "是否锁定面板,锁定后只能提供私聊机器人获取临时密码");
 spark.emit("event.telemetry.pushconfig", wbc);
 
