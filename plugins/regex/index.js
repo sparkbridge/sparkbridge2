@@ -262,7 +262,7 @@ const PRE_CONFIG = {
     }
 }
 
-_config.initFile('data.json', PRE_CONFIG);
+_config.initFile('data.json', PRE_CONFIG,false);
 const regexs = JSON5.parse(_config.getFile('data.json'));
 
 async function formatMsg(msg) {
