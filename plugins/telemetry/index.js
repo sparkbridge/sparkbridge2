@@ -199,5 +199,4 @@ function startServer() {
 
 setTimeout(() => {
     startServer();
-
 }, 500);

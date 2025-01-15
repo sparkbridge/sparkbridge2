@@ -36,20 +36,27 @@ const CONFIG = JSON5.parse(RAW_CONFIG);
 
 global.spark = new Spark(CONFIG.target, CONFIG.qid, CONFIG.pwd);
 
-spark.on("event.telemetry.ready",()=>{
-    const  WebConfigBuilder   = spark.telemetry.WebConfigBuilder;
+spark.on("event.telemetry.ready", () => {
+    const WebConfigBuilder = spark.telemetry.WebConfigBuilder;
     let wbc = new WebConfigBuilder("base");
-    wbc.addText("target",CONFIG.target,"连接地址");
-    wbc.addNumber("qid",CONFIG.qid,'QQ号码');
-    wbc.addText("pwd",CONFIG.pwd,"连接密码");
-    wbc.addSwitch('onebot_mode_v11',CONFIG.onebot_mode_v11,"是否使用onebot适配器");
+    wbc.addText("target", CONFIG.target, "连接地址");
+    wbc.addNumber("qid", CONFIG.qid, 'QQ号码');
+    wbc.addText("pwd", CONFIG.pwd, "连接密码");
+    wbc.addSwitch('onebot_mode_v11', CONFIG.onebot_mode_v11, "是否使用onebot适配器");
+    wbc.addSwitch("debugMode", spark.debug, "开发者模式");
     spark.emit("event.telemetry.pushconfig", wbc);
 })
 
-spark.on("event.telemetry.updateconfig_base",(plname,K,newV)=>{
-    CONFIG[K] = newV;
-    ROOT_FILE_HELPER.updateFile('config.json',CONFIG);
-    logger.info(`收到配置文件[${K}]更改请求，此项无法热重载，请重启服务器`);
+spark.on("event.telemetry.updateconfig_base", (plname, K, newV) => {
+    if (K !== "debugMode") {
+        logger.info(`收到配置文件[${K}]更改请求，此项无法热重载，请重启服务器`);
+        CONFIG[K] = newV;
+        ROOT_FILE_HELPER.updateFile('config.json', CONFIG);
+    } else {
+        spark.debug = true;
+        logger.info(`开发者模式已开启`);
+    }
+
 })
 
 
@@ -109,7 +116,7 @@ function readPluginDir() {
             plugins_load_list.push(i);
         }
     }
-    logger.info('检测到了' + plugins_load_list.length+ '个插件');
+    logger.info('检测到了' + plugins_load_list.length + '个插件');
     spark.plugins_list = plugins_load_list;
     bootUpPlugins(plugins_load_list, current_list);
 }
