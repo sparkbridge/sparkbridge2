@@ -41,6 +41,13 @@ function generateRandomPassword(length) {
 }
 
 var currentPwd = {};
+var ip_whitelist = {};
+
+function isIpAllowed(req) {
+    const clientIp = req.socket.remoteAddress;
+    return Object.values(ip_whitelist).includes(clientIp);
+}
+
 //const ADMINS = ;
 function findQid(pwd) {
     for (let id in currentPwd) {
@@ -63,6 +70,7 @@ spark.on("message.private.friend", (obj, reply) => {
         reply('您的临时密码为：' + pwd, true);
         setTimeout(() => {
             delete currentPwd[obj.sender.user_id];
+            delete ip_whitelist[obj.sender.user_id];
         }, config.pwd_timeout*60000); // 过期时间
     }
 });
@@ -128,7 +136,9 @@ const server = http.createServer((req, res) => {
             }
         } else if (pathname.startsWith('/api/')) {
             // 处理GET类型的API请求
-            handleApiRequest(req,pathname.substring('/api/'.length), null, req.method, res);
+            try{
+                handleApiRequest(req, pathname.substring('/api/'.length), null, req.method, res);
+            }catch(err){console.log(err);}
         } else if (pathname.startsWith('/static/')) {
             try {
                 var fileName = req.url.substring('/static/'.length);
@@ -147,8 +157,8 @@ const server = http.createServer((req, res) => {
             // 这里需要实现404页面的发送逻辑
             // 其他请求，返回404页面，并重定向到/page/index.html
             res.writeHead(404, { 'Content-Type': 'text/html' });
-            res.end(fs.readFileSync('./pages/404.html', 'utf-8'));
-            res.writeHead(302, { 'Location': '/page/index.html' });
+            //res.end(fs.readFileSync('./pages/404.html', 'utf-8'));
+            //res.writeHead(302, { 'Location': '/page/index.html' });
             res.end();
         }
     } else if (req.method === 'POST') {
@@ -156,7 +166,9 @@ const server = http.createServer((req, res) => {
         handleRequest(req, res, body => {
             if (pathname.startsWith('/api/')) {
                 // 处理POST类型的API请求
-                handleApiRequest(req,pathname.substring('/api/'.length), body, req.method, res);
+               try{
+                   handleApiRequest(req, pathname.substring('/api/'.length), body, req.method, res);
+               }catch(err){console.log(err);}
             } else {
                 // POST请求到非API路径，返回405 Method Not Allowed
                 res.writeHead(405, { 'Content-Type': 'text/plain' });
@@ -170,9 +182,19 @@ const server = http.createServer((req, res) => {
     }
 });
 
-// 定义处理API请求的函数
-function handleApiRequest(req,apiName, requestBody, method, res) {
+function handleApiRequest(req, apiName, requestBody, method, res) {
     if (spark.debug) logger.info(method + " >> " + apiName);
+
+    // 检查是否是登录接口
+    const isLoginRequest = apiName === "login";
+
+    // 如果不是登录请求，检查IP是否在白名单中
+    if (!isLoginRequest && !isIpAllowed(req)) {
+        logger.warn(`IP [${req.socket.remoteAddress}] 不在白名单中，拒绝访问API: ${apiName}`);
+        res.writeHead(403, { 'Content-Type': 'text/plain' });
+        res.end('Access denied: Your IP is not allowed to access this API.');
+        return;
+    }
 
     // 根据不同的请求方法处理API请求
     if (method === 'GET') {
@@ -193,7 +215,7 @@ function handleApiRequest(req,apiName, requestBody, method, res) {
         // 处理POST请求
         try {
             const parsedBody = requestBody ? JSON.parse(requestBody) : {};
-            var responseContent = {}
+            var responseContent = {};
             switch (apiName) {
                 case "update_global_config":
                     let cgK = parsedBody.value;
@@ -205,36 +227,35 @@ function handleApiRequest(req,apiName, requestBody, method, res) {
                     responseContent.code = 0;
                     break;
                 case "login":
+                    // 登录逻辑
                     if (config.lock_panel) {
                         let pwd = parsedBody.password;
                         let qid = findQid(pwd);
-                        // console.log(pwd,qid);
                         logger.info(`IP:[${req.socket.remoteAddress}] 尝试连接面板`);
                         if (qid) {
                             responseContent = {
-                                expires_day: 0, // 有效期
-                                message: `您使用管理账户：${qid} 登入`, // 返回消息
-                                status: 200 // 返回状态 200为成功登录 其它都可
-                            }
+                                expires_day: 0,
+                                message: `您使用管理账户：${qid} 登入`,
+                                status: 200
+                            };
                             if (config.reply_after_auth) spark.QClient.sendPrivateMsg(qid, `登入提示：\n您使用密码登入SpakrBridge面板\nIP:[${req.socket.remoteAddress}]\n若非本人操作请前往控制台查看`);
-                            logger.info(`管理员：${qid} 登入面板`)
+                            logger.info(`管理员：${qid} 登入面板`);
+                            ip_whitelist[qid] = req.socket.remoteAddress;
                         } else {
                             responseContent = {
-                                expires_day: 0, // 有效期
-                                message: "无法找到您的账户，请重新登入", // 返回消息
-                                status: 0 // 返回状态 200为成功登录 其它都可
-                            }
+                                expires_day: 0,
+                                message: "无法找到您的账户，请重新登入",
+                                status: 0
+                            };
                         }
                     } else {
-                        console.log(parsedBody);
                         responseContent = {
-                            expires_day: 0, // 有效期
-                            message: "未开启面板锁定，已放行", // 返回消息
-                            status: 200 // 返回状态 200为成功登录 其它都可
-                        }
+                            expires_day: 0,
+                            message: "未开启面板锁定，已放行",
+                            status: 200
+                        };
                     }
                     break;
-
             }
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify(responseContent));
