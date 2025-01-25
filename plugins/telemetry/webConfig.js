@@ -4,6 +4,7 @@ class WebConfigTye{
     static Choosing = 3;
     static text = 4;
     static number = 5;
+    static buttom = 6;
 }
 
 
@@ -35,6 +36,9 @@ class WebConfigBuilder{
     }
     addNumber(k,v,desc = "描述"){
         this.#setKV(k,v,WebConfigTye.number,desc);
+    }
+    addButtom(k,v,desc = "描述"){
+        this.#setKV(k, v, WebConfigTye.buttom, desc);
     }
     #setKV(k,v,t,desc){
         if(this.configObj[k]){

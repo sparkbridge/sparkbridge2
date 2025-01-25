@@ -6,7 +6,9 @@ const _config = spark.getFileHelper('telemetry');
 _config.initFile('config.json', {
     webPort: 3002,
     lock_panel: true,
-    allow_global: true
+    allow_global: true,
+    pwd_timeout : 5,
+    reply_after_auth:true
 });
 var config = JSON.parse(_config.getFile('config.json'));
 
@@ -26,13 +28,53 @@ spark.on("event.telemetry.updateconfig_telemetry", (id, changeK, value) => {
     // console.log("触发回调",id,changeK,value);
     config[changeK] = value;
     _config.updateFile('config.json', config);
-})
+});
+
+function generateRandomPassword(length) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let password = '';
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        password += characters[randomIndex];
+    }
+    return password;
+}
+
+var currentPwd = {};
+//const ADMINS = ;
+function findQid(pwd) {
+    for (let id in currentPwd) {
+        if (currentPwd[id] == pwd) {
+            return id;
+        }
+    }
+    return null;
+}
+
+spark.on("message.private.friend", (obj, reply) => {
+    if (obj.raw_message != "获取密码") return;
+    if (spark.mc.config.admins.includes(obj.sender.user_id)) {
+        if (currentPwd[obj.sender.user_id]) {
+            reply('您的临时密码为：' + currentPwd[obj.sender.user_id], true);
+            return;
+        }
+        const pwd = generateRandomPassword(12);
+        currentPwd[obj.sender.user_id] = pwd;
+        reply('您的临时密码为：' + pwd, true);
+        setTimeout(() => {
+            delete currentPwd[obj.sender.user_id];
+        }, config.pwd_timeout*60000); // 过期时间
+    }
+});
+
 
 
 const wbc = new WebConfigBuilder("telemetry");
 wbc.addNumber("webPort", config.webPort, "网页端口");
-wbc.addSwitch("allow_global", config.allow_global, "是否允许外网访问(锁定未实装，谨慎开启)");
+wbc.addSwitch("allow_global", config.allow_global, "是否允许外网访问");
 wbc.addSwitch("lock_panel", config.lock_panel, "是否锁定面板,锁定后只能提供私聊机器人获取临时密码");
+wbc.addSwitch("reply_after_auth", config.reply_after_auth, "登入面板后是否提醒");
+wbc.addNumber("pwd_timeout", config.pwd_timeout, "密码过期时间（单位分钟）");
 spark.emit("event.telemetry.pushconfig", wbc);
 
 // 以下为http服务器部分
@@ -46,7 +88,7 @@ const server = http.createServer((req, res) => {
     const { pathname, query } = parse(req.url);
     // console.log(req.socket.remoteAddress);
     // const isLocal = req.headers.host.startsWith('localhost') || req.headers.host.startsWith('127.0.0.1');
-    const isLocal = req.socket.remoteAddress === '::1';
+    const isLocal = req.socket.remoteAddress === '::1' || req.socket.remoteAddress === '::ffff:127.0.0.1';
     if (config.allow_global == false && isLocal == false) {
         logger.info(`收到外部网络${req.socket.remoteAddress}的访问，已拒绝`);
         return;
@@ -86,7 +128,7 @@ const server = http.createServer((req, res) => {
             }
         } else if (pathname.startsWith('/api/')) {
             // 处理GET类型的API请求
-            handleApiRequest(pathname.substring('/api/'.length), null, req.method, res);
+            handleApiRequest(req,pathname.substring('/api/'.length), null, req.method, res);
         } else if (pathname.startsWith('/static/')) {
             try {
                 var fileName = req.url.substring('/static/'.length);
@@ -114,7 +156,7 @@ const server = http.createServer((req, res) => {
         handleRequest(req, res, body => {
             if (pathname.startsWith('/api/')) {
                 // 处理POST类型的API请求
-                handleApiRequest(pathname.substring('/api/'.length), body, req.method, res);
+                handleApiRequest(req,pathname.substring('/api/'.length), body, req.method, res);
             } else {
                 // POST请求到非API路径，返回405 Method Not Allowed
                 res.writeHead(405, { 'Content-Type': 'text/plain' });
@@ -129,8 +171,8 @@ const server = http.createServer((req, res) => {
 });
 
 // 定义处理API请求的函数
-function handleApiRequest(apiName, requestBody, method, res) {
-    // console.log(apiName);
+function handleApiRequest(req,apiName, requestBody, method, res) {
+    if (spark.debug) logger.info(method + " >> " + apiName);
 
     // 根据不同的请求方法处理API请求
     if (method === 'GET') {
@@ -161,6 +203,36 @@ function handleApiRequest(apiName, requestBody, method, res) {
                     GConfig[parsedBody.plugin_id][parsedBody.changeK].value = cgK;
                     spark.emit("event.telemetry.updateconfig_" + parsedBody.plugin_id, parsedBody.plugin_id, parsedBody.changeK, cgK);
                     responseContent.code = 0;
+                    break;
+                case "login":
+                    if (config.lock_panel) {
+                        let pwd = parsedBody.password;
+                        let qid = findQid(pwd);
+                        // console.log(pwd,qid);
+                        logger.info(`IP:[${req.socket.remoteAddress}] 尝试连接面板`);
+                        if (qid) {
+                            responseContent = {
+                                expires_day: 0, // 有效期
+                                message: `您使用管理账户：${qid} 登入`, // 返回消息
+                                status: 200 // 返回状态 200为成功登录 其它都可
+                            }
+                            if (config.reply_after_auth) spark.QClient.sendPrivateMsg(qid, `登入提示：\n您使用密码登入SpakrBridge面板\nIP:[${req.socket.remoteAddress}]\n若非本人操作请前往控制台查看`);
+                            logger.info(`管理员：${qid} 登入面板`)
+                        } else {
+                            responseContent = {
+                                expires_day: 0, // 有效期
+                                message: "无法找到您的账户，请重新登入", // 返回消息
+                                status: 0 // 返回状态 200为成功登录 其它都可
+                            }
+                        }
+                    } else {
+                        console.log(parsedBody);
+                        responseContent = {
+                            expires_day: 0, // 有效期
+                            message: "未开启面板锁定，已放行", // 返回消息
+                            status: 200 // 返回状态 200为成功登录 其它都可
+                        }
+                    }
                     break;
 
             }

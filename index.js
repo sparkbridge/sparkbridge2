@@ -53,8 +53,8 @@ spark.on("event.telemetry.updateconfig_base", (plname, K, newV) => {
         CONFIG[K] = newV;
         ROOT_FILE_HELPER.updateFile('config.json', CONFIG);
     } else {
-        spark.debug = true;
-        logger.info(`开发者模式已开启`);
+        spark.debug = newV;
+        logger.info(`开发者模式已`+(newV==true?"开启":"关闭"));
     }
 
 })
