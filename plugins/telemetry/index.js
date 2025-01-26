@@ -5,10 +5,10 @@ const { WebConfigBuilder, WebConfigTye } = require('./webConfig');
 const _config = spark.getFileHelper('telemetry');
 _config.initFile('config.json', {
     webPort: 3002,
-    lock_panel: true,
+    lock_panel: false,
     allow_global: true,
-    pwd_timeout : 5,
-    reply_after_auth:true
+    pwd_timeout: 5,
+    reply_after_auth: true
 });
 var config = JSON.parse(_config.getFile('config.json'));
 
@@ -71,7 +71,7 @@ spark.on("message.private.friend", (obj, reply) => {
         setTimeout(() => {
             delete currentPwd[obj.sender.user_id];
             delete ip_whitelist[obj.sender.user_id];
-        }, config.pwd_timeout*60000); // 过期时间
+        }, config.pwd_timeout * 60000); // 过期时间
     }
 });
 
@@ -136,9 +136,9 @@ const server = http.createServer((req, res) => {
             }
         } else if (pathname.startsWith('/api/')) {
             // 处理GET类型的API请求
-            try{
+            try {
                 handleApiRequest(req, pathname.substring('/api/'.length), null, req.method, res);
-            }catch(err){console.log(err);}
+            } catch (err) { console.log(err); }
         } else if (pathname.startsWith('/static/')) {
             try {
                 var fileName = req.url.substring('/static/'.length);
@@ -166,9 +166,9 @@ const server = http.createServer((req, res) => {
         handleRequest(req, res, body => {
             if (pathname.startsWith('/api/')) {
                 // 处理POST类型的API请求
-               try{
-                   handleApiRequest(req, pathname.substring('/api/'.length), body, req.method, res);
-               }catch(err){console.log(err);}
+                try {
+                    handleApiRequest(req, pathname.substring('/api/'.length), body, req.method, res);
+                } catch (err) { console.log(err); }
             } else {
                 // POST请求到非API路径，返回405 Method Not Allowed
                 res.writeHead(405, { 'Content-Type': 'text/plain' });

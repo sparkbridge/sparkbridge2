@@ -30,7 +30,7 @@ if (fhelper.exists(PLUGIN_DATA_DIR) == false) fhelper.mkdir(PLUGIN_DATA_DIR);
 console.log(fhelper.read(path.join(__dirname, 'logo.txt')));
 
 let ROOT_FILE_HELPER = new fhelper.FileObj('base');
-ROOT_FILE_HELPER.initFile('config.json', { target: "ws://127.0.0.1:8080", qid: 114514, pwd: '', onebot_mode_v11: true });
+ROOT_FILE_HELPER.initFile('config.json', { target: "ws://127.0.0.1:3001", qid: 114514, pwd: '', onebot_mode_v11: true });
 let RAW_CONFIG = ROOT_FILE_HELPER.getFile('config.json');
 const CONFIG = JSON5.parse(RAW_CONFIG);
 
