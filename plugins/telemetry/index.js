@@ -44,6 +44,9 @@ var currentPwd = {};
 var ip_whitelist = {};
 
 function isIpAllowed(req) {
+    if(config.allow_global){
+        return true;
+    }
     const clientIp = req.socket.remoteAddress;
     return Object.values(ip_whitelist).includes(clientIp);
 }
@@ -175,7 +178,8 @@ const server = http.createServer((req, res) => {
                 res.end('Method Not Allowed');
             }
         });
-    } else {
+    }
+    else {
         // 其他HTTP方法，返回405 Method Not Allowed
         res.writeHead(405, { 'Content-Type': 'text/plain' });
         res.end('Method Not Allowed');
@@ -256,6 +260,9 @@ function handleApiRequest(req, apiName, requestBody, method, res) {
                         };
                     }
                     break;
+                case "button_click_event":
+                    console.log(parsedBody);    
+                break 
             }
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify(responseContent));

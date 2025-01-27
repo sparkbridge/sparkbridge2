@@ -1,6 +1,6 @@
 {
   "name": "sparkbridge2",
-  "version": "2.5.2-beta",
+  "version": "2.5.2-beta2",
   "description": "all new adapter",
   "main": "index.js",
   "scripts": {
