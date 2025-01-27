@@ -3,7 +3,7 @@ name: Build and Release
 on:
   push:
     branches:
-      - main  # 或者你使用的其他分支
+      - main  # 或者您使用的其他分支
 
 jobs:
   build-and-release:
@@ -13,55 +13,38 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build project
-        run: npm run build
-
-      - name: Generate version number
-        id: version
+      - name: Update version number
+        id: update_version
         run: |
           # 获取当前版本号
-          version=$(node -e "console.log(require('./package.json').version)")
+          version=$(node -p "require('./package.json').version")
           # 自动递增版本号
           IFS='.' read -r -a version_parts <<< "$version"
           version_parts[2]=$((version_parts[2] + 1))
           new_version="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
           echo "New version: $new_version"
           echo "VERSION=$new_version" >> $GITHUB_ENV
-
-      - name: Update package.json version
-        run: |
-          npm version ${{ env.VERSION }} --no-git-tag-version
+          # 更新 package.json 中的版本号
+          npm version $new_version --no-git-tag-version
           git add package.json
-          git commit -m "chore: update version to ${{ env.VERSION }}"
+          git commit -m "chore: update version to $new_version"
           git push
+
+      - name: Package files
+        run: |
+          # 打包所有文件到一个压缩包中
+          zip -r release-${{ env.VERSION }}.zip .
 
       - name: Create GitHub Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.VERSION }}
-          release_name: Release ${{ env.VERSION }}
+          tag_name: v${{ env.VERSION }}
+          release_name: Release v${{ env.VERSION }}
           body: |
-            Release notes for ${{ env.VERSION }}
+            Release notes for v${{ env.VERSION }}
           draft: false
           prerelease: false
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/
-          asset_name: build-artifacts.zip
-          asset_content_type: application/zip
+          files: release-${{ env.VERSION }}.zip
