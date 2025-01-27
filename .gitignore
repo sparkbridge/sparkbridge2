@@ -3,6 +3,7 @@ testdata/
 serverdata/
 tmp/
 plugins/examples/
+./sparkbridge2.zip
 
 # idea
 .vscode/
