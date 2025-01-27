@@ -41,7 +41,7 @@ spark.on("event.telemetry.ready", () => {
     let wbc = new WebConfigBuilder("base");
     wbc.addText("target", CONFIG.target, "连接地址");
     wbc.addNumber("qid", CONFIG.qid, 'QQ号码');
-    wbc.addText("pwd", CONFIG.pwd, "连接密码");
+    wbc.addText("pwd", CONFIG.pwd, "连接密码（Access Token）");
     wbc.addSwitch('onebot_mode_v11', CONFIG.onebot_mode_v11, "是否使用onebot适配器");
     wbc.addSwitch("debugMode", spark.debug, "开发者模式");
     spark.emit("event.telemetry.pushconfig", wbc);
@@ -49,12 +49,12 @@ spark.on("event.telemetry.ready", () => {
 
 spark.on("event.telemetry.updateconfig_base", (plname, K, newV) => {
     if (K !== "debugMode") {
-        logger.info(`收到配置文件[${K}]更改请求，此项无法热重载，请重启服务器`);
+        logger.info(`收到配置文件[${K}]更改请求，此项无法热重载， 请重启服务器`);
         CONFIG[K] = newV;
         ROOT_FILE_HELPER.updateFile('config.json', CONFIG);
     } else {
         spark.debug = newV;
-        logger.info(`开发者模式已`+(newV==true?"开启":"关闭"));
+        logger.info(`开发者模式已` + (newV == true ? "开启" : "关闭"));
     }
 
 })
