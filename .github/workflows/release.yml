@@ -3,7 +3,7 @@ name: Build and Release
 on:
   push:
     branches:
-      - main  # 或者您使用的其他分支
+      - main  # 或者你使用的其他分支
 
 jobs:
   build-and-release:
@@ -12,6 +12,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set Git user identity
+        run: |
+          git config --global user.email "dreamgqf@163.com"
+          git config --global user.name "Lition802"
 
       - name: Update version number
         id: update_version
@@ -39,7 +44,7 @@ jobs:
         id: create_release
         uses: softprops/action-gh-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.Action_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
         with:
           tag_name: v${{ env.VERSION }}
           release_name: Release v${{ env.VERSION }}
