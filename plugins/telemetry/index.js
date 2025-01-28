@@ -44,11 +44,15 @@ var currentPwd = {};
 var ip_whitelist = {};
 
 function isIpAllowed(req) {
-    if(config.allow_global){
+    const clientIp = req.socket.remoteAddress;
+    const inclue_id = Object.values(ip_whitelist).includes(clientIp);
+    if (config.lock_panel) {
+        // 锁面板，判断IP
+        // console.log(inclue_id);
+        return inclue_id;
+    } else {
         return true;
     }
-    const clientIp = req.socket.remoteAddress;
-    return Object.values(ip_whitelist).includes(clientIp);
 }
 
 //const ADMINS = ;
@@ -86,6 +90,9 @@ wbc.addSwitch("allow_global", config.allow_global, "是否允许外网访问");
 wbc.addSwitch("lock_panel", config.lock_panel, "是否锁定面板,锁定后只能提供私聊机器人获取临时密码");
 wbc.addSwitch("reply_after_auth", config.reply_after_auth, "登入面板后是否提醒");
 wbc.addNumber("pwd_timeout", config.pwd_timeout, "密码过期时间（单位分钟）");
+wbc.addButtom("evt_id", () => {
+   return {status: 200,message:"感谢您对SparkBridge的支持"}
+}, "点我点我");
 spark.emit("event.telemetry.pushconfig", wbc);
 
 // 以下为http服务器部分
@@ -100,7 +107,7 @@ const server = http.createServer((req, res) => {
     // console.log(req.socket.remoteAddress);
     // const isLocal = req.headers.host.startsWith('localhost') || req.headers.host.startsWith('127.0.0.1');
     const isLocal = req.socket.remoteAddress === '::1' || req.socket.remoteAddress === '::ffff:127.0.0.1';
-    if (config.allow_global == false && isLocal == false) {
+    if (!isLocal && config.allow_global == false) {
         logger.info(`收到外部网络${req.socket.remoteAddress}的访问，已拒绝`);
         return;
     }
@@ -261,8 +268,9 @@ function handleApiRequest(req, apiName, requestBody, method, res) {
                     }
                     break;
                 case "button_click_event":
-                    console.log(parsedBody);    
-                break 
+                    // console.log(parsedBody);
+                    responseContent = GConfig[parsedBody.plugin_name][parsedBody.event_name].value();
+                    break
             }
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify(responseContent));
