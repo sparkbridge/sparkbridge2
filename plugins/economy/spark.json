@@ -3,5 +3,6 @@
     "author":"lition",
     "version":[0,0,1],
     "desc":"经济系统",
+    "loadmode": "hybrid",
     "load":true
 }

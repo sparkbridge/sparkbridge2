@@ -3,5 +3,6 @@
     "author":"lition",
     "version":[0,0,1],
     "desc":"进出服务器和聊天适配器",
+    "loadmode": "hybrid",
     "load":true
 }

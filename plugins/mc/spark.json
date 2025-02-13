@@ -7,5 +7,6 @@
         1
     ],
     "desc": "LL适配器",
+    "loadmode": "hybrid",
     "load":true
 }

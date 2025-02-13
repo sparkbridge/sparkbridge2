@@ -77,6 +77,20 @@ function loadPlugin(_name) {
     try {
 
         let pl_info = require('./plugins/' + _name + "/spark.json");
+
+        if(pl_info.loadmode){
+            if(pl_info.loadmode !== 'hybrid'){
+                if(pl_info.loadmode == 'offline' && spark.onBDS){
+                    logger.info(`忽略 ${pl_info.name}，因在BDS模式下无法使用`);
+                    return;
+                }
+                if(pl_info.loadmode == 'bds' &&!spark.onBDS){
+                    logger.info(`忽略 ${pl_info.name}，因在非BDS模式下无法使用`);
+                    return;
+                }
+            }
+        }
+
         if (pl_info.load) {
             let pl_obj = require('./plugins/' + _name);
             logger.info(`加载 ${pl_info.name}`);

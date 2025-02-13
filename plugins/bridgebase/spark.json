@@ -7,5 +7,6 @@
         1
     ],
     "desc": "bridge适配器",
+    "loadmode": "hybrid",
     "load":true
 }

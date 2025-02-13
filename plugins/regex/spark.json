@@ -7,5 +7,6 @@
         1
     ],
     "desc": "正则表达式适配器",
+    "loadmode": "hybrid",
     "load":true
 }
