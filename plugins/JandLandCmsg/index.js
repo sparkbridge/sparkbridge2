@@ -1,31 +1,14 @@
 const _config = spark.getFileHelper('JandLandCmsg');
 const JSON5 = require('json5');
 
-async function formatMsg(msg) {
-    const formattedMessages = await Promise.all(msg.map(async (t) => {
+function formatMsg(msg) {
+    const formattedMessages =msg.map((t) => {
         switch (t.type) {
             case 'at':
-                try {
-                    if (spark.mc.getXbox(t.data.qq) == undefined) {
-                        const data = await spark.QClient.getGroupMemberInfo(spark.mc.config.group, t.data.qq);
-                        if (data) {
-                            let name
-                            if (data.card == "") {
-                                name = data.nickname;
-                            }
-                            else {
-                                name = data.card;
-                            }
-                            return '@' + name;
-                        } else {
-                            return '@' + t.data.qq;
-                        }
-                    }else{
-                        return '@' + spark.mc.getXbox(t.data.qq);
-                    }
-                } catch (error) {
-                    console.error(error);
+                if (spark.mc.getXbox(t.data.qq) == undefined) {
                     return '@' + t.data.qq;
+                }else{
+                    return '@' + spark.mc.getXbox(t.data.qq);
                 }
             case 'text':
                 return t.data.text;
@@ -34,8 +17,7 @@ async function formatMsg(msg) {
             case 'face':
                 return '[表情]';
         }
-    }));
-
+    });
     return formattedMessages.join('');
 }
 
@@ -50,7 +32,7 @@ _config.initFile('config.json', {
         }
     },
     chatMaxLength: 20,
-    chatShield: ['傻逼']
+    chatShield: ['']
 });
 
 const  WebConfigBuilder   = spark.telemetry.WebConfigBuilder;
@@ -170,13 +152,13 @@ spark.Cmd.regPlaceHolder('PLAYER_MSG', (player, msg) => {
 });
 
 
-/*spark.Cmd.regPlaceHolder('USER_MSG', e => {
+spark.Cmd.regPlaceHolder('USER_MSG', e => {
     return formatMsg(e.message);
-})*/
-//这个代码不知道为什么没有办法运行，直接用上面的Player_msg就行了
-spark.Cmd.regPlaceHolder('USER_MSG', (player, msg) => {
-    return msg;
 });
+// //这个代码不知道为什么没有办法运行，直接用上面的Player_msg就行了
+// spark.Cmd.regPlaceHolder('USER_MSG', (player, msg) => {
+//     return msg;
+// });
 
 
 const GROUP_ID = spark.mc.config.group;
@@ -223,7 +205,7 @@ if (config.switch.chat.server) {
     
     spark.on('message.group.normal', async (e) => {
         if (e.group_id !== GROUP_ID) return;
-        let msg =await formatMsg(e.message);
+        let msg = formatMsg(e.message);
    //     console.log(spark.Cmd.buildString(lang.chat.server, [], e.sender, msg));
         mc.broadcast(spark.Cmd.buildString(lang.chat.server, [], e.sender, msg));
     });
