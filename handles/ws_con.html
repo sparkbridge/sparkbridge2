@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpakrBridge WebSocket 调试台</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .form-group button.connect {
+            background-color: #2ecc71;
+            /* Green */
+        }
+
+        .form-group button.disconnect {
+            background-color: #e74c3c;
+            /* Red */
+        }
+
+        .form-group button.send {
+            background-color: #3498db;
+            /* Blue */
+        }
+
+        .form-group button:active {
+            transform: scale(0.98);
+            filter: brightness(0.9);
+        }
+
+        .messages {
+            margin-top: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: #f9f9f9;
+            height: 200px;
+            overflow-y: auto;
+        }
+
+        /* Custom Alert Modal */
+        .alert-modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .alert-modal-content {
+            display: flex;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin: 15% auto;
+            width: auto;
+            max-width: 90%;
+            align-items: center;
+        }
+
+        .alert-modal-content .alert-color-bar {
+            width: 6px;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .alert-modal-content .alert-content {
+            flex-grow: 1;
+        }
+
+        .alert-modal-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .alert-modal-message {
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .alert-modal-close {
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+        }
+
+        /* Alert Types */
+        .alert-success .alert-color-bar {
+            background-color: #2ecc71;
+        }
+
+        .alert-warning .alert-color-bar {
+            background-color: #f1c40f;
+        }
+
+        .alert-error .alert-color-bar {
+            background-color: #e74c3c;
+        }
+
+        .alert-info .alert-color-bar {
+            background-color: #3498db;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>SpakrBridge WebSocket 调试台</h1>
+        <div class="form-group">
+            <label for="ws-url">WebSocket URL</label>
+            <input type="text" id="ws-url" placeholder="ws://localhost:3001" value="ws://localhost:3001">
+        </div>
+        <div class="form-group">
+            <label for="x-self-id">X-Self-ID</label>
+            <input type="text" id="x-self-id" placeholder="输入QID">
+        </div>
+        <div class="form-group">
+            <label for="authorization">Authorization</label>
+            <input type="text" id="authorization" placeholder="输入连接密钥">
+        </div>
+        <div class="form-group">
+            <button id="connect-btn" class="connect">连接</button>
+        </div>
+        <div class="form-group">
+            <label for="template-select">消息模板</label>
+            <select id="template-select">
+                <!-- Options will be dynamically populated -->
+            </select>
+        </div>
+        <div id="dynamic-inputs"></div>
+        <div class="form-group">
+            <button id="send-btn" class="send" onclick="sendMessage()" disabled>发送</button>
+        </div>
+        <div class="messages" id="messages">
+            <p>消息将在此显示...</p>
+        </div>
+    </div>
+
+    <!-- Custom Alert Modal -->
+    <div id="alert-modal" class="alert-modal">
+        <div class="alert-modal-content alert-info">
+            <div class="alert-color-bar"></div>
+            <div class="alert-content">
+                <div class="alert-modal-title"></div>
+                <p class="alert-modal-message"></p>
+            </div>
+            <span class="alert-modal-close">×</span>
+        </div>
+    </div>
+
+    <script>
+        const wsTemplates = {
+            "Simple Message": [
+                { label: "Message", id: "message", type: "text" }
+            ],
+            "User Details": [
+                { label: "Name", id: "name", type: "text" },
+                { label: "Age", id: "age", type: "number" },
+                { label: "Email", id: "email", type: "email" }
+            ],
+            "Custom Data": [
+                { label: "Key", id: "key", type: "text" },
+                { label: "Value", id: "value", type: "text" }
+            ]
+        };
+
+        const templateSelect = document.getElementById('template-select');
+        const dynamicInputs = document.getElementById('dynamic-inputs');
+        const wsUrlInput = document.getElementById('ws-url');
+        const xSelfIdInput = document.getElementById('x-self-id');
+        const authorizationInput = document.getElementById('authorization');
+        const messagesDiv = document.getElementById('messages');
+        let ws = null;
+
+        // Populate template select options
+        for (const templateName in wsTemplates) {
+            const option = document.createElement('option');
+            option.value = templateName;
+            option.text = templateName;
+            templateSelect.appendChild(option);
+        }
+
+        templateSelect.addEventListener('change', () => {
+            renderDynamicInputs(templateSelect.value);
+        });
+
+        function renderDynamicInputs(templateName) {
+            dynamicInputs.innerHTML = ''; // Clear existing inputs
+            const template = wsTemplates[templateName];
+            if (template) {
+                template.forEach((field, index) => {
+                    const inputGroup = document.createElement('div');
+                    inputGroup.className = 'form-group';
+                    const label = document.createElement('label');
+                    label.htmlFor = field.id;
+                    label.textContent = field.label;
+                    const input = document.createElement('input');
+                    input.type = field.type;
+                    input.id = field.id;
+                    input.placeholder = `Enter ${field.label}`;
+                    inputGroup.appendChild(label);
+                    inputGroup.appendChild(input);
+                    dynamicInputs.appendChild(inputGroup);
+                });
+            }
+        }
+
+        document.getElementById('connect-btn').addEventListener('click', () => {
+            if (!ws) {
+                // Clear messages on new connection
+                messagesDiv.innerHTML = '<p>Messages will appear here...</p>';
+
+                const wsUrl = wsUrlInput.value;
+                const xSelfId = xSelfIdInput.value;
+                const authorization = 'Bearer ' + authorizationInput.value;
+
+                ws = new WebSocket(wsUrl);
+
+                ws.onopen = () => {
+                    document.getElementById('connect-btn').classList.replace('connect', 'disconnect');
+                    document.getElementById('connect-btn').innerText = '断开连接';
+                    document.getElementById('send-btn').disabled = false;
+                    addMessage('已连接到 WebSocket 服务器');
+                };
+
+                ws.onmessage = (event) => {
+                    addMessage(`服务器回复: ${event.data}`);
+                };
+
+                ws.onerror = (error) => {
+                    showAlert('错误', `WebSocket 错误: ${error.message}`, 'alert-error');
+                };
+
+                ws.onclose = () => {
+                    document.getElementById('connect-btn').classList.replace('disconnect', 'connect');
+                    document.getElementById('connect-btn').innerText = '连接';
+                    document.getElementById('send-btn').disabled = true;
+                    addMessage('已断开与 WebSocket 服务器的连接');
+                    ws = null;
+                };
+            } else {
+                ws.close();
+            }
+        });
+
+        function sendMessage() {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                const templateName = templateSelect.value;
+                const template = wsTemplates[templateName];
+                const messageData = {};
+
+                template.forEach(field => {
+                    const input = document.getElementById(field.id);
+                    messageData[field.id] = input.value;
+                });
+
+                const processedData = processMessageData(messageData);
+                if (processedData) {
+                    ws.send(JSON.stringify(processedData));
+                    document.getElementById('dynamic-inputs').querySelectorAll('input').forEach(input => {
+                        input.value = ''; // Clear all inputs
+                    });
+                }
+            } else {
+                console.log(10000)
+                showAlert('警告', '您尚未连接到 WebSocket 服务器！', 'alert-warning');
+            }
+        }
+
+        function processMessageData(data) {
+            data.timestamp = new Date().toISOString();
+            console.log("Processed Data:", data);
+            return data;
+        }
+
+        // Helper function to add messages to the messages div
+        function addMessage(message) {
+            const messageElement = document.createElement('p');
+            messageElement.innerText = message;
+            messagesDiv.appendChild(messageElement);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to bottom
+        }
+
+        // Custom Alert Function
+        function showAlert(title, message, type = 'alert-info') {
+            const alertModal = document.getElementById('alert-modal');
+            const alertTitle = document.querySelector('.alert-modal-title');
+            const alertMessage = document.querySelector('.alert-modal-message');
+            const closeModal = document.querySelector('.alert-modal-close');
+            const alertContent = document.querySelector('.alert-modal-content');
+
+            alertTitle.innerText = title;
+            alertMessage.innerText = message;
+            alertContent.className = `alert-modal-content ${type}`; // Apply alert type class
+
+            alertModal.style.display = 'block';
+
+            closeModal.onclick = () => {
+                alertModal.style.display = 'none';
+            };
+
+            window.onclick = (event) => {
+                if (event.target === alertModal) {
+                    alertModal.style.display = 'none';
+                }
+            };
+        }
+
+        // Initialize with the first template
+        renderDynamicInputs(templateSelect.options[0].value);
+    </script>
+</body>
+
+</html>

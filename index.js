@@ -30,17 +30,19 @@ if (fhelper.exists(PLUGIN_DATA_DIR) == false) fhelper.mkdir(PLUGIN_DATA_DIR);
 console.log(fhelper.read(path.join(__dirname, 'logo.txt')));
 
 let ROOT_FILE_HELPER = new fhelper.FileObj('base');
-ROOT_FILE_HELPER.initFile('config.json', { target: "ws://127.0.0.1:3001", qid: 114514, pwd: '', onebot_mode_v11: true });
+ROOT_FILE_HELPER.initFile('config.json', { target: "ws://127.0.0.1:3001", qid: 114514, pwd: '', onebot_mode_v11: true ,ws_type:0,server_port:3001});
 let RAW_CONFIG = ROOT_FILE_HELPER.getFile('config.json');
 const CONFIG = JSON5.parse(RAW_CONFIG);
 
-global.spark = new Spark(CONFIG.target, CONFIG.qid, CONFIG.pwd);
+global.spark = new Spark(CONFIG.ws_type,CONFIG.target,CONFIG.server_port, CONFIG.qid, CONFIG.pwd);
 
 spark.on("event.telemetry.ready", () => {
     const WebConfigBuilder = spark.telemetry.WebConfigBuilder;
     let wbc = new WebConfigBuilder("base");
     wbc.addText("target", CONFIG.target, "连接地址");
     wbc.addNumber("qid", CONFIG.qid, 'QQ号码');
+    wbc.addChoosing("ws_type", ["正向WS", "反向WS"], CONFIG.ws_type, "websocket类型");
+    wbc.addNumber("server_port", CONFIG.server_port, 'Websocket Server端口');
     wbc.addText("pwd", CONFIG.pwd, "连接密码（Access Token）");
     wbc.addSwitch('onebot_mode_v11', CONFIG.onebot_mode_v11, "是否使用onebot适配器");
     wbc.addSwitch("debugMode", spark.debug, "开发者模式");
