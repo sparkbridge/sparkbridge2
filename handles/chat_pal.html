@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扁平化风格聊天框</title>
+    <style>
+        /* 全局样式 */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f8fa;
+            /* 淡蓝色背景 */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .chat-container {
+            width: 50%;
+            /* 页面宽度为网页的一半 */
+            max-width: 600px;
+            /* 最大宽度限制 */
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid #e1e8ed;
+            /* 淡蓝色边框 */
+        }
+
+        /* 聊天区域 */
+        .chat-box {
+            padding: 15px;
+            height: 400px;
+            overflow-y: auto;
+            border-bottom: 1px solid #e1e8ed;
+            background-color: #f9f9f9;
+            /* 略带灰色的白色背景 */
+        }
+
+        .message {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .message-content {
+            background-color: #007bff;
+            /* 淡蓝色消息 */
+            color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 5px;
+            max-width: 70%;
+            /* 限制消息框宽度 */
+            word-wrap: break-word;
+            /* 自动换行 */
+        }
+
+        .message.user .message-content {
+            background-color: #1da1f2;
+            /* 用户消息颜色 */
+        }
+
+        .message.other .message-content {
+            background-color: #ffffff;
+            /* 对方消息颜色（纯白色） */
+            color: #333333;
+            /* 对方消息文字颜色（深灰色） */
+        }
+
+        .message img {
+            max-width: 100px;
+            margin-top: 5px;
+            /* 图片与文字的间距 */
+            border-radius: 5px;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        /* 输入区域 */
+        .input-container {
+            display: flex;
+            padding: 10px;
+            background-color: #f5f8fa;
+            border-top: 1px solid #e1e8ed;
+        }
+
+        .input-container input[type="text"] {
+            flex: 1;
+            padding: 6px 10px;
+            /* 调整内边距 */
+            height: 16px;
+            /* 文本框高度 */
+            border: 1px solid #e1e8ed;
+            border-radius: 4px;
+            background-color: #ffffff;
+            margin-right: 10px;
+            font-size: 14px;
+            /* 字体大小 */
+            line-height: 1.2;
+            /* 调整行高 */
+        }
+
+        .input-container button {
+            padding: 8px 12px;
+            /* 增加按钮的内边距 */
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            /* 垂直居中 */
+            justify-content: center;
+            /* 水平居中 */
+        }
+
+        .input-container button:hover {
+            background-color: #0056b3;
+        }
+
+        /* 自定义选择图片按钮 */
+        .input-container .custom-file-upload {
+            padding: 8px 12px;
+            /* 增加按钮的内边距 */
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-left: 10px;
+            /* 与发送按钮的距离 */
+            display: flex;
+            align-items: center;
+            /* 垂直居中 */
+            justify-content: center;
+            /* 水平居中 */
+        }
+
+        .input-container .custom-file-upload:hover {
+            background-color: #0056b3;
+        }
+
+        .input-container input[type="file"] {
+            display: none;
+            /* 隐藏默认的文件选择按钮 */
+        }
+
+        /* 参数选择区域 */
+        .parameter-container {
+            padding: 15px;
+            background-color: #f5f8fa;
+            border-top: 1px solid #e1e8ed;
+        }
+
+        .parameter-container div {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .parameter-container label {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .parameter-container input[type="text"],
+        .parameter-container input[type="number"],
+        .parameter-container select {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #e1e8ed;
+            border-radius: 4px;
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chat-container">
+        <div class="chat-box" id="chatBox"></div>
+        <div class="input-container">
+            <input type="text" id="messageInput" placeholder="输入消息">
+            <button onclick="sendMessage('user')">发送</button>
+            <label for="imageInput" class="custom-file-upload">选择图片</label>
+            <input type="file" id="imageInput" accept="image/*">
+        </div>
+        <div class="parameter-container">
+            <div>
+                <label for="textParam">文本参数：</label>
+                <input type="text" id="textParam">
+            </div>
+            <div>
+                <label for="numberParam">数字参数：</label>
+                <input type="number" id="numberParam">
+            </div>
+            <div>
+                <label for="dropdownParam">下拉框：</label>
+                <select id="dropdownParam">
+                    <option value="option1">选项1</option>
+                    <option value="option2">选项2</option>
+                    <option value="option3">选项3</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <script>
+        function sendMessage(user) {
+            const messageInput = document.getElementById("messageInput");
+            const imageInput = document.getElementById("imageInput");
+            const chatBox = document.getElementById("chatBox");
+            const messageText = messageInput.value.trim();
+            const messageImage = imageInput.files[0];
+
+            if (!messageText && !messageImage) {
+                alert("请输入消息或选择图片！");
+                return;
+            }
+
+            const messageDiv = document.createElement("div");
+            messageDiv.classList.add("message", user);
+
+            const messageContent = document.createElement("div");
+            messageContent.classList.add("message-content");
+
+            if (messageText) {
+                const textElement = document.createElement("p");
+                textElement.textContent = messageText;
+                messageContent.appendChild(textElement);
+            }
+
+            if (messageImage) {
+                const messageImageElement = document.createElement("img");
+                messageImageElement.src = URL.createObjectURL(messageImage);
+                messageContent.appendChild(messageImageElement);
+            }
+
+            messageDiv.appendChild(messageContent);
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // 清空输入框
+            messageInput.value = "";
+            imageInput.value = "";
+        }
+
+        // 模拟对方发送消息和图片的函数
+        function sendOtherMessage(text, imageUrl = null) {
+            const chatBox = document.getElementById("chatBox");
+            const messageDiv = document.createElement("div");
+            messageDiv.classList.add("message", "other");
+
+            const messageContent = document.createElement("div");
+            messageContent.classList.add("message-content");
+
+            if (text) {
+                const textElement = document.createElement("p");
+                textElement.textContent = text;
+                messageContent.appendChild(textElement);
+            }
+
+            if (imageUrl) {
+                const messageImageElement = document.createElement("img");
+                messageImageElement.src = imageUrl;
+                messageContent.appendChild(messageImageElement);
+            }
+
+            messageDiv.appendChild(messageContent);
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // 示例：模拟对方发送消息和图片
+        sendOtherMessage("这是对方的新消息", "https://sparkbridge.cn/spark.jpg");
+    </script>
+</body>
+
+</html>

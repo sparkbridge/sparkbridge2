@@ -38,11 +38,15 @@
         }
 
         .form-group input,
-        .form-group textarea {
+        .form-group select {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
+            background-color: #f9f9f9;
+            /* Light background for flat design */
+            font-size: 14px;
+            color: #333;
         }
 
         .form-group button {
@@ -54,6 +58,8 @@
             font-size: 16px;
             cursor: pointer;
             transition: background-color 0.3s, transform 0.3s;
+            background-color: #3498db;
+            /* Main color: Light blue */
         }
 
         .form-group button.connect {
@@ -68,7 +74,7 @@
 
         .form-group button.send {
             background-color: #3498db;
-            /* Blue */
+            /* Light blue */
         }
 
         .form-group button:active {
@@ -107,7 +113,8 @@
             padding: 15px;
             margin: 15% auto;
             width: auto;
-            max-width: 90%;
+            max-width: 500px;
+            /* Adjusted max-width */
             align-items: center;
         }
 
@@ -155,6 +162,11 @@
         .alert-info .alert-color-bar {
             background-color: #3498db;
         }
+
+        /* Cursor pointer on select */
+        select {
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -164,14 +176,6 @@
         <div class="form-group">
             <label for="ws-url">WebSocket URL</label>
             <input type="text" id="ws-url" placeholder="ws://localhost:3001" value="ws://localhost:3001">
-        </div>
-        <div class="form-group">
-            <label for="x-self-id">X-Self-ID</label>
-            <input type="text" id="x-self-id" placeholder="输入QID">
-        </div>
-        <div class="form-group">
-            <label for="authorization">Authorization</label>
-            <input type="text" id="authorization" placeholder="输入连接密钥">
         </div>
         <div class="form-group">
             <button id="connect-btn" class="connect">连接</button>
@@ -222,8 +226,6 @@
         const templateSelect = document.getElementById('template-select');
         const dynamicInputs = document.getElementById('dynamic-inputs');
         const wsUrlInput = document.getElementById('ws-url');
-        const xSelfIdInput = document.getElementById('x-self-id');
-        const authorizationInput = document.getElementById('authorization');
         const messagesDiv = document.getElementById('messages');
         let ws = null;
 
@@ -266,9 +268,6 @@
                 messagesDiv.innerHTML = '<p>Messages will appear here...</p>';
 
                 const wsUrl = wsUrlInput.value;
-                const xSelfId = xSelfIdInput.value;
-                const authorization = 'Bearer ' + authorizationInput.value;
-
                 ws = new WebSocket(wsUrl);
 
                 ws.onopen = () => {
@@ -290,7 +289,7 @@
                     document.getElementById('connect-btn').classList.replace('disconnect', 'connect');
                     document.getElementById('connect-btn').innerText = '连接';
                     document.getElementById('send-btn').disabled = true;
-                    addMessage('已断开与 WebSocket 服务器的连接');
+                    showAlert('提示', '已断开与 WebSocket 服务器的连接', 'alert-warning');
                     ws = null;
                 };
             } else {
@@ -300,16 +299,16 @@
 
         function sendMessage() {
             if (ws && ws.readyState === WebSocket.OPEN) {
-                const templateName = templateSelect.value;
-                const template = wsTemplates[templateName];
-                const messageData = {};
+                const messageType = templateSelect.value;
+                const template = wsTemplates[messageType];
+                const dataArray = [];
 
                 template.forEach(field => {
                     const input = document.getElementById(field.id);
-                    messageData[field.id] = input.value;
+                    dataArray.push(input.value); // Collect input values
                 });
 
-                const processedData = processMessageData(messageData);
+                const processedData = processMessageData(messageType, dataArray);
                 if (processedData) {
                     ws.send(JSON.stringify(processedData));
                     document.getElementById('dynamic-inputs').querySelectorAll('input').forEach(input => {
@@ -317,15 +316,16 @@
                     });
                 }
             } else {
-                console.log(10000)
                 showAlert('警告', '您尚未连接到 WebSocket 服务器！', 'alert-warning');
             }
         }
 
-        function processMessageData(data) {
-            data.timestamp = new Date().toISOString();
-            console.log("Processed Data:", data);
-            return data;
+        function processMessageData(messageType, dataArray) {
+            // Here you can process the message type and data array as needed
+            console.log("Message Type:", messageType);
+            console.log("Data Array:", dataArray);
+            
+            return { messageType, dataArray }; // Return the processed data
         }
 
         // Helper function to add messages to the messages div

@@ -90,10 +90,7 @@ wbc.addSwitch("allow_global", config.allow_global, "是否允许外网访问");
 wbc.addSwitch("lock_panel", config.lock_panel, "是否锁定面板,锁定后只能提供私聊机器人获取临时密码");
 wbc.addSwitch("reply_after_auth", config.reply_after_auth, "登入面板后是否提醒");
 wbc.addNumber("pwd_timeout", config.pwd_timeout, "密码过期时间（单位分钟）");
-wbc.addButtom("evt_id", () => {
-   return {status: 200,message:"感谢您对SparkBridge的支持"}
-}, "点我点我");
-spark.emit("event.telemetry.pushconfig", wbc);
+
 
 // 以下为http服务器部分
 

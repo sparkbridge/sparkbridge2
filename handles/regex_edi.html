@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>正则表达式 数据可视化 编辑器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f7fc;
+            /* 淡蓝色背景 */
+            color: #333;
+            position: relative;
+            /* 用于定位弹窗 */
+        }
+
+        h1,
+        h2 {
+            color: #2c3e50;
+            /* 深蓝色标题 */
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e7e7e7;
+        }
+
+        th {
+            background-color: #5dade2;
+            /* 淡蓝色表头 */
+            color: #fff;
+        }
+
+        td {
+            transition: background-color 0.3s;
+        }
+
+        td:hover {
+            background-color: #d6eaf8;
+            /* 淡蓝色悬停效果 */
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #5dade2;
+            /* 淡蓝色按钮 */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2e86c1;
+            /* 深蓝色悬停效果 */
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #5dade2;
+            /* 淡蓝色开关 */
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(20px);
+        }
+
+        footer {
+            margin-top: 50px;
+            padding: 10px 0;
+            text-align: center;
+            font-size: 0.9em;
+            color: #7f8c8d;
+            border-top: 1px solid #ddd;
+        }
+
+        /* 弹窗样式 */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+            animation: fadeOut 3s forwards;
+        }
+
+        .toast.success {
+            background-color: #dff0d8;
+            /* 浅绿色 */
+            color: #3c763d;
+        }
+
+        .toast.error {
+            background-color: #f2dede;
+            /* 浅红色 */
+            color: #a94442;
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>正则表达式 数据可视化 编辑器</h1>
+    <div class="button-group">
+        <button onclick="triggerImport()">导入 JSON 文件</button>
+        <button onclick="exportJSON()">导出 JSON 文件</button>
+    </div>
+    <input type="file" id="import-json" accept="application/json" style="display: none;">
+
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>正则表达式</th>
+                <th>命令</th>
+                <th>管理员权限</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <h2>添加新规则</h2>
+    <div class="form-group">
+        <label for="regex">正则表达式</label>
+        <input type="text" id="regex" placeholder="输入正则表达式">
+    </div>
+    <div class="form-group">
+        <label for="cmd">命令</label>
+        <input type="text" id="cmd" placeholder="输入命令">
+    </div>
+    <div class="form-group">
+        <label for="adm">管理员权限</label>
+        <label class="switch">
+            <input type="checkbox" id="adm">
+            <span class="slider"></span>
+        </label>
+    </div>
+    <button onclick="addRule()">添加规则</button>
+
+    <footer>
+        <p>JSON 数据可视化工具 - 由 SparkBridge 开发</p>
+    </footer>
+
+    <!-- 弹窗 -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // 初始数据
+        let data = {};
+
+        // 初始化表格
+        function renderTable() {
+            const tableBody = document.querySelector("#data-table tbody");
+            tableBody.innerHTML = "";
+            for (const regex in data) {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td contenteditable="true" data-key="${regex}" data-field="regex">${regex}</td>
+                    <td contenteditable="true" data-key="${regex}" data-field="cmd">${data[regex].cmd}</td>
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" data-key="${regex}" class="adm-switch" ${data[regex].adm ? "checked" : ""}>
+                            <span class="slider"></span>
+                        </label>
+                    </td>
+                    <td>
+                        <button onclick="deleteRule('${regex}')">删除</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            }
+        }
+
+        // 添加规则
+        function addRule() {
+            const regex = document.getElementById("regex").value;
+            const cmd = document.getElementById("cmd").value;
+            const adm = document.getElementById("adm").checked;
+            if (!regex || !cmd) {
+                showToast("正则表达式和命令不能为空！", "error");
+                return;
+            }
+            data[regex] = { cmd, adm };
+            renderTable();
+            document.getElementById("regex").value = "";
+            document.getElementById("cmd").value = "";
+            document.getElementById("adm").checked = false;
+        }
+
+        // 监听表格单元格编辑
+        document.querySelector("#data-table tbody").addEventListener("input", function (event) {
+            const target = event.target;
+            if (target.contentEditable === "true") {
+                const key = target.getAttribute("data-key");
+                const field = target.getAttribute("data-field");
+                if (field === "regex") {
+                    const newKey = target.textContent;
+                    if (newKey !== key) {
+                        data[newKey] = data[key];
+                        delete data[key];
+                    }
+                } else if (field === "cmd") {
+                    data[key].cmd = target.textContent;
+                }
+            }
+        });
+
+        // 监听管理员权限开关
+        document.querySelector("#data-table tbody").addEventListener("change", function (event) {
+            const target = event.target;
+            if (target.classList.contains("adm-switch")) {
+                const key = target.getAttribute("data-key");
+                data[key].adm = target.checked;
+            }
+        });
+
+        // 删除规则
+        function deleteRule(regex) {
+            if (confirm("确定要删除这条规则吗？")) {
+                delete data[regex];
+                renderTable();
+            }
+        }
+
+        // 导出 JSON 文件
+        function exportJSON() {
+            const jsonString = JSON.stringify(data, null, 4);
+            const blob = new Blob([jsonString], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "data.json";
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // 触发文件选择
+        function triggerImport() {
+            document.getElementById("import-json").click();
+        }
+
+        // 导入 JSON 文件
+        document.getElementById("import-json").addEventListener("change", function (event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    if (typeof importedData === "object" && !Array.isArray(importedData)) {
+                        data = importedData;
+                        renderTable();
+                        showToast("JSON 文件导入成功！", "success");
+                    } else {
+                        showToast("导入的文件格式不正确，请确保是有效的 JSON 对象。", "error");
+                    }
+                } catch (error) {
+                    showToast("导入的文件格式不正确，请确保是有效的 JSON 文件。", "error");
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        // 自定义弹窗
+        function showToast(message, type = "success") {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.className = `toast ${type}`; // 设置弹窗类型
+            toast.style.display = "block";
+            setTimeout(() => {
+                toast.style.display = "none";
+            }, 5000); // 3秒后自动关闭
+        }
+
+        // 初始化页面
+        renderTable();
+    </script>
+</body>
+
+</html>
