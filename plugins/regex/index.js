@@ -123,18 +123,6 @@ regCmd('g', (_arg, reg, e, reply) => {
     spark.QClient.sendGroupMsg(Number(target), buildString(arg, reg, e))
 })
 
-
-let JandQuitConfig = JSON.parse(spark.getFileHelper('JandLandCmsg').getFile('config.json'))
-function hasShield(raw) {
-    let ret = false;
-    JandQuitConfig.chatShield.forEach(et => {
-        if (raw.match(et)) {
-            ret = true
-        }
-    });
-    return ret;
-}
-
 regCmd('t', (arg, reg, e, reply) => {
     let t_and_m = arg.split(':');
     let tp = t_and_m[0];
@@ -145,9 +133,6 @@ regCmd('t', (arg, reg, e, reply) => {
        // console.log(tellallMsg)
         if (tellallMsg.length > JandQuitConfig.chatMaxLength + ms.replace(/\$1/g, '').length) {
             tellallMsg = '[群聊]聊天长度过长，将不会转发'
-        }
-        if (hasShield(tellallMsg)) {
-            tellallMsg = '[群聊]聊天包含违禁词，将不会转发'
         }
 
         mc.broadcast(tellallMsg);

@@ -32,7 +32,7 @@ _config.initFile('config.json', {
         }
     },
     chatMaxLength: 20,
-    chatShield: ['']
+    // chatShield: []
 });
 
 const  WebConfigBuilder   = spark.telemetry.WebConfigBuilder;
@@ -56,7 +56,7 @@ wbc_2.addSwitch("left",config.switch.left,"是否开启离开提示");
 wbc_2.addSwitch("chat_group",config.switch.chat.group,"是否转发消息到群聊");
 wbc_2.addSwitch("chat_server",config.switch.chat.server,"是否转发消息到服务器（默认为关闭，默认的正则表达式附带了chat xxxx的正则）");
 wbc_2.addNumber("chatMaxLength",config.chatMaxLength,"聊天最大字数长度");
-wbc_2.addEditArray("chatShield",config.chatShield,"聊天屏蔽词语");
+// wbc_2.addEditArray("chatShield",config.chatShield,"聊天屏蔽词语");
 spark.emit("event.telemetry.pushconfig", wbc_2);
 
 spark.on("event.telemetry.updateconfig_JandLandCmsg",(p,k,v)=>{
@@ -177,26 +177,13 @@ if (config.switch.left) {
     });
 }
 
-function hasShield(raw){
-    let ret = false;
-    config.chatShield.forEach(et => {
-        if(raw.match(et)){
-            ret = true
-        }
-    });
-    return ret;
-}
-
 if (config.switch.chat.group) {
     spark.mc.on('onChat', (player, msg) => {
         if(msg.length > config.chatMaxLength){
             player.tell('聊天长度过长，将不会转发');
             return;
         }
-        if(hasShield(msg)){
-            player.tell('聊天包含违禁词，将不会转发');
-            return;
-        }
+
         spark.QClient.sendGroupMsg(GROUP_ID, spark.Cmd.buildString(lang.chat.group, [], player, msg));
     });
 }

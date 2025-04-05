@@ -98,7 +98,6 @@ class Qadapter {
 
                 // 监听错误事件
                 ws.on('error', (error) => {
-
                     this.logger.error('WebSocket error:', error);
                 });
 
