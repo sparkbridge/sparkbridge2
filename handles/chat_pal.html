@@ -4,13 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>扁平化风格聊天框</title>
+    <title>SpakrBridge WebSocket调试器</title>
     <style>
         /* 全局样式 */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f5f8fa;
-            /* 淡蓝色背景 */
             margin: 0;
             padding: 0;
             display: flex;
@@ -21,15 +20,12 @@
 
         .chat-container {
             width: 50%;
-            /* 页面宽度为网页的一半 */
             max-width: 600px;
-            /* 最大宽度限制 */
             background-color: #ffffff;
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             border: 1px solid #e1e8ed;
-            /* 淡蓝色边框 */
         }
 
         /* 聊天区域 */
@@ -39,7 +35,6 @@
             overflow-y: auto;
             border-bottom: 1px solid #e1e8ed;
             background-color: #f9f9f9;
-            /* 略带灰色的白色背景 */
         }
 
         .message {
@@ -50,32 +45,25 @@
 
         .message-content {
             background-color: #007bff;
-            /* 淡蓝色消息 */
             color: #ffffff;
             padding: 8px 12px;
             border-radius: 5px;
             max-width: 70%;
-            /* 限制消息框宽度 */
             word-wrap: break-word;
-            /* 自动换行 */
         }
 
         .message.user .message-content {
             background-color: #1da1f2;
-            /* 用户消息颜色 */
         }
 
         .message.other .message-content {
             background-color: #ffffff;
-            /* 对方消息颜色（纯白色） */
             color: #333333;
-            /* 对方消息文字颜色（深灰色） */
         }
 
         .message img {
             max-width: 100px;
             margin-top: 5px;
-            /* 图片与文字的间距 */
             border-radius: 5px;
         }
 
@@ -94,22 +82,17 @@
         .input-container input[type="text"] {
             flex: 1;
             padding: 6px 10px;
-            /* 调整内边距 */
             height: 16px;
-            /* 文本框高度 */
             border: 1px solid #e1e8ed;
             border-radius: 4px;
             background-color: #ffffff;
             margin-right: 10px;
             font-size: 14px;
-            /* 字体大小 */
             line-height: 1.2;
-            /* 调整行高 */
         }
 
         .input-container button {
             padding: 8px 12px;
-            /* 增加按钮的内边距 */
             background-color: #007bff;
             color: #ffffff;
             border: none;
@@ -118,41 +101,11 @@
             transition: background-color 0.3s;
             display: flex;
             align-items: center;
-            /* 垂直居中 */
             justify-content: center;
-            /* 水平居中 */
         }
 
         .input-container button:hover {
             background-color: #0056b3;
-        }
-
-        /* 自定义选择图片按钮 */
-        .input-container .custom-file-upload {
-            padding: 8px 12px;
-            /* 增加按钮的内边距 */
-            background-color: #007bff;
-            color: #ffffff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin-left: 10px;
-            /* 与发送按钮的距离 */
-            display: flex;
-            align-items: center;
-            /* 垂直居中 */
-            justify-content: center;
-            /* 水平居中 */
-        }
-
-        .input-container .custom-file-upload:hover {
-            background-color: #0056b3;
-        }
-
-        .input-container input[type="file"] {
-            display: none;
-            /* 隐藏默认的文件选择按钮 */
         }
 
         /* 参数选择区域 */
@@ -182,6 +135,62 @@
             border-radius: 4px;
             background-color: #ffffff;
         }
+
+        /* 新增的连接按钮样式 */
+        .connect-button {
+            padding: 8px 12px;
+            background-color: #28a745;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .connect-button:hover {
+            background-color: #218838;
+        }
+
+        /* 自定义弹窗样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -190,70 +199,170 @@
         <div class="chat-box" id="chatBox"></div>
         <div class="input-container">
             <input type="text" id="messageInput" placeholder="输入消息">
-            <button onclick="sendMessage('user')">发送</button>
-            <label for="imageInput" class="custom-file-upload">选择图片</label>
-            <input type="file" id="imageInput" accept="image/*">
+            <button onclick="sendMessage()">发送</button>
         </div>
         <div class="parameter-container">
-            <div>
+            <!-- <div>
                 <label for="textParam">文本参数：</label>
                 <input type="text" id="textParam">
+            </div> -->
+            <div>
+                <label for="numberParam">群号：</label>
+                <input type="number" id="numberParam_GroupID" value="114514">
             </div>
             <div>
-                <label for="numberParam">数字参数：</label>
-                <input type="number" id="numberParam">
+                <label for="numberParam">机器人QQ：</label>
+                <input type="number" id="numberParam_BotQQ" value="114514">
             </div>
             <div>
+                <label for="numberParam">发送人QQ：</label>
+                <input type="number" id="numberParam_senderQQ" value="114514">
+            </div>
+            <!-- <div>
                 <label for="dropdownParam">下拉框：</label>
                 <select id="dropdownParam">
                     <option value="option1">选项1</option>
                     <option value="option2">选项2</option>
                     <option value="option3">选项3</option>
                 </select>
+            </div> -->
+            <div>
+                <label for="urlParam">URL：</label>
+                <input type="text" id="urlParam" placeholder="输入WebSocket URL" value="ws://127.0.0.1:3001">
             </div>
+            <button class="connect-button" onclick="connectWebSocket()">连接</button>
         </div>
     </div>
-    <script>
-        function sendMessage(user) {
-            const messageInput = document.getElementById("messageInput");
-            const imageInput = document.getElementById("imageInput");
-            const chatBox = document.getElementById("chatBox");
-            const messageText = messageInput.value.trim();
-            const messageImage = imageInput.files[0];
+    </div>
 
-            if (!messageText && !messageImage) {
-                alert("请输入消息或选择图片！");
+    <!-- 自定义弹窗 -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p id="modalMessage">这是一条消息</p>
+        </div>
+    </div>
+
+    <script>
+        var socket = null;
+
+        // 建立WebSocket连接
+        function connectWebSocket() {
+            var url = document.getElementById("urlParam").value.trim();
+            if (!url) {
+                showModal("请输入WebSocket URL", 3);
                 return;
             }
 
+            socket = new WebSocket(url);
+
+            socket.onopen = function () {
+                showModal("WebSocket连接成功", 3);
+            };
+
+            socket.onmessage = function (event) {
+                // 处理WebSocket接收到的数据
+                handleWebSocketMessage(event.data);
+            };
+
+            socket.onerror = function (error) {
+                showModal("WebSocket连接出错：" + error.message, 3);
+            };
+
+            socket.onclose = function () {
+                showModal("WebSocket连接已关闭", 3);
+            };
+        }
+
+        // 发送消息
+        function sendMessage() {
+            var messageInput = document.getElementById("messageInput");
+            var message = messageInput.value.trim();
+            const chatBox = document.getElementById("chatBox");
+
+            if (message && socket && socket.readyState === WebSocket.OPEN) {
+                let sendpack = {
+                    self_id: Number(document.getElementById("numberParam_BotQQ").value),
+                    user_id: Number(document.getElementById("numberParam_senderQQ").value),
+                    time: 1743923380,
+                    message_id: 114514,
+                    message_seq: 114514,
+                    message_type: 'group',
+                    sender: {
+                        user_id: Number(document.getElementById("numberParam_senderQQ").value),
+                        nickname: '测试人员',
+                        card: '',
+                        role: 'member',
+                        title: ''
+                    },
+                    raw_message: message,
+                    font: 14,
+                    sub_type: 'normal',
+                    message: [
+                        {
+                            type: 'text', data: {
+                                text: message
+                            }
+                        }
+                    ],
+                    message_format: 'array',
+                    post_type: 'message',
+                    group_id: Number(document.getElementById("numberParam_GroupID").value)
+                }
+                // console.log(sendpack);
+
+                socket.send(JSON.stringify(sendpack));
+
+                // 将消息显示在聊天框中
+                displayMessage(message, "user");
+
+                messageInput.value = "";
+                // showModal("消息已发送", 3);
+            } else {
+                showModal("消息不能为空，或WebSocket连接未建立", 3);
+            }
+        }
+
+        // 显示消息到聊天框
+        function displayMessage(messageText, user) {
+            const chatBox = document.getElementById("chatBox");
             const messageDiv = document.createElement("div");
             messageDiv.classList.add("message", user);
 
             const messageContent = document.createElement("div");
             messageContent.classList.add("message-content");
-
-            if (messageText) {
-                const textElement = document.createElement("p");
-                textElement.textContent = messageText;
-                messageContent.appendChild(textElement);
-            }
-
-            if (messageImage) {
-                const messageImageElement = document.createElement("img");
-                messageImageElement.src = URL.createObjectURL(messageImage);
-                messageContent.appendChild(messageImageElement);
-            }
+            messageContent.textContent = messageText;
 
             messageDiv.appendChild(messageContent);
             chatBox.appendChild(messageDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            // 清空输入框
-            messageInput.value = "";
-            imageInput.value = "";
+            chatBox.scrollTop = chatBox.scrollHeight; // 滚动到最新消息
         }
 
-        // 模拟对方发送消息和图片的函数
+        // 显示弹窗
+        function showModal(message, autoCloseTime) {
+            document.getElementById("modalMessage").textContent = message;
+            document.getElementById("myModal").style.display = "block";
+
+            if (autoCloseTime) {
+                setTimeout(function () {
+                    document.getElementById("myModal").style.display = "none";
+                }, autoCloseTime * 1000);
+            }
+        }
+
+        // 关闭弹窗
+        document.querySelector(".close").onclick = function () {
+            document.getElementById("myModal").style.display = "none";
+        };
+
+        // 点击弹窗外部区域关闭弹窗
+        window.onclick = function (event) {
+            if (event.target == document.getElementById("myModal")) {
+                document.getElementById("myModal").style.display = "none";
+            }
+        };
+
+        // 接收并显示其他用户的消息
         function sendOtherMessage(text, imageUrl = null) {
             const chatBox = document.getElementById("chatBox");
             const messageDiv = document.createElement("div");
@@ -279,8 +388,51 @@
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        // 示例：模拟对方发送消息和图片
-        sendOtherMessage("这是对方的新消息", "https://sparkbridge.cn/spark.jpg");
+        // 处理WebSocket接收到的数据
+        function handleWebSocketMessage(data) {
+            // 在这里处理接收到的数据
+            // 示例：将接收到的数据作为消息显示在聊天框中
+            /*
+            {
+                "action":"send_msg",
+                "params":{
+                    "user_id":519916681,
+                    "message":[{"type":"reply","data":{"id":"114514"}},{"type":"text","data":{"text":"你是111"}}],
+                    "message_type":"group",
+                    "group_id":519916681
+                }
+            }
+            
+            */
+
+            if (data == 'Client 未提供正确的授权头') {
+                alert("请将sparkbridge调整至Debug模式");
+                return;
+            }
+
+            let pre_msg = JSON.parse(data);
+
+            try {
+
+                switch (pre_msg.action) {
+                    case 'send_msg':
+                        if(pre_msg.group_id !== document.getElementById("numberParam_GroupID").value) return;
+                        let msg_data = pre_msg.params.message.map(v => {
+                            return v.type === 'text' ? v.data.text : '';
+                        });
+                        sendOtherMessage(msg_data.join(""));
+                        break;
+                    default:
+                        break;
+                }
+            } catch (err) {
+                console.log(err);
+                showModal(err)
+
+            }
+            // console.log(data.toString());
+            // sendOtherMessage(data);
+        }
     </script>
 </body>
 
