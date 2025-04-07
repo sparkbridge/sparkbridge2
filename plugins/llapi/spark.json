@@ -4,5 +4,6 @@
     "version":[0,0,1],
     "desc":"liteloader适配器",
     "loadmode": "hybrid",
+    "priority": "core",
     "load":true
 }

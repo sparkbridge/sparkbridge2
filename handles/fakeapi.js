@@ -15,7 +15,7 @@ mc.runcmd = (cmd) => {
 
 mc.runcmdEx = (cmd) => {
     console.log('执行：' + cmd);
-    return { output: '执行成功', success: true }
+    return { output: '执行成功：fakeapi completed', success: true }
 }
 
 

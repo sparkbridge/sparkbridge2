@@ -412,14 +412,20 @@
 
             let pre_msg = JSON.parse(data);
 
+            console.log(pre_msg);
+
             try {
 
                 switch (pre_msg.action) {
                     case 'send_msg':
-                        if(pre_msg.group_id !== document.getElementById("numberParam_GroupID").value) return;
+                        if(pre_msg.params.group_id !== Number(document.getElementById("numberParam_GroupID").value)) {
+                            console.log(pre_msg.group_id , Number(document.getElementById("numberParam_GroupID").value))
+                            break; // 非本群消息不处理
+                        }
                         let msg_data = pre_msg.params.message.map(v => {
                             return v.type === 'text' ? v.data.text : '';
                         });
+
                         sendOtherMessage(msg_data.join(""));
                         break;
                     default:

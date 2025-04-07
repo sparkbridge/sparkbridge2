@@ -8,5 +8,6 @@
     ],
     "desc": "LL适配器",
     "loadmode": "hybrid",
+    "priority": "ess",
     "load":true
 }

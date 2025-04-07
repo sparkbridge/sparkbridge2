@@ -8,5 +8,6 @@
     ],
     "desc": "bridge适配器",
     "loadmode": "hybrid",
+    "priority":"core",
     "load":true
 }

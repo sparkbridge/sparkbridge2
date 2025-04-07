@@ -2,6 +2,20 @@ const logger = spark.getLogger('regex');
 const JSON5 = require('json5');
 spark.setOwnProperty('Cmd', {});
 
+
+let JandQuitConfig = JSON.parse(spark.getFileHelper('JandLandCmsg').getFile('config.json'))
+
+
+const WebConfigBuilder = spark.telemetry.WebConfigBuilder;
+let wbc = new WebConfigBuilder("Regex");
+wbc.addButtom("regex_penal", () => {
+    return {
+        status: 303, // 跳转状态码为303
+        url: "http://reg.sparkbridge.cn"
+    }
+}, "跳转到正则表达式编辑面板");
+spark.emit("event.telemetry.pushconfig", wbc);
+
 /**
  * 
  * @param {String} str 
@@ -130,7 +144,7 @@ regCmd('t', (arg, reg, e, reply) => {
 
     if (tp == 'all') {
         let tellallMsg = buildString(ms, reg, e).trim()
-       // console.log(tellallMsg)
+        // console.log(tellallMsg)
         if (tellallMsg.length > JandQuitConfig.chatMaxLength + ms.replace(/\$1/g, '').length) {
             tellallMsg = '[群聊]聊天长度过长，将不会转发'
         }
@@ -247,29 +261,30 @@ const PRE_CONFIG = {
     }
 }
 
-_config.initFile('data.json', PRE_CONFIG,false);
+_config.initFile('data.json', PRE_CONFIG, false);
 const regexs = JSON5.parse(_config.getFile('data.json'));
 
-async function formatMsg(msg) {
-    const formattedMessages = await Promise.all(msg.map(async (t) => {
+function formatMsg(msg) {
+    const formattedMessages = msg.map((t) => {
         switch (t.type) {
             case 'at':
                 try {
                     if (spark.mc.getXbox(t.data.qq) == undefined) {
-                        const data = await spark.QClient.getGroupMemberInfo(spark.mc.config.group, t.data.qq);
-                        if (data) {
-                            let name
-                            if (data.card == "") {
-                                name = data.nickname;
-                            }
-                            else {
-                                name = data.card;
-                            }
-                            return '@' + name;
-                        } else {
-                            return '@' + t.data.qq;
-                        }
-                    }else{
+                        // const data = await spark.QClient.getGroupMemberInfo(spark.mc.config.group, t.data.qq);
+                        // if (data) {
+                        //     let name
+                        //     if (data.card == "") {
+                        //         name = data.nickname;
+                        //     }
+                        //     else {
+                        //         name = data.card;
+                        //     }
+                        //     return '@' + name;
+                        // } else {
+                        //     return '@' + t.data.qq;
+                        // }
+                        return '@' + t.data.qq;
+                    } else {
                         return '@' + spark.mc.getXbox(t.data.qq);
                     }
                 } catch (error) {
@@ -283,17 +298,17 @@ async function formatMsg(msg) {
             case 'face':
                 return '[表情]';
         }
-    }));
+    });
 
     return formattedMessages.join('');
 }
 
 //spark.debug = true;
-spark.on('message.group.normal', async (e, reply) => {
+spark.on('message.group.normal',  (e, reply) => {
     //reply("?")
     const { raw_message, group_id, user_id } = e;
     //console.log(raw_message, group_id, user_id ,GROUP);
-    const raw = await formatMsg(e.message);
+    const raw =  formatMsg(e.message);
 
     //console.log(raw);
     if (group_id !== GROUP) return;

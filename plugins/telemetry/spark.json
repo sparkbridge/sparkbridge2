@@ -8,5 +8,6 @@
     ],
     "desc": "回传数据定义器",
     "loadmode": "hybrid",
+    "priority": "ess",
     "load":true
 }

@@ -182,3 +182,20 @@ if (spark.onBDS) {
     readPluginDir();
 }
 
+function moduleExists(moduleName) {
+    try {
+        // 尝试解析模块路径
+        require.resolve(moduleName);
+        return true; // 模块存在
+    } catch (error) {
+        return false; // 模块不存在
+    }
+}
+
+// 示例用法
+const moduleName = 'vm';
+if (moduleExists(moduleName)) {
+    console.log(`模块 ${moduleName} 存在`);
+} else {
+    console.log(`模块 ${moduleName} 不存在`);
+}
