@@ -4,6 +4,39 @@ const logger = require('../handles/logger');
 const { text } = require('../handles/msgbuilder');
 const { boom } = require('../handles/reconnect');
 
+class CustomTrigger extends EventEmitter {
+    constructor() {
+        super();
+        this.interceptors = {}; // 使用对象存储拦截器，键为事件名称
+    }
+
+    // 添加拦截器，并指定事件名称
+    addInterceptor(event, interceptor) {
+        if (!this.interceptors[event]) {
+            this.interceptors[event] = [];
+        }
+        this.interceptors[event].push(interceptor);
+    }
+
+    // 触发事件
+    trigger(event, ...args) {
+        // 检查是否有拦截器拦截当前事件
+        if (this.interceptors[event]) {
+            for (const interceptor of this.interceptors[event]) {
+                const result = interceptor(...args);
+                if (result === false) {
+                    if(spark.debug) console.log(`Event '${event}' was intercepted.`);
+                    return; // 如果拦截器返回 false，则中断事件触发
+                }
+            }
+        }
+
+        // 如果没有被拦截，则正常触发事件
+        this.emit(event, ...args);
+    }
+}
+
+
 class Qadapter {
     client;
     target;
@@ -11,7 +44,7 @@ class Qadapter {
     pwd;
     ws_type;
     port;
-    eventEmitter = new EventEmitter();
+    eventEmitter = new CustomTrigger();
     //eventKeyMap = new Map();
     logger = logger.getLogger('Qadapter')
     constructor(ws_type,target,port, qid, pwd, customs) {
@@ -143,8 +176,14 @@ class Qadapter {
                  element(...arg);
              });
          }*/
-        this.eventEmitter.emit(evk, ...arg);
+        this.eventEmitter.trigger(evk, ...arg);
     }
+
+    addInterceptor(evt,interceptor){
+        if (spark.debug) console.log('触发addInterceptor');
+        this.eventEmitter.addInterceptor(evt,interceptor);
+    }
+
     setOwnProperty(k, v) {
         if (spark.debug) console.log('挂载 ——> ' + k);
         this[k] = v;

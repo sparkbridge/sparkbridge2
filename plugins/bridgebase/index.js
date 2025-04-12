@@ -56,13 +56,21 @@ spark.on('gocq.pack', (pack) => {
                 pack.message = _pmessage;
                 //console.log(_pmessage);
             }
-            if (pack.raw_message.includes('&#91;') || pack.raw_message.includes('&#93;') || pack.raw_message.includes('&#44') || pack.raw_message.includes('&amp;')) {
-                pack.raw_message = pack.raw_message.replace('&#91;', '[');
-                pack.raw_message = pack.raw_message.replace('&#93;', ']');
-                pack.raw_message = pack.raw_message.replace('&#44;', ',');
-                pack.raw_message = pack.raw_message.replace('&amp;', '&');
+            if (pack.raw_message.includes('&#91;') || pack.raw_message.includes('&#93;') || pack.raw_message.includes('&#44;') || pack.raw_message.includes('&amp;')) {
+                pack.raw_message = pack.raw_message.replaceAll('&#91;', '[')
+                    .replaceAll('&#93;', ']')
+                    .replaceAll('&#44;', ',')
+                    .replaceAll('&amp;', '&');
                 // 采用最烂的替换方式，希望能有高效率的方法，欢迎PR
             }
+
+            // if (pack.raw_message.includes('&#91;') || pack.raw_message.includes('&#93;') || pack.raw_message.includes('&#44;') || pack.raw_message.includes('&amp;')) {
+            //     pack.raw_message = decodeURIComponent(pack.raw_message.replace(/&#(\d+);/g, function (match, p1) {
+            //         return String.fromCharCode(p1);
+            //     }));
+            // }
+
+
             spark.emit(`${POST_TYPE}.${pack.message_type}.${pack.sub_type}`, pack, build_reply(pack.group_id == undefined ? pack.user_id : pack.group_id, pack.message_type, pack.message_id));
             break;
         case 'notice':

@@ -8,6 +8,7 @@
     ],
     "desc": "LL适配器",
     "loadmode": "hybrid",
-    "priority": "ess",
+    "permission": "core",
+    "priority": "init",
     "load":true
 }

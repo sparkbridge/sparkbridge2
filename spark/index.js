@@ -19,6 +19,9 @@ class Spark {
     emit(evt,...arg){
         this.QClient.emit(evt,...arg);
     }
+    addInterceptor(evt,interceptor) {
+        this.QClient.addInterceptor(evt,interceptor);
+    }
     /**
      * 
      * @param {*} plugin_name 
