@@ -148,6 +148,7 @@ function VMrunCodeFromDir(perm,dirPath) {
                 clearTimeout,
                 spark,
                 ll,
+                mc,
                 require: (moduleName) => {
                     // 解析模块路径
                     const resolvedPath = require.resolve(moduleName, { paths: [dirPath] });
@@ -160,8 +161,7 @@ function VMrunCodeFromDir(perm,dirPath) {
                 console,
                 setInterval,
                 clearTimeout,
-                spark,
-                ll,
+                spark
             };
         }
 
