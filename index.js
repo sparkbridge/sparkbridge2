@@ -109,6 +109,38 @@ function ModuleLoaderInit(plugins_list){
     });
 }
 
+function writeFilePermission(plugin_dir, permission) {
+    try {
+        // 确保文件路径是绝对路径
+        let kpath = path.join(__dirname, 'plugins', plugin_dir, 'spark.json');
+        // 修改权限字段
+        let jsonData = JSON.parse(fs.readFileSync(kpath, 'utf8'));
+        jsonData.permission = permission;
+
+        // 将修改后的 JSON 数据写回到文件
+        fs.writeFileSync(kpath, JSON.stringify(jsonData, null, 2));
+        console.log(`文件已成功修改并保存：${path}`);
+    } catch (error) {
+        console.error(`处理文件时出错：${error}`);
+    }
+}
+
+function writeFilePriority(plugin_dir, priority) {
+    try {
+        // 确保文件路径是绝对路径
+        let kpath = path.join(__dirname, 'plugins', plugin_dir, 'spark.json');
+        // 修改权限字段
+        let jsonData = JSON.parse(fs.readFileSync(kpath, 'utf8'));
+        jsonData.priority = priority;
+
+        // 将修改后的 JSON 数据写回到文件
+        fs.writeFileSync(kpath, JSON.stringify(jsonData, null, 2));
+        console.log(`文件已成功修改并保存：${path}`);
+    } catch (error) {
+        console.error(`处理文件时出错：${error}`);
+    }
+}
+
 
 logger.info('SparkBridge载入中...VERSION:' + ME.version);
 spark.VERSION = ME.VERSION;
@@ -235,6 +267,12 @@ function readPluginDir() {
         if (!sata.isDirectory()) return;
         logger.info('读取 ' + epl);
         let i_info = JSON.parse(fhelper.read(path.join(__dirname, 'plugins', epl, 'spark.json')));
+        if (!i_info.priority){
+            writeFilePriority(epl, 'post');
+        }
+        if (!i_info.permission){
+            writeFilePermission(epl, 'key');
+        }
         const priorityValue = priorityMap[i_info.priority] || 0;
         current_list[i_info.name] = {
             name: i_info.name,
