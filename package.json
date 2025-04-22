@@ -1,10 +1,11 @@
 {
   "name": "sparkbridge2",
-  "version": "2.5.13",
+  "version": "2.6.0",
   "description": "all new adapter",
   "main": "index.js",
   "scripts": {
-    "dev": "node index"
+    "dev": "node index",
+    "create": "node handles/plugin_create.js"
   },
   "repository": {
     "type": "git",

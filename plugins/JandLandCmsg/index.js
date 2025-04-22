@@ -132,7 +132,7 @@ spark.Cmd.regPlaceHolder('USER_XBOXID', e => {
     const qid = e.user_id;
    
     if (spark.mc.getXbox(qid) == undefined) {
-        console.log('this',e,);
+
         return e.sender.nickname; //获取card有时候是空的，用nickname代替
     } else {
         return spark.mc.getXbox(qid);
