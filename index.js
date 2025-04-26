@@ -37,7 +37,7 @@ ROOT_FILE_HELPER.initFile('config.json', {
     onebot_mode_v11: true,
     ws_type: 0,
     server_port: 3001,
-    debug:false
+    debug: false
 }
 );
 let RAW_CONFIG = ROOT_FILE_HELPER.getFile('config.json');
@@ -67,38 +67,38 @@ spark.on("event.telemetry.updateconfig_base", (plname, K, newV) => {
         spark.debug = newV;
         logger.info(`开发者模式已` + (newV == true ? "开启" : "关闭"));
     } else {
-        
+
     }
 });
 
 const PermissionMap = {
     nor: 0,
-    key : 1,
+    key: 1,
     core: 2
 }
 
-function ModuleLoaderInit(plugins_list){
+function ModuleLoaderInit(plugins_list) {
     const WebConfigBuilder = spark.telemetry.WebConfigBuilder;
     let wbc = new WebConfigBuilder("ModuleLoader");
-    plugins_list.forEach(v=>{
+    plugins_list.forEach(v => {
         let pl_info = require('./plugins/' + v + "/spark.json");
-        wbc.addChoosing(`${v}_permission`, ["完全隔离", "可访问关键部件", '可访问内核'], PermissionMap[pl_info.permission],'插件最高权限');
+        wbc.addChoosing(`${v}_permission`, ["完全隔离", "可访问关键部件", '可访问内核'], PermissionMap[pl_info.permission], '插件最高权限');
     })
     spark.emit("event.telemetry.pushconfig", wbc);
 
     spark.on("event.telemetry.updateconfig_ModuleLoader", (plname, K, newV) => {
         let tgtname = K.split("_")[0];
-        if (Object.keys(spark.plugins_list).includes(tgtname)){
-            let pkpath = path.join(__dirname,'plugins',spark.plugins_list[tgtname].folder,'spark.json');
+        if (Object.keys(spark.plugins_list).includes(tgtname)) {
+            let pkpath = path.join(__dirname, 'plugins', spark.plugins_list[tgtname].folder, 'spark.json');
             try {
                 // 确保文件路径是绝对路径
                 const absolutePath = path.resolve(pkpath);
                 // 读取文件内容
-                const data =  fs.readFileSync(absolutePath, 'utf8');
+                const data = fs.readFileSync(absolutePath, 'utf8');
                 // 解析 JSON 数据
                 let jsonData = JSON.parse(data);
-                let pm_arr = ['nor','key','core'];
-                jsonData.permission =pm_arr[newV];
+                let pm_arr = ['nor', 'key', 'core'];
+                jsonData.permission = pm_arr[newV];
                 // 将修改后的 JSON 数据写回到文件
                 fs.writeFileSync(absolutePath, JSON.stringify(jsonData, null, 2));
                 // console.log(`文件已成功修改并保存：${absolutePath}`);
@@ -154,7 +154,7 @@ if (typeof mc !== 'undefined') {
 const PLUGINS_PATH = path.join(__dirname, 'plugins');
 const plugins_list = fhelper.listdir(PLUGINS_PATH);
 
-function VMrunCodeFromDir(perm,dirPath) {
+function VMrunCodeFromDir(perm, dirPath) {
     try {
         // 尝试读取 package.json 文件
         const packageJsonPath = path.join(dirPath, 'package.json');
@@ -172,7 +172,7 @@ function VMrunCodeFromDir(perm,dirPath) {
 
         let context = {};
 
-        if(perm == 'key'){
+        if (perm == 'key') {
             // key permission
             context = {
                 console,
@@ -187,7 +187,7 @@ function VMrunCodeFromDir(perm,dirPath) {
                     return require(resolvedPath);
                 },
             };
-        }else{
+        } else {
             // normal permission
             context = {
                 console,
@@ -214,7 +214,7 @@ function VMrunCodeFromDir(perm,dirPath) {
 const priorityMap = {
     post: 0,  // 普通
     main: 1,  // 关键
-    init: 2 , // 核心
+    init: 2, // 核心
     base: 3
 };
 
@@ -237,11 +237,11 @@ function loadPlugin(_name) {
         }
 
         if (pl_info.load) {
-            if (pl_info.permission == 'core' || pl_info.permission == 'key') {
+            if (pl_info.permission == 'core') {
                 let pl_obj = require('./plugins/' + _name);
             } else {
-                VMrunCodeFromDir(pl_info.permission,'./plugins/' + _name)
-        }
+                VMrunCodeFromDir(pl_info.permission, './plugins/' + _name)
+            }
             // logger.info(`加载 ${pl_info.name}`);
             logger.info(`${pl_info.name} 加载完成，作者：${pl_info.author}`);
         } else {
@@ -267,10 +267,10 @@ function readPluginDir() {
         if (!sata.isDirectory()) return;
         logger.info('读取 ' + epl);
         let i_info = JSON.parse(fhelper.read(path.join(__dirname, 'plugins', epl, 'spark.json')));
-        if (!i_info.priority){
+        if (!i_info.priority) {
             writeFilePriority(epl, 'post');
         }
-        if (!i_info.permission){
+        if (!i_info.permission) {
             writeFilePermission(epl, 'key');
         }
         const priorityValue = priorityMap[i_info.priority] || 0;
@@ -312,7 +312,7 @@ function bootUpPlugins(plugins_load_list, current_list) {
 
         // 按照 priority 排序
         // pluginInfoList.sort((a, b) => b.priority - a.priority); // 降序排序，优先级高的先加载
-        
+
         const pluginInfoArray = Object.values(current_list);
 
         // 按照 priority 降序排序
@@ -334,7 +334,7 @@ function bootUpPlugins(plugins_load_list, current_list) {
         }
         // 更新 list.json 文件
         fhelper.writeTo(path.join(__dirname, 'plugins', 'list.json'), JSON.stringify(plugins_load_list));
-        if(CONFIG.debug){
+        if (CONFIG.debug) {
             ModuleLoaderInit(plugins_load_list);
         }
         spark.plugins_list = sortedPluginInfoObj;
@@ -358,7 +358,7 @@ if (spark.onBDS) {
     logger.warn('====本地调试器====');
     logger.warn("您现在处于调试模式！！！");
     logger.warn("MC类将被覆盖");
-    logger.warn("数据存储已转移到testdata文件夹")
+    logger.warn("数据存储已转移到testdata文件夹");
     logger.warn('====本地调试器====\n');
     require('./handles/fakeapi');
     readPluginDir();
