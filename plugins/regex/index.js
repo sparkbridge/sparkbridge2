@@ -2,8 +2,10 @@ const logger = spark.getLogger('regex');
 const JSON5 = require('json5');
 spark.setOwnProperty('Cmd', {});
 
+let cfg = spark.getFileHelper('JandLandCmsg');
+cfg.initFile('config.json', {})
 
-let JandQuitConfig = JSON.parse(spark.getFileHelper('JandLandCmsg').getFile('config.json'))
+let JandQuitConfig = JSON.parse(cfg.getFile('config.json'))
 
 
 const WebConfigBuilder = spark.telemetry.WebConfigBuilder;
@@ -53,43 +55,100 @@ function getPlaceHolder(key, ...arg) {
     }
 }
 
+// function buildPlaceHolder(raw) {
+//     let out_raw = [];
+//     // 是否正在匹配
+//     let matching = false;
+//     // 正在匹配的字符串
+//     let matching_now = '';
+//     // 是否跳过当前转义
+//     let skip_next = false;
+//     for (let i in raw) {
+//         let now_i = raw[i];
+//         //console.log('匹配：'+now_i);
+//         if (skip_next == false) { // 需要进行变量判断
+//             if (now_i == '\\') {  // 需要直接写入下一位
+//                 skip_next = true;
+//                 //console.log('跳过判断下一位');
+//             } else if (now_i == '%') {
+//                 // 开始或者结束匹配变量
+//                 if (matching) {
+//                     matching = false;
+//                     out_raw.push({ type: 'holder', raw: matching_now });
+//                     matching_now = '';
+//                 } else {
+//                     matching = true;
+//                 }
+//             } else {
+//                 if (matching) {
+//                     matching_now += now_i;
+//                 } else {
+//                     out_raw.push({ type: 'plan', raw: now_i })
+//                 }
+//             }
+//         } else { //需要直接写入当前字符串
+//             out_raw.push({ type: 'plan', raw: now_i })
+//             skip_next = false;
+//         }
+//     }
+//     return out_raw;
+// }
+
 function buildPlaceHolder(raw) {
-    let out_raw = [];
-    // 是否正在匹配
-    let matching = false;
-    // 正在匹配的字符串
-    let matching_now = '';
-    // 是否跳过当前转义
-    let skip_next = false;
-    for (let i in raw) {
-        let now_i = raw[i];
-        //console.log('匹配：'+now_i);
-        if (skip_next == false) { // 需要进行变量判断
-            if (now_i == '\\') {  // 需要直接写入下一位
-                skip_next = true;
-                //console.log('跳过判断下一位');
-            } else if (now_i == '%') {
-                // 开始或者结束匹配变量
-                if (matching) {
-                    matching = false;
-                    out_raw.push({ type: 'holder', raw: matching_now });
-                    matching_now = '';
-                } else {
-                    matching = true;
-                }
-            } else {
-                if (matching) {
-                    matching_now += now_i;
-                } else {
-                    out_raw.push({ type: 'plan', raw: now_i })
-                }
-            }
-        } else { //需要直接写入当前字符串
-            out_raw.push({ type: 'plan', raw: now_i })
-            skip_next = false;
+    const tokens = [];
+    let currentPosition = 0;
+    let buffer = '';
+    let isEscaped = false;
+    let isInsidePlaceholder = false;
+
+    while (currentPosition < raw.length) {
+        const char = raw[currentPosition];
+
+        if (isEscaped) {
+            // 处理转义字符，直接添加到缓冲区
+            buffer += char;
+            isEscaped = false;
+            currentPosition++;
+            continue;
         }
+
+        if (char === '\\') {
+            // 遇到转义字符，标记下一个字符直接处理
+            isEscaped = true;
+            currentPosition++;
+            continue;
+        }
+
+        if (char === '%') {
+            // 处理缓冲区内容
+            if (buffer.length > 0) {
+                tokens.push({
+                    type: isInsidePlaceholder ? 'holder' : 'plain',
+                    raw: buffer
+                });
+                buffer = '';
+            }
+
+            // 切换占位符状态
+            isInsidePlaceholder = !isInsidePlaceholder;
+            currentPosition++;
+            continue;
+        }
+
+        // 普通字符添加到缓冲区
+        buffer += char;
+        currentPosition++;
     }
-    return out_raw;
+
+    // 处理最后剩余的缓冲区内容
+    if (buffer.length > 0) {
+        tokens.push({
+            type: isInsidePlaceholder ? 'holder' : 'plain',
+            raw: buffer
+        });
+    }
+
+    return tokens;
 }
 
 spark.Cmd.buildPlaceHolder = buildPlaceHolder;
@@ -304,11 +363,11 @@ function formatMsg(msg) {
 }
 
 //spark.debug = true;
-spark.on('message.group.normal',  (e, reply) => {
+spark.on('message.group.normal', (e, reply) => {
     //reply("?")
     const { raw_message, group_id, user_id } = e;
     //console.log(raw_message, group_id, user_id ,GROUP);
-    const raw =  formatMsg(e.message);
+    const raw = formatMsg(e.message);
 
     //console.log(raw);
     if (group_id !== GROUP) return;

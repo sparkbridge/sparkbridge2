@@ -157,7 +157,8 @@ const plugins_list = fhelper.listdir(PLUGINS_PATH);
 function VMrunCodeFromDir(perm, dirPath) {
     try {
         // 尝试读取 package.json 文件
-        const packageJsonPath = path.join(dirPath, 'package.json');
+        const packageJsonPath = path.join(__dirname, dirPath, 'package.json');
+        // console.log(`正在尝试从目录 ${dirPath} 运行代码...`);
         let mainFile = 'index.js'; // 默认入口文件
         if (fs.existsSync(packageJsonPath)) {
             const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
@@ -165,7 +166,7 @@ function VMrunCodeFromDir(perm, dirPath) {
         }
 
         // 获取入口文件的完整路径
-        const filePath = path.join(dirPath, mainFile);
+        const filePath = path.join(__dirname,dirPath, mainFile);
 
         // 读取入口文件内容
         const code = fs.readFileSync(filePath, 'utf8');
@@ -183,7 +184,7 @@ function VMrunCodeFromDir(perm, dirPath) {
                 mc,
                 require: (moduleName) => {
                     // 解析模块路径
-                    const resolvedPath = require.resolve(moduleName, { paths: [dirPath] });
+                    const resolvedPath = require.resolve(moduleName, { paths: [path.join(__dirname, dirPath)] });
                     return require(resolvedPath);
                 },
             };
