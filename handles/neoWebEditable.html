@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>正则表达式 数据可视化 编辑器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f7fc;
+            /* 淡蓝色背景 */
+            color: #333;
+            position: relative;
+            /* 用于定位弹窗 */
+        }
+
+        h1 {
+            color: #2c3e50;
+            /* 深蓝色标题 */
+        }
+
+        h2 {
+            color: #5dade2;
+            /* 淡蓝色小标题 */
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e7e7e7;
+        }
+
+        th {
+            background-color: #5dade2;
+            /* 淡蓝色表头 */
+            color: #fff;
+        }
+
+        td {
+            transition: background-color 0.3s;
+        }
+
+        td:hover {
+            background-color: #d6eaf8;
+            /* 淡蓝色悬停效果 */
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #5dade2;
+            /* 淡蓝色开关 */
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(20px);
+        }
+
+        .custom-input,
+        .custom-select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            color: #333;
+            font-family: Arial, sans-serif;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+
+        .custom-input:focus,
+        .custom-select:focus {
+            border-color: #5dade2;
+            box-shadow: 0 0 5px rgba(93, 174, 226, 0.5);
+        }
+
+        .custom-select {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23333"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 20px;
+        }
+
+        .array-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .array-item input {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .array-item button {
+            padding: 5px 10px;
+            background-color: #5dade2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .array-item button:hover {
+            background-color: #2e86c1;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .modal-buttons button {
+            margin-left: 10px;
+            padding: 10px 15px;
+            background-color: #5dade2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .modal-buttons button:hover {
+            background-color: #2e86c1;
+        }
+
+        footer {
+            margin-top: 50px;
+            padding: 10px 0;
+            text-align: center;
+            font-size: 0.9em;
+            color: #7f8c8d;
+            border-top: 1px solid #ddd;
+        }
+
+        /* 弹窗样式 */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+            animation: fadeOut 3s forwards;
+        }
+
+        .toast.success {
+            background-color: #dff0d8;
+            /* 浅绿色 */
+            color: #3c763d;
+        }
+
+        .toast.error {
+            background-color: #f2dede;
+            /* 浅红色 */
+            color: #a94442;
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>正则表达式 数据可视化 编辑器</h1>
+
+    <!-- 配置部分1 -->
+    <h2>配置部分1</h2>
+    <table id="data-table-配置部分1">
+        <thead>
+            <tr>
+                <th>配置名称</th>
+                <th>描述</th>
+                <th>可编辑项</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <!-- 配置部分2 -->
+    <h2>配置部分2</h2>
+    <table id="data-table-配置部分2">
+        <thead>
+            <tr>
+                <th>配置名称</th>
+                <th>描述</th>
+                <th>可编辑项</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <!-- 弹窗 -->
+    <div id="toast" class="toast"></div>
+
+    <!-- 数组编辑弹窗 -->
+    <div id="array-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>编辑数组</h2>
+            <div id="array-editor"></div>
+            <div class="modal-buttons">
+                <button id="add-item" onclick="addItem()">添加</button>
+                <button id="save-array" onclick="saveArray()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 初始数据
+        let data = {
+            "配置部分1": {
+                "配置1": { description: "这是配置1的描述", editable: { type: "text", value: "文本内容1" } },
+                "配置2": { description: "这是配置2的描述", editable: { type: "switch", value: true } },
+                "配置3": { description: "这是配置3的描述", editable: { type: "array", value: ["元素1", "元素2", "元素3"] } }
+            },
+            "配置部分2": {
+                "配置4": { description: "这是配置4的描述", editable: { type: "dropdown", value: "选项1", options: ["选项1", "选项2", "选项3"] } },
+                "配置5": { description: "这是配置5的描述", editable: { type: "text", value: "文本内容5" } }
+            }
+        };
+
+        // 当前编辑的数组配置项
+        let currentArrayKey = null;
+        let currentSection = null;
+
+        // 初始化表格
+        function renderTable(section, tableId) {
+            const tableBody = document.querySelector(`#${tableId} tbody`);
+            if (!tableBody) {
+                console.error(`Table with id ${tableId} not found.`);
+                return;
+            }
+            tableBody.innerHTML = "";
+            for (const key in data[section]) {
+                const row = document.createElement("tr");
+                const editable = data[section][key].editable || { type: "text", value: "" };
+                let editableElement;
+
+                if (editable.type === "text") {
+                    editableElement = document.createElement("input");
+                    editableElement.type = "text";
+                    editableElement.value = editable.value;
+                    editableElement.classList.add("custom-input");
+                    editableElement.addEventListener("input", () => {
+                        editable.value = editableElement.value;
+                        onDataChange(section, key, "editable", editable.value);
+                    });
+                } else if (editable.type === "switch") {
+                    editableElement = document.createElement("label");
+                    editableElement.className = "switch";
+                    const checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.checked = editable.value;
+                    checkbox.addEventListener("change", () => {
+                        editable.value = checkbox.checked;
+                        onDataChange(section, key, "editable", editable.value);
+                    });
+                    const slider = document.createElement("span");
+                    slider.className = "slider";
+                    editableElement.appendChild(checkbox);
+                    editableElement.appendChild(slider);
+                } else if (editable.type === "dropdown") {
+                    editableElement = document.createElement("select");
+                    editableElement.classList.add("custom-select");
+                    (editable.options || []).forEach(option => {
+                        const optionElement = document.createElement("option");
+                        optionElement.value = option;
+                        optionElement.text = option;
+                        if (option === editable.value) {
+                            optionElement.selected = true;
+                        }
+                        editableElement.appendChild(optionElement);
+                    });
+                    editableElement.addEventListener("change", () => {
+                        editable.value = editableElement.value;
+                        onDataChange(section, key, "editable", editable.value);
+                    });
+                } else if (editable.type === "array") {
+                    editableElement = document.createElement("button");
+                    editableElement.textContent = "编辑数组";
+                    editableElement.classList.add("custom-input");
+                    editableElement.addEventListener("click", () => {
+                        openArrayEditor(section, key, editable.value);
+                    });
+                }
+
+                row.innerHTML = `
+                    <td>${key}</td>
+                    <td>${data[section][key].description}</td>
+                    <td></td>
+                `;
+                row.cells[2].appendChild(editableElement);
+                tableBody.appendChild(row);
+            }
+        }
+
+        // 打开数组编辑弹窗
+        function openArrayEditor(section, key, arrayValue) {
+            currentSection = section;
+            currentArrayKey = key;
+            const arrayEditor = document.getElementById("array-editor");
+            arrayEditor.innerHTML = "";
+            arrayValue.forEach((item, index) => {
+                const arrayItem = document.createElement("div");
+                arrayItem.className = "array-item";
+                const input = document.createElement("input");
+                input.type = "text";
+                input.value = item;
+                input.classList.add("custom-input");
+                input.addEventListener("input", () => {
+                    arrayValue[index] = input.value;
+                    onDataChange(currentSection, currentArrayKey, "editable", arrayValue);
+                });
+                const removeButton = document.createElement("button");
+                removeButton.textContent = "删除";
+                removeButton.addEventListener("click", () => {
+                    arrayValue.splice(index, 1);
+                    renderArrayEditor(arrayValue);
+                });
+                arrayItem.appendChild(input);
+                arrayItem.appendChild(removeButton);
+                arrayEditor.appendChild(arrayItem);
+            });
+            document.getElementById("array-modal").style.display = "block";
+        }
+
+        // 添加新元素
+        function addItem() {
+            if (currentSection && currentArrayKey) {
+                data[currentSection][currentArrayKey].editable.value.push("");
+                renderArrayEditor(data[currentSection][currentArrayKey].editable.value);
+            }
+        }
+
+        // 重新渲染数组编辑器
+        function renderArrayEditor(arrayValue) {
+            const arrayEditor = document.getElementById("array-editor");
+            arrayEditor.innerHTML = "";
+            arrayValue.forEach((item, index) => {
+                const arrayItem = document.createElement("div");
+                arrayItem.className = "array-item";
+                const input = document.createElement("input");
+                input.type = "text";
+                input.value = item;
+                input.classList.add("custom-input");
+                input.addEventListener("input", () => {
+                    arrayValue[index] = input.value;
+                    onDataChange(currentSection, currentArrayKey, "editable", arrayValue);
+                });
+                const removeButton = document.createElement("button");
+                removeButton.textContent = "删除";
+                removeButton.addEventListener("click", () => {
+                    arrayValue.splice(index, 1);
+                    renderArrayEditor(arrayValue);
+                });
+                arrayItem.appendChild(input);
+                arrayItem.appendChild(removeButton);
+                arrayEditor.appendChild(arrayItem);
+            });
+        }
+
+        // 保存数组编辑
+        function saveArray() {
+            if (currentSection && currentArrayKey) {
+                const arrayEditor = document.getElementById("array-editor");
+                const inputs = arrayEditor.querySelectorAll("input");
+                data[currentSection][currentArrayKey].editable.value = Array.from(inputs).map(input => input.value);
+                showToast(`数组保存成功：section=${currentSection}, key=${currentArrayKey}`);
+                document.getElementById("array-modal").style.display = "none";
+                renderTable(currentSection, `data-table-${currentSection.replace(/\s+/g, '')}`);
+            }
+        }
+
+        // 关闭数组编辑弹窗
+        document.querySelector(".close").addEventListener("click", () => {
+            document.getElementById("array-modal").style.display = "none";
+        });
+
+        // 数据变动触发的回调函数
+        function onDataChange(section, key, field, value) {
+            console.log(`数据变动：section=${section}, key=${key}, field=${field}, value=${value}`);
+            showToast(`数据变动：section=${section}, key=${key}, value=${value}`);
+        }
+
+        // 自定义弹窗
+        function showToast(message, type = "success") {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.className = `toast ${type}`; // 设置弹窗类型
+            toast.style.display = "block";
+            setTimeout(() => {
+                toast.style.display = "none";
+            }, 5000); // 5秒后自动关闭
+        }
+
+        // 初始化页面
+        renderTable("配置部分1", "data-table-配置部分1");
+        renderTable("配置部分2", "data-table-配置部分2");
+    </script>
+</body>
+
+</html>

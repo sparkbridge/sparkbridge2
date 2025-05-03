@@ -178,6 +178,8 @@ function VMrunCodeFromDir(perm, dirPath) {
             context = {
                 console,
                 setInterval,
+                setTimeout,
+                clearInterval,
                 clearTimeout,
                 spark,
                 ll,
@@ -193,6 +195,8 @@ function VMrunCodeFromDir(perm, dirPath) {
             context = {
                 console,
                 setInterval,
+                setTimeout,
+                clearInterval,
                 clearTimeout,
                 spark
             };
@@ -272,7 +276,7 @@ function readPluginDir() {
             writeFilePriority(epl, 'post');
         }
         if (!i_info.permission) {
-            writeFilePermission(epl, 'key');
+            writeFilePermission(epl, 'core');
         }
         const priorityValue = priorityMap[i_info.priority] || 0;
         current_list[i_info.name] = {
