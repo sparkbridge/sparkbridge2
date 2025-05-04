@@ -1,40 +1,40 @@
-function SendMsg(msg) {
-    spark.QClient.sendGroupMsg(spark.mc.config.group, msg);
-}
-ll.exports(SendMsg, "SparkAPI", "sendGroupMessage");
-
-function callCustomEvent(event,eventId){
-    let func=ll.imports(event,eventId);
-    spark.on(event,(e)=>{
-         func(e);
-    });
-}
-var EventId=0;
-function GetEventID(){
-    EventId++;
-    return "SparkBridge_Event_" + EventId;
-}
-ll.exports(callCustomEvent,"SparkAPI","callCustomEvent");
-ll.exports(GetEventID,"SparkAPI","GetEventID");
+ll.exports((msg) => spark.QClient.sendGroupMsg(spark.mc.config.group, msg), "SparkAPI", "sendGroupMessage");
+ll.exports(() => spark.mc.config.group, "SparkAPI", "GetGroupId");
+// -----------------------------------------------------------------
 
 const msgbuilder = require('../../handles/msgbuilder');
-function GetGroupId(){
-    return spark.mc.config.group;
+const packbuilder = require('../../handles/packbuilder');
+function callCustomEvent(event, eventId) {
+    spark.on(event, (e) => {
+        if (ll.hasExported(event, eventId)) ll.imports(event, eventId)(e);
+    });
 }
-function sendWSPack(json){
-    return spark.QClient.sendWSPack(json);
+
+let EventId = 0;
+ll.exports(callCustomEvent, "SparkAPI", "callCustomEvent");
+ll.exports(() => `SparkBridge_Event_${++EventId}`, "SparkAPI", "GetEventID");
+ll.exports((type) => {
+    switch (type) {
+        case 'spark.mc.config':
+            return spark.mc.config;
+    }
+}, "SparkAPI", "GetInfo")
+ll.exports((data) => spark.QClient.sendWSPack(data), "SparkAPI", "sendWSPack");//直接spark.QClient.sendWSPack会报错
+ll.exports(spark.QClient.sendGroupMsg, "SparkAPI", "sendGroupMsg");
+
+function getStaticMethods(klass) {
+    return Object.getOwnPropertyNames(klass)
+        .filter(prop => typeof klass[prop] === 'function'
+            && prop !== 'length'
+            && prop !== 'name'
+            && prop !== 'prototype');
 }
-ll.exports(GetGroupId,"SparkAPI","GetGroupId");
-ll.exports(sendWSPack,"SparkAPI","sendWSPack");//直接spark.QClient.sendWSPack会报错
-ll.exports(spark.QClient.deleteMsg,"SparkAPI","deleteMsg");
-ll.exports(spark.QClient.sendGroupMsg,"SparkAPI","sendGroupMsg");
-ll.exports(spark.QClient.sendPrivateMsg,"SparkAPI","sendPrivateMsg");
-ll.exports(spark.QClient.sendGroupForwardMsg,"SparkAPI","sendGroupForwardMsg");
-ll.exports(msgbuilder.img,"SparkAPI","msgbuilder.img");
-ll.exports(msgbuilder.at,"SparkAPI","msgbuilder.at");
-ll.exports(msgbuilder.face,"SparkAPI","msgbuilder.face");
-ll.exports(msgbuilder.text,"SparkAPI","msgbuilder.text");
-ll.exports(msgbuilder.poke,"SparkAPI","msgbuilder.poke");
-ll.exports(msgbuilder.reply,"SparkAPI","msgbuilder.reply");
-ll.exports(msgbuilder.format,"SparkAPI","msgbuilder.format");
-ll.exports(msgbuilder.ForwardMsgBuilder,"SparkAPI","msgbuilder.ForwardMsgBuilder");
+function exportClass(klass, name) {
+    let list = getStaticMethods(klass);
+    ll.exports(() => list, "SparkAPI", name);
+    list.forEach(method => {
+        ll.exports(klass[method], "SparkAPI", `${name}.${method}`);
+    });
+}
+exportClass(msgbuilder, 'msgbuilder');
+exportClass(packbuilder, 'packbuilder');
