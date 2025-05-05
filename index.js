@@ -166,7 +166,7 @@ function VMrunCodeFromDir(perm, dirPath) {
         }
 
         // 获取入口文件的完整路径
-        const filePath = path.join(__dirname,dirPath, mainFile);
+        const filePath = path.join(__dirname, dirPath, mainFile);
 
         // 读取入口文件内容
         const code = fs.readFileSync(filePath, 'utf8');
@@ -190,6 +190,8 @@ function VMrunCodeFromDir(perm, dirPath) {
                     return require(resolvedPath);
                 },
             };
+            context.ll.import = ll.imports;
+            context.ll.exports = ll.exports;
         } else {
             // normal permission
             context = {
@@ -351,6 +353,10 @@ function bootUpPlugins(plugins_load_list, current_list) {
 spark.debug = CONFIG.debug;
 
 if (spark.onBDS) {
+
+    // 针对 https://github.com/LiteLDev/LegacyScriptEngine/issues/270 的临时解决方案
+    global.ll.import = ll.imports;
+    global.ll.exports = ll.exports;
     ll.registerPlugin(
     /* name */ "sparkbridge2",
     /* introduction */ "a qq bot system",
