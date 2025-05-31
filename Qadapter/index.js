@@ -69,10 +69,11 @@ class Qadapter {
                 console.log(e);
             });
             this.client.on('close', (e) => {
-                this.logger.warn(`websocket 已经断开,将在 ${(new Date(Date.now() + boom())).toISOString()} 尝试重连`);
+                let waitTime = boom();
+                this.logger.warn(`websocket 已经断开,将在 ${(new Date(Date.now() + waitTime)).toLocaleString()} 尝试重连`);
                 setTimeout(() => {
                     this.login()
-                }, boom());
+                }, waitTime);
             });
             this.client.on('message', (_data, _islib) => {
                 let raw = _data;
